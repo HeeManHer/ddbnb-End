@@ -10,8 +10,8 @@ spring:
 #    username: C##GOLANG
 #    password: GOLANG
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url : jdbc:mysql://@mysql.localhost:3306/nasigorang?useSSL=false&useUnicode=true&serverTimezone=Asia/Seoul
-    username: nasigorang
+    url : jdbc:mysql://@localhost:3306/nasigorang?useSSL=false&useUnicode=true&serverTimezone=Asia/Seoul
+    username: root
     password: dudgp0204
     hikari:
       auto-commit: false
@@ -29,12 +29,12 @@ spring:
 jwt:
   secret-key: ipqjRiEoJ7_EdLCaX_6kAwI95NrX3_5uiDgnzuwjCj11mgAAAYhNDF3k
 
-oauth:
-  kakao:
-    client-id: 202bf1013addf514255b52a8c9c69ebf
-    url:
-      auth: https://kauth.kakao.com
-      api: https://kapi.kakao.com
+#oauth:
+#  kakao:
+#    client-id: 202bf1013addf514255b52a8c9c69ebf
+#    url:
+#      auth: https://kauth.kakao.com
+#      api: https://kapi.kakao.com
 #  naver:
 #    secret: W_2DmcLfYU
 #    client-id: Y2i4SlApP7A1KZsUoott
