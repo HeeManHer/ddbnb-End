@@ -1,6 +1,5 @@
 package com.nasigolang.ddbnb.member.controller;
 
-
 import com.nasigolang.ddbnb.common.ResponseDto;
 import com.nasigolang.ddbnb.member.dto.MemberDTO;
 import com.nasigolang.ddbnb.member.service.MemberService;

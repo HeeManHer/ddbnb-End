@@ -5,21 +5,17 @@ server:
 # oracle driver config
 spring:
   datasource:
-#    driver-class-name: oracle.jdbc.driver.OracleDriver
-#    url: jdbc:oracle:thin:@oracle.coffit.site:1521:xe
-#    username: C##GOLANG
-#    password: GOLANG
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url : jdbc:mysql://@localhost:3306/nasigorang?useSSL=false&useUnicode=true&serverTimezone=Asia/Seoul
-    username: root
-    password: dudgp0204
+    driver-class-name: oracle.jdbc.driver.OracleDriver
+    url: jdbc:oracle:thin:@oracle.coffit.site:1521:xe
+    username: C##GOLANG
+    password: GOLANG
     hikari:
       auto-commit: false
 
   jpa:
-    generate-ddl: false
+    generate-ddl: true
     show-sql: true
-    database: mysql
+    database: oracle
     properties:
       hibernate:
         '[format_sql]': true
@@ -46,4 +42,3 @@ jwt:
 # mybatis config
 mybatis:
   mapper-locations: mybatis/mappers/*.xml
-

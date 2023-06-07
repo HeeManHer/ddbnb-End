@@ -40,9 +40,9 @@ public class MemberDTO {
     private String starPoint;
 
     private String status;
+  
 
     public MemberDTO() {}
-
 
     public MemberDTO(long memberId, String nickname, String profileImage, int reportedCount, String socialLogin, String socialId, String accessToken, long accessTokenExpireDate, String refreshToken, long refreshTokenExpireDate, String gender, LocalDateTime signDate, LocalDateTime deletedDate, String preferredArea, String petStitterCarrer, String detailedHistory, String period, String starPoint, String status) {
 
@@ -67,7 +67,7 @@ public class MemberDTO {
         this.starPoint = starPoint;
         this.status = status;
     }
-
+  
     public long getMemberId() {
         return memberId;
     }
