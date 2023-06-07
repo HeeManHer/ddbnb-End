@@ -69,3 +69,4 @@ public class MemberSimpleDTO {
                 ", linkToMyPage='" + linkToMyPage + '\'' +
                 '}';
     }
+}
