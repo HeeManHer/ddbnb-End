@@ -10,13 +10,13 @@ import java.util.Date;
 @Getter
 @Setter
 @ToString
-@Table(name = "MEMBER")
-@Entity(name = "Member")
-@SequenceGenerator(name = "MEMBER_SEQ_GENERATOR", initialValue = 1, allocationSize = 1, sequenceName = "SEQ_MEMBER_ID")
+@Table(name = "SAMPLE")
+@Entity(name = "Sample")
+@SequenceGenerator(name = "SAMPLE_SEQ_GENERATOR", initialValue = 1, allocationSize = 1, sequenceName = "SEQ_SAMPLE_ID")
 public class Sample {
     @Id
     @Column(name = "MEMBER_ID")
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "MEMBER_SEQ_GENERATOR")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "SAMPLE_SEQ_GENERATOR")
     private int memberId;
 
     @Column(name = "NICKNAME")
