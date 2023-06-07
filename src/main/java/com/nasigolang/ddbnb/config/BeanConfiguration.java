@@ -4,7 +4,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
-import springfox.documentation.swagger2.mappers.ModelMapper;
+import org.modelmapper.ModelMapper;
 
 @Configuration
 @ComponentScan(basePackages = "com.nasigolang.ddbnb")

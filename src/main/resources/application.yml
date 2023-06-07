@@ -27,7 +27,7 @@ spring:
           auto: update
 
 jwt:
-  secret-key: ipqjRiEoJ7_EdLCaX_6kAwI95NrX3_5uiDgnzuwjCj11mgAAAYhNDF3k
+  secret: asdfjp298pafo1320efqw0udvnh0er0h412r08byfdq9dsvh02143908hfeqwn80fdqs0nfdqs0n412013rq0nqefn08dfas0das730732g86923kjefho43y592y095r2wofhw92yt832y5r920woqhjfwoty28rt02ty230hwot92ty0923752rywohr9wyf823y8329yt0wyf9stgf932y20gfy9w8yh28it2y3y239836y25720hw8fy83r49y23y8
 
 #oauth:
 #  kakao:
