@@ -27,7 +27,6 @@ public class JwtFilter extends OncePerRequestFilter {
 
 	private final TokenProvider tokenProvider;
 
-	/* 이거라도 해볼까 고민해 본 흔적 */
 	private final RequestMatcher requestMatcher = new AntPathRequestMatcher("/api/v1/login/**");
 
 	public JwtFilter(TokenProvider tokenProvider){
@@ -40,7 +39,7 @@ public class JwtFilter extends OncePerRequestFilter {
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
 									FilterChain filterChain) throws ServletException, IOException {
 
-		System.out.println("혹시호출되니?????????????????????????");
+		System.out.println("호출됨????");
 
 		try {
 			/* 1. Request Header 토큰 꺼내기 */
@@ -105,10 +104,6 @@ public class JwtFilter extends OncePerRequestFilter {
 		} else if("/swagger-ui/index.html".equals(path)) {
 			return true;
 		} else if("/swagger-ui.html".equals(path)) {
-			return true;
-		} else if("/api/v1/rallies".equals(path) && (method.equals("GET"))) {
-			return true;
-		} else if("/api/v1/rallies/search".equals(path) && (method.equals("GET"))) {
 			return true;
 		} else {
 			return false;
