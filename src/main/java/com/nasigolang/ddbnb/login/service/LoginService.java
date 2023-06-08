@@ -125,9 +125,9 @@ public class LoginService {
 			newMember.setRefreshTokenExpireDate(oauthToken.getRefresh_token_expires_in() + System.currentTimeMillis());
 			newMember.setAccessTokenExpireDate(oauthToken.getExpires_in() + System.currentTimeMillis());
 //			newMember.setProfileImage("https://api.dicebear.com/6.x/thumbs/svg?seed=" + newMember.getSocialId().split("@")[0]);
-			if (kakaoProfileDTO.getKakao_account().getGender() != null) {
-				newMember.setGender(kakaoProfileDTO.getKakao_account().getGender());
-			}
+			//if (kakaoProfileDTO.getKakao_account().getGender() != null) {
+			//	newMember.setGender(kakaoProfileDTO.getKakao_account().getGender());
+			//}
 
 			memberService.registNewUser(newMember);
 		}
