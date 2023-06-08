@@ -35,4 +35,9 @@ public class ReviewService {
         List<Review> reviews = reviewRepository.findAll();
         return reviews.stream().map(review -> modelMapper.map(review, ReviewDTO.class)).collect(Collectors.toList());
     }
+
+    public void postReview(ReviewDTO newReview){
+      reviewRepository.save(modelMapper.map(newReview, Review.class));
+
+    }
 }
