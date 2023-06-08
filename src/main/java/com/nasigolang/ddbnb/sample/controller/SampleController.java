@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import java.nio.charset.Charset;
 
 @RestController
-@RequestMapping("/member")
+@RequestMapping("/api/v1/sample")
 @AllArgsConstructor
 public class SampleController {
 
@@ -49,6 +49,28 @@ public class SampleController {
 
         return ResponseEntity.ok().headers(headers).body(new ResponseDto(HttpStatus.OK, "생성 성공", null));
 
+    }
+
+    @PutMapping("/modify")
+    public ResponseEntity<ResponseDto> modifySample(@RequestBody SampleDTO menu) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
+
+
+        sampleService.modifySample(menu);
+
+        return ResponseEntity.ok().headers(headers).body(new ResponseDto(HttpStatus.OK, "수정 성공", null));
+    }
+
+    @DeleteMapping("/delete")
+    public ResponseEntity<ResponseDto> deleteSample(@PathVariable int memberId) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
+
+
+        sampleService.deleteSample(memberId);
+
+        return ResponseEntity.ok().headers(headers).body(new ResponseDto(HttpStatus.OK, "삭제 성공", null));
     }
 
 }

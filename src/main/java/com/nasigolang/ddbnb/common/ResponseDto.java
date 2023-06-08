@@ -1,9 +1,14 @@
 package com.nasigolang.ddbnb.common;
 
 
+import lombok.*;
 import org.springframework.http.HttpStatus;
 
-
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
+@Setter
+@ToString
 public class ResponseDto {
 
     private int status;
@@ -14,34 +19,5 @@ public class ResponseDto {
         this.status = status.value();
         this.message = message;
         this.data = data;
-    }
-
-    public int getStatus() {
-        return status;
-    }
-
-    public void setStatus(int status) {
-        this.status = status;
-    }
-
-    public String getMessage() {
-        return message;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
-    }
-
-    public Object getData() {
-        return data;
-    }
-
-    public void setData(Object data) {
-        this.data = data;
-    }
-
-    @Override
-    public String toString() {
-        return "ResponseDto{" + "status=" + status + ", message='" + message + '\'' + ", data=" + data + '}';
     }
 }
