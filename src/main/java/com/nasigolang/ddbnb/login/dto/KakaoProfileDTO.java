@@ -1,5 +1,8 @@
 package com.nasigolang.ddbnb.login.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class KakaoProfileDTO {
 
 	private long id;
@@ -50,108 +53,55 @@ public class KakaoProfileDTO {
 
 	public class KakaoAccount {
 
-		private boolean has_email;
-		private boolean email_needs_agreement;
-		private boolean is_email_valid;
-		private boolean is_email_verified;
-		private String email;
-		private boolean has_gender;
-		private boolean gender_needs_agreement;
-		private String gender;
+
 
 		public KakaoAccount() {}
 
-		public KakaoAccount(boolean has_email, boolean email_needs_agreement,
-			boolean is_email_valid,
-			boolean is_email_verified, String email, boolean has_gender,
-			boolean gender_needs_agreement,
-			String gender) {
-			this.has_email = has_email;
-			this.email_needs_agreement = email_needs_agreement;
-			this.is_email_valid = is_email_valid;
-			this.is_email_verified = is_email_verified;
-			this.email = email;
-			this.has_gender = has_gender;
-			this.gender_needs_agreement = gender_needs_agreement;
-			this.gender = gender;
+	}
+
+	public class profile{
+
+		private String nickname;
+		private String profile_image_url;
+		private boolean is_default_image;
+
+		public profile(String nickname, String profile_image_url, boolean is_default_image) {
+			this.nickname = nickname;
+			this.profile_image_url = profile_image_url;
+			this.is_default_image = is_default_image;
 		}
 
-		public boolean isHas_email() {
-			return has_email;
+		public String getNickname() {
+			return nickname;
 		}
 
-		public void setHas_email(boolean has_email) {
-			this.has_email = has_email;
+		public void setNickname(String nickname) {
+			this.nickname = nickname;
 		}
 
-		public boolean isEmail_needs_agreement() {
-			return email_needs_agreement;
+		public String getProfile_image_url() {
+			return profile_image_url;
 		}
 
-		public void setEmail_needs_agreement(boolean email_needs_agreement) {
-			this.email_needs_agreement = email_needs_agreement;
+		public void setProfile_image_url(String profile_image_url) {
+			this.profile_image_url = profile_image_url;
 		}
 
-		public boolean isIs_email_valid() {
-			return is_email_valid;
+		public boolean isIs_default_image() {
+			return is_default_image;
 		}
 
-		public void setIs_email_valid(boolean is_email_valid) {
-			this.is_email_valid = is_email_valid;
-		}
-
-		public boolean isIs_email_verified() {
-			return is_email_verified;
-		}
-
-		public void setIs_email_verified(boolean is_email_verified) {
-			this.is_email_verified = is_email_verified;
-		}
-
-		public String getEmail() {
-			return email;
-		}
-
-		public void setEmail(String email) {
-			this.email = email;
-		}
-
-		public boolean isHas_gender() {
-			return has_gender;
-		}
-
-		public void setHas_gender(boolean has_gender) {
-			this.has_gender = has_gender;
-		}
-
-		public boolean isGender_needs_agreement() {
-			return gender_needs_agreement;
-		}
-
-		public void setGender_needs_agreement(boolean gender_needs_agreement) {
-			this.gender_needs_agreement = gender_needs_agreement;
-		}
-
-		public String getGender() {
-			return gender;
-		}
-
-		public void setGender(String gender) {
-			this.gender = gender;
+		public void setIs_default_image(boolean is_default_image) {
+			this.is_default_image = is_default_image;
 		}
 
 		@Override
 		public String toString() {
-			return "KakaoAccount{" +
-				"has_email=" + has_email +
-				", email_needs_agreement=" + email_needs_agreement +
-				", is_email_valid=" + is_email_valid +
-				", is_email_verified=" + is_email_verified +
-				", email='" + email + '\'' +
-				", has_gender=" + has_gender +
-				", gender_needs_agreement=" + gender_needs_agreement +
-				", gender='" + gender + '\'' +
-				'}';
+			return "profile{" +
+					"nickname='" + nickname + '\'' +
+					", profile_image_url='" + profile_image_url + '\'' +
+					", is_default_image=" + is_default_image +
+					'}';
 		}
 	}
 }

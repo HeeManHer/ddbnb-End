@@ -50,8 +50,9 @@ public class LoginService {
 
 		MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
 		params.add("grant_type", "authorization_code");
-		params.add("client_id", System.getenv("KakaoRestAPIKey"));
-		params.add("redirect_uri", "http://dallibocca.site/oauth");
+		params.add("client_id", "202bf1013addf514255b52a8c9c69ebf");
+//		params.add("client_id", System.getenv("KakaoRestAPIKey"));
+		params.add("redirect_uri", "http://localhost:3000/kakao/callback");
 		params.add("code", code);
 
 		HttpEntity<MultiValueMap<String, String>> kakaoTokenRequest =
