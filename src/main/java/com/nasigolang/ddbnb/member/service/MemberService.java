@@ -44,9 +44,9 @@ public class MemberService {
 
     @Transactional
     public long registNewUser(MemberDTO newMember) {
-
+        System.out.println(9);
         newMember.setNickname("새로운회원" + (Math.random() * 100 + 1));
-
+        System.out.println(10);
         return memberRepository.save(modelMapper.map(newMember, Member.class)).getMemberId();
     }
 
@@ -210,9 +210,9 @@ public class MemberService {
         }
     }
     public MemberDTO findBySocialId(String socialLogin, String socialId) {
-
+        System.out.println(5);
         Member foundMember = memberRepository.findBySocialId(socialLogin, socialId);
-
+        System.out.println(6);
         if (foundMember == null) {
             return null;
         } else {
