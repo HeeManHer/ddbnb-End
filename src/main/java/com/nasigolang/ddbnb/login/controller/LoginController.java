@@ -3,7 +3,6 @@ package com.nasigolang.ddbnb.login.controller;
 
 import com.nasigolang.ddbnb.common.ResponseDto;
 import com.nasigolang.ddbnb.login.dto.AccessTokenDTO;
-import com.nasigolang.ddbnb.login.dto.NaverAccessTokenDTO;
 import com.nasigolang.ddbnb.login.dto.OauthTokenDTO;
 import com.nasigolang.ddbnb.login.service.LoginService;
 import io.swagger.annotations.Api;

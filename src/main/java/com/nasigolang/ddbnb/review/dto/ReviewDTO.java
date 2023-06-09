@@ -15,21 +15,20 @@ public class ReviewDTO {
     private String reviewDetail;
 
     private String reviewStarPoint;
-    private long rallyId;
 
     private java.util.Date reviewWriteDate;
 
     private byte[] reviewImage;
     public ReviewDTO() {}
 
-    public ReviewDTO(long reviewId, String reviewTitle, long memberId, long reviewerId, String reviewDetail, String reviewStarPoint, long rallyId, Date reviewWriteDate, byte[] reviewImage) {
+    public ReviewDTO(long reviewId, String reviewTitle, long memberId, long reviewerId, String reviewDetail, String reviewStarPoint, Date reviewWriteDate, byte[] reviewImage) {
         this.reviewId = reviewId;
         this.reviewTitle = reviewTitle;
         this.memberId = memberId;
         this.reviewerId = reviewerId;
         this.reviewDetail = reviewDetail;
         this.reviewStarPoint = reviewStarPoint;
-        this.rallyId = rallyId;
+
         this.reviewWriteDate = reviewWriteDate;
         this.reviewImage = reviewImage;
     }
@@ -82,13 +81,6 @@ public class ReviewDTO {
         this.reviewStarPoint = reviewStarPoint;
     }
 
-    public long getRallyId() {
-        return rallyId;
-    }
-
-    public void setRallyId(long rallyId) {
-        this.rallyId = rallyId;
-    }
 
     public Date getReviewWriteDate() {
         return reviewWriteDate;
@@ -115,7 +107,6 @@ public class ReviewDTO {
                 ", reviewerId=" + reviewerId +
                 ", reviewDetail='" + reviewDetail + '\'' +
                 ", reviewStarPoint='" + reviewStarPoint + '\'' +
-                ", rallyId=" + rallyId +
                 ", reviewWriteDate=" + reviewWriteDate +
                 ", reviewImage=" + Arrays.toString(reviewImage) +
                 '}';

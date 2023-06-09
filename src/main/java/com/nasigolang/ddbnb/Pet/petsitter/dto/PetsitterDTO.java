@@ -1,4 +1,4 @@
-package com.nasigolang.ddbnb.petsitter.dto;
+package com.nasigolang.ddbnb.Pet.petsitter.dto;
 
 public class PetsitterDTO {
 

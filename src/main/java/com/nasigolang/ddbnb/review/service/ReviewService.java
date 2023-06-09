@@ -5,12 +5,13 @@ import com.nasigolang.ddbnb.review.dto.ReviewDTO;
 import com.nasigolang.ddbnb.review.entity.Review;
 import com.nasigolang.ddbnb.review.repository.ReviewRepository;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class ReviewService {
@@ -31,9 +32,20 @@ public class ReviewService {
         this.objectMapper = objectMapper;
     }
 
-    public List<ReviewDTO> findAllReview(Pageable pageable) {
-        List<Review> reviews = reviewRepository.findAll();
-        return reviews.stream().map(review -> modelMapper.map(review, ReviewDTO.class)).collect(Collectors.toList());
+    //전체리뷰 조회
+    public Page<ReviewDTO> findAllReview(Pageable page) {
+        page = PageRequest.of(page.getPageNumber() <= 0 ? 0 : page.getPageNumber() - 1, 8, Sort.by("memberId"));
+
+//        Page<Review> reviews = reviewRepository.findAll(pageable);
+        return reviewRepository.findAll(page).map(review -> modelMapper.map(review, ReviewDTO.class));
+    }
+
+    /*일부 조회*/
+//    @Transactional
+    public ReviewDTO findReviewById(long reviewId) {
+        Review foundReview = reviewRepository.findById(reviewId).get();
+        return modelMapper.map(foundReview, ReviewDTO.class);
+
     }
 
     public void postReview(ReviewDTO newReview){
