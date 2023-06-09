@@ -85,4 +85,8 @@ public class MemberController {
         return ResponseEntity.ok().headers(headers).body(new ResponseDto(HttpStatus.OK, "조회 성공", memberService.findMemberBySignDayIsToday(page, LocalDate.now()).getContent()));
     }
 
+
+
+
+
 }
