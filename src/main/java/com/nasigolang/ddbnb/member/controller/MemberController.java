@@ -53,4 +53,8 @@ public class MemberController {
                 .body(new ResponseDto(HttpStatus.OK, "소셜 아이디 검색 성공", responseMap));
     }
 
+
+
+
+
 }
