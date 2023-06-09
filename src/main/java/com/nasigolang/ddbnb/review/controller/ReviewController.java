@@ -34,6 +34,7 @@ public class ReviewController {
     public ReviewController(ReviewService reviewService) {
         this.reviewService = reviewService;
     }
+
     @ApiOperation(value = "모든 리뷰 목록 조회")
     @GetMapping("/reviews")
     public ResponseEntity<ResponseDto> findAllReview(@PageableDefault Pageable pageable) {

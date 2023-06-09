@@ -1,4 +1,4 @@
-package com.nasigolang.ddbnb.petmom.repositroy;
+package com.nasigolang.ddbnb.Pet.petmom.repositroy;
 
 import com.nasigolang.ddbnb.review.entity.Review;
 import org.springframework.data.jpa.repository.JpaRepository;
