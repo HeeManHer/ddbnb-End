@@ -15,12 +15,14 @@ public class MemberDTO {
     private String nickname;
     private String profileImage;
     private String gender;
+
     private String preferredArea;
     private String petStitterCarrer;
-    private String period;
     private String detailedHistory;
+    private String period;
+  
     private String starPoint;
-    private String status;
+    private String status;  
     private int reportedCount;
 
     private LocalDate signDate;
