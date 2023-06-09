@@ -22,9 +22,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
-import org.modelmapper.ModelMapper;
 
-
+import java.time.LocalDate;
 import java.util.Date;
 
 @Service
@@ -35,8 +34,7 @@ public class MemberService {
     private final ObjectMapper objectMapper;
 
     @Autowired
-    public MemberService(MemberRepository memberRepository, ModelMapper modelMapper,
-                         ObjectMapper objectMapper) {
+    public MemberService(MemberRepository memberRepository, ModelMapper modelMapper, ObjectMapper objectMapper) {
         this.memberRepository = memberRepository;
         this.modelMapper = modelMapper;
         this.objectMapper = objectMapper;
@@ -57,23 +55,12 @@ public class MemberService {
         return modelMapper.map(member, MemberDTO.class);
     }
 
-    public MemberSimpleDTO findMemberByIdSimple(long memberId) {
 
-        MemberSimpleDTO member = memberRepository.findMemberByIdSimple(memberId);
+    public Page<MemberSimpleDTO> findAllMembers(Pageable pageable) {
 
-        member.setLinkToMyPage("/mypage/" + member.getMemberId());  //마이페이지 링크 기억안나서 아직 예시
+        pageable = PageRequest.of(pageable.getPageNumber() <= 0 ? 0 : pageable.getPageNumber() - 1, pageable.getPageSize(), Sort.by("memberId"));
 
-        return member;
-    }
-
-    public Page<MemberDTO> findAllMembers(Pageable pageable) {
-
-        pageable = PageRequest.of(pageable.getPageNumber() <= 0 ? 0 : pageable.getPageNumber() - 1,
-                pageable.getPageSize(),
-                Sort.by("memberId"));
-
-        return memberRepository.findAll(pageable)
-                .map(member -> modelMapper.map(member, MemberDTO.class));
+        return memberRepository.findAll(pageable).map(member -> modelMapper.map(member, MemberSimpleDTO.class));
     }
 
     @Transactional
@@ -98,22 +85,14 @@ public class MemberService {
                     HttpHeaders headers = new HttpHeaders();
                     headers.add("Authorization", "Bearer " + foundMember.getAccessToken());
 
-                    HttpEntity<MultiValueMap<String, String>> kakaoDeactivateRequest =
-                            new HttpEntity<>(headers);
+                    HttpEntity<MultiValueMap<String, String>> kakaoDeactivateRequest = new HttpEntity<>(headers);
 
-                    ResponseEntity<String> kakaoDeactivateResponse = rt.exchange(
-                            "https://kapi.kakao.com/v1/user/unlink",
-                            HttpMethod.POST,
-                            kakaoDeactivateRequest,
-                            String.class
-                    );
+                    ResponseEntity<String> kakaoDeactivateResponse = rt.exchange("https://kapi.kakao.com/v1/user/unlink", HttpMethod.POST, kakaoDeactivateRequest, String.class);
 
                     String kakaoDeactivateResult = "";
 
                     try {
-                        kakaoDeactivateResult = objectMapper.readValue(
-                                kakaoDeactivateResponse.getBody(),
-                                String.class);
+                        kakaoDeactivateResult = objectMapper.readValue(kakaoDeactivateResponse.getBody(), String.class);
                     } catch (JsonProcessingException e) {
                         throw new RuntimeException(e);
                     }
@@ -139,15 +118,9 @@ public class MemberService {
                         params.add("refresh_token", foundMember.getRefreshToken());
                         params.add("grant_type", "refresh_token");
 
-                        HttpEntity<MultiValueMap<String, String>> naverRenewRequest =
-                                new HttpEntity<>(params, headers);
+                        HttpEntity<MultiValueMap<String, String>> naverRenewRequest = new HttpEntity<>(params, headers);
 
-                        ResponseEntity<String> naverRenewResponses = rtForRenew.exchange(
-                                "https://nid.naver.com/oauth2.0/token",
-                                HttpMethod.GET,
-                                naverRenewRequest,
-                                String.class
-                        );
+                        ResponseEntity<String> naverRenewResponses = rtForRenew.exchange("https://nid.naver.com/oauth2.0/token", HttpMethod.GET, naverRenewRequest, String.class);
 
                         ObjectMapper objectMapper = new ObjectMapper();
                         RenewTokenDTO renewToken = null;
@@ -160,13 +133,11 @@ public class MemberService {
                         if (renewToken.getRefresh_token() != null) {
 
                             foundMember.setRefreshToken(renewToken.getRefresh_token());
-                            foundMember.setRefreshTokenExpireDate(
-                                    (1000 * 60 * 60 * 6) + System.currentTimeMillis());
+                            foundMember.setRefreshTokenExpireDate((1000 * 60 * 60 * 6) + System.currentTimeMillis());
                         }
 
                         foundMember.setAccessToken(renewToken.getAccess_token());
-                        foundMember.setAccessTokenExpireDate(
-                                renewToken.getExpires_in() + System.currentTimeMillis());
+                        foundMember.setAccessTokenExpireDate(renewToken.getExpires_in() + System.currentTimeMillis());
 
                     }
 
@@ -182,24 +153,16 @@ public class MemberService {
                     params.add("access_token", foundMember.getAccessToken());
                     params.add("grant_type", "delete");
 
-                    HttpEntity<MultiValueMap<String, String>> naverDeactivateRequest =
-                            new HttpEntity<>(headers, params);
+                    HttpEntity<MultiValueMap<String, String>> naverDeactivateRequest = new HttpEntity<>(headers, params);
 
-                    ResponseEntity<String> naverDeactivateResponse = rt.exchange(
-                            "https://nid.naver.com/oauth2.0/token",
-                            HttpMethod.POST,
-                            naverDeactivateRequest,
-                            String.class
-                    );
+                    ResponseEntity<String> naverDeactivateResponse = rt.exchange("https://nid.naver.com/oauth2.0/token", HttpMethod.POST, naverDeactivateRequest, String.class);
 
                     System.out.println(naverDeactivateResponse.getBody());
 
                     String naverDeactivateResult = "";
 
                     try {
-                        naverDeactivateResult = objectMapper.readValue(
-                                naverDeactivateResponse.getBody(),
-                                String.class);
+                        naverDeactivateResult = objectMapper.readValue(naverDeactivateResponse.getBody(), String.class);
                     } catch (JsonProcessingException e) {
                         throw new RuntimeException(e);
                     }
@@ -209,6 +172,7 @@ public class MemberService {
                 }
         }
     }
+
     public MemberDTO findBySocialId(String socialLogin, String socialId) {
 
         Member foundMember = memberRepository.findBySocialId(socialLogin, socialId);
@@ -218,5 +182,22 @@ public class MemberService {
         } else {
             return modelMapper.map(foundMember, MemberDTO.class);
         }
+    }
+
+    public int findMemberAmount() {
+        return memberRepository.findMemberAmount();
+    }
+
+    public int findMemberVisitant(LocalDate now) {
+        
+        return memberRepository.findByLastVisitDate(now);
+    }
+
+    public Page<MemberSimpleDTO> findMemberBySignDayIsToday(Pageable page, LocalDate now) {
+
+        page = PageRequest.of(page.getPageNumber() <= 0 ? 0 : page.getPageNumber() - 1, 5, Sort.by("signDate"));
+
+        return memberRepository.findMemberBySignDate(page, now).map(member -> modelMapper.map(member, MemberSimpleDTO.class));
+
     }
 }
