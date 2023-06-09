@@ -30,6 +30,7 @@ public class ReviewController {
     public ReviewController(ReviewService reviewService) {
         this.reviewService = reviewService;
     }
+
     @ApiOperation(value = "모든 리뷰 목록 조회")
     @GetMapping("/reviews")
     public ResponseEntity<ResponseDto> findAllReview(@PageableDefault(size = 15) Pageable pageable) {
@@ -42,11 +43,7 @@ public class ReviewController {
         List<ReviewDTO> reviews = reviewService.findAllReview(pageable);
         responseMap.put("reviews", reviews);
 
-        return new ResponseEntity<>(
-                new ResponseDto(HttpStatus.OK, "조회성공", responseMap),
-                headers,
-                HttpStatus.OK
-        );
+        return new ResponseEntity<>(new ResponseDto(HttpStatus.OK, "조회성공", responseMap), headers, HttpStatus.OK);
     }
 
 }

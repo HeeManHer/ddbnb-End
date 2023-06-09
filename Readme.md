@@ -93,3 +93,16 @@
     OrderBy              ex) findByPriceOrderByMenuCodeDesc              -> where x.menuPrice = ?1 order by x.menuCode desc
     Not                  ex) findByMenuNameNot                           -> where x.menuName <> ?1
     In                   ex) findByMenuNameIn(Collection<Name> names)    -> where x.menuName in (?1)
+
+## 페이지 정보
+
+    System.out.println("조회한 내용 목록 : " + menuList.getContent());
+    System.out.println("총 페이지 수 : " + menuList.getTotalPages());
+    System.out.println("총 메뉴 수 : " + menuList.getTotalElements());
+    System.out.println("해댕 페이지에 조회될 요소 수 : " + menuList.getSize());
+    System.out.println("해당 페이지의 실제 요소 수 : " + menuList.getNumberOfElements());
+    System.out.println("현재 페이지 : " + menuList.getNumber() + 1);
+    System.out.println("getPageable : " + menuList.getPageable());
+    System.out.println("첫 페이지 여부 : " + menuList.isFirst());
+    System.out.println("마지막 페이지 여부 : " + menuList.isLast());
+    System.out.println("정렬 방식 : " + menuList.getSort());
