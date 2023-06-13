@@ -33,5 +33,4 @@ public class PetsitterboardDTO {
     private String petShape;
     private String petGender;
     private String petSize;
-
 }

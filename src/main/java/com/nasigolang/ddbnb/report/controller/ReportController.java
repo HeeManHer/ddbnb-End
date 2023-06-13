@@ -1,37 +1,72 @@
 package com.nasigolang.ddbnb.report.controller;
 
 import com.nasigolang.ddbnb.common.ResponseDto;
+import com.nasigolang.ddbnb.common.paging.Pagenation;
+import com.nasigolang.ddbnb.common.paging.ResponseDtoWithPaging;
+import com.nasigolang.ddbnb.common.paging.SelectCriteria;
 import com.nasigolang.ddbnb.report.dto.ReportDTO;
 import com.nasigolang.ddbnb.report.service.ReportService;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.nio.charset.Charset;
-import java.util.Date;
+import java.time.LocalDate;
 
 @RestController
-@RequestMapping("/api/v1/report")
+@RequestMapping("/api/v1")
 @AllArgsConstructor
 public class ReportController {
 
     private final ReportService reportService;
 
 
-    @PostMapping("/regist")
-    public ResponseEntity<ResponseDto> registNewReport(@RequestBody ReportDTO newReport){
+    @PostMapping("/report")
+    public ResponseEntity<ResponseDto> registNewReport(@RequestBody ReportDTO newReport) {
+
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
-        newReport.setReportDate(new Date());
+
+        newReport.setReportDate(LocalDate.now());
+
         reportService.registNewReport(newReport);
 
         return ResponseEntity.ok().headers(headers).body(new ResponseDto(HttpStatus.OK, "생성 성공", null));
 
     }
+
+    @GetMapping("/report")
+    public ResponseEntity<ResponseDto> findAllReport(@PageableDefault Pageable page, @RequestParam String category) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
+
+        Page<ReportDTO> reportList = reportService.findAllReport(page, category);
+        SelectCriteria selectCriteria = Pagenation.getSelectCriteria(reportList);
+
+        ResponseDtoWithPaging data = new ResponseDtoWithPaging(reportList.getContent(), selectCriteria);
+
+
+        return ResponseEntity.ok().headers(headers).body(new ResponseDto(HttpStatus.OK, "조회 성공", data));
+    }
+
+    @GetMapping("/report/today")
+    public ResponseEntity<ResponseDto> findReportByToday(@PageableDefault Pageable page) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
+
+        Page<ReportDTO> reportList = reportService.findReportByToday(page, LocalDate.now());
+        SelectCriteria selectCriteria = Pagenation.getSelectCriteria(reportList);
+
+        ResponseDtoWithPaging data = new ResponseDtoWithPaging(reportList.getContent(), selectCriteria);
+
+
+        return ResponseEntity.ok().headers(headers).body(new ResponseDto(HttpStatus.OK, "조회 성공", data));
+    }
+
 }

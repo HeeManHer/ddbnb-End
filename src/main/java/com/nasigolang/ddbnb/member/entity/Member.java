@@ -11,12 +11,12 @@ import java.time.LocalDate;
 @Getter
 @ToString
 @Entity(name = "Member")
-@Table(name = "member")
+@Table(name = "MEMBER")
 @SequenceGenerator(name = "member_sequence_generator", sequenceName = "sequence_member_id", initialValue = 1, allocationSize = 50)
 public class Member {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "member_sequence_generator")
-    @Column(name = "member_id")
+    @Column(name = "MEMBER_ID")
     private long memberId;
 
     @Column(name = "nickname", unique = true, nullable = false)
@@ -58,7 +58,7 @@ public class Member {
     @Column(name = "preferred_area")
     private String preferredArea;
 
-    @Column(name = "per_sitter_career")
+    @Column(name = "pet_sitter_career")
     private String petStitterCarrer;
 
     @Column(name = "detailed_history")

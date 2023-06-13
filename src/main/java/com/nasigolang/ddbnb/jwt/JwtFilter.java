@@ -101,6 +101,8 @@ public class JwtFilter extends OncePerRequestFilter {
 			return true;
 		} else if("/api/v1/login/navercode".equals(path)) {
 			return true;
+		} else if("/api/v1/login/kakaologout".equals(path)) {
+			return true;
 		} else if("/swagger-ui/index.html".equals(path)) {
 			return true;
 		} else if("/swagger-ui.html".equals(path)) {

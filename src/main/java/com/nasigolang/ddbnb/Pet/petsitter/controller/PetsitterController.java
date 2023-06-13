@@ -2,11 +2,11 @@ package com.nasigolang.ddbnb.Pet.petsitter.controller;
 
 import com.nasigolang.ddbnb.Pet.petsitter.dto.PetsitterDTO;
 import com.nasigolang.ddbnb.Pet.petsitter.dto.PetsitterboardDTO;
+import com.nasigolang.ddbnb.Pet.petsitter.service.PetsitterService;
 import com.nasigolang.ddbnb.common.ResponseDto;
 import com.nasigolang.ddbnb.common.paging.Pagenation;
 import com.nasigolang.ddbnb.common.paging.ResponseDtoWithPaging;
 import com.nasigolang.ddbnb.common.paging.SelectCriteria;
-import com.nasigolang.ddbnb.Pet.petsitter.service.PetsitterService;
 import com.nasigolang.ddbnb.member.entity.Member;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
@@ -42,15 +42,14 @@ public class PetsitterController {
                                                    @RequestParam(name= "endDate",defaultValue="")@DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate endDate) {
 
         HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(new MediaType("application","json", Charset.forName("UTF-8")));
+        headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
 
         Page<PetsitterboardDTO> petsitterList = petsitterService.findMenuList(page,location,petSize,care,startDate,endDate);
         SelectCriteria selectCriteria = Pagenation.getSelectCriteria(petsitterList);
 
         ResponseDtoWithPaging data = new ResponseDtoWithPaging(petsitterList.getContent(), selectCriteria);
 
-        return ResponseEntity.ok().headers(headers).body(new ResponseDto
-                (HttpStatus.OK, "조회 성공", data));
+        return ResponseEntity.ok().headers(headers).body(new ResponseDto(HttpStatus.OK, "조회 성공", data));
     }
 
     @PostMapping("/regist")
