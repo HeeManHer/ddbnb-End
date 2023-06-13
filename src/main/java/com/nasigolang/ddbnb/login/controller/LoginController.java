@@ -1,18 +1,27 @@
 package com.nasigolang.ddbnb.login.controller;
 
 
+import com.fasterxml.jackson.databind.util.JSONPObject;
 import com.nasigolang.ddbnb.common.ResponseDto;
 import com.nasigolang.ddbnb.login.dto.AccessTokenDTO;
+import com.nasigolang.ddbnb.login.dto.KakaoProfileDTO;
+import com.nasigolang.ddbnb.login.dto.NaverAccessTokenDTO;
 import com.nasigolang.ddbnb.login.dto.OauthTokenDTO;
 import com.nasigolang.ddbnb.login.service.LoginService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.web.reactive.function.client.WebClientAutoConfiguration;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -50,6 +59,29 @@ public class LoginController {
 				.body(new ResponseDto(HttpStatus.OK, "로그인 성공", responseMap));
 	}
 
+	@PostMapping("/kakaologout")
+	public ResponseEntity<?> kakaoLogout(@RequestHeader("Authorization") String accessToken) {
+		/* 카카오 로그아웃 API 호출 */
+
+		boolean logoutSuccess = loginService.kakaoLogout(accessToken);
+
+		if (logoutSuccess) {
+			/* 로그아웃 성공 처리 */
+			return ResponseEntity
+					.ok()
+					.body(new ResponseDto(HttpStatus.OK, "로그아웃 성공", null));
+		} else {
+			/* 로그아웃 실패 처리 */
+			return ResponseEntity
+					.badRequest()
+					.body(new ResponseDto(HttpStatus.BAD_REQUEST, "로그아웃 실패", null));
+		}
+	}
+
+
+
+
+
 	@ApiOperation(value = "jwt 액세스 토큰 만료되어 재발급")
 	@PostMapping("/renew")
 	public ResponseEntity<?> renewAccessToken(@RequestHeader(value = "Auth") String auth) {
@@ -61,7 +93,6 @@ public class LoginController {
 	@ApiOperation(value = "네이버 인가 코드 받아와서 액세스 토큰 발급")
 	@PostMapping("/navercode")
 	public ResponseEntity<?> getNaverCode(@RequestBody Map<String, String> codeAndState) {
-
 		/* 인가 코드로 액세스 토큰 발급 */
 		NaverAccessTokenDTO naverAccessToken = loginService.getNaverAccessToken(codeAndState.get("code"), codeAndState.get("state"));
 

@@ -46,7 +46,7 @@ public class PetsitterController {
                 (HttpStatus.OK, "조회 성공", data));
     }
 
-    @PostMapping("/list")
-    @ApiOperation(value="펫시터 추가")
-    public ResponseEntity<ResponseDto> modify
+//    @PostMapping("/list")
+//    @ApiOperation(value="펫시터 추가")
+//    public ResponseEntity<ResponseDto> modify
 }

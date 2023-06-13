@@ -21,6 +21,11 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import springfox.documentation.swagger2.mappers.ModelMapper;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Date;
@@ -138,23 +143,23 @@ public class LoginService {
 			System.out.println(8);
 		}
 
-			/* 소셜 아이디로 멤버가 있는지 조회해 가져옴 */
-			foundmember = memberService.findBySocialId("KAKAO", String.valueOf(kakaoProfileDTO.getId()));
+		/* 소셜 아이디로 멤버가 있는지 조회해 가져옴 */
+		foundmember = memberService.findBySocialId("KAKAO", String.valueOf(kakaoProfileDTO.getId()));
 
-			/* 액세스토큰, 리프레시 토큰 업데이트 */
-			foundmember.setRefreshToken(oauthToken.getRefresh_token());
-			foundmember.setAccessToken(oauthToken.getAccess_token());
-			foundmember.setRefreshTokenExpireDate(oauthToken.getRefresh_token_expires_in() + System.currentTimeMillis());
-			foundmember.setAccessTokenExpireDate(oauthToken.getExpires_in() + System.currentTimeMillis());
+		/* 액세스토큰, 리프레시 토큰 업데이트 */
+		foundmember.setRefreshToken(oauthToken.getRefresh_token());
+		foundmember.setAccessToken(oauthToken.getAccess_token());
+		foundmember.setRefreshTokenExpireDate(oauthToken.getRefresh_token_expires_in() + System.currentTimeMillis());
+		foundmember.setAccessTokenExpireDate(oauthToken.getExpires_in() + System.currentTimeMillis());
 
 
 		Date accessExpireDate = new Date(foundmember.getAccessTokenExpireDate());
 
-		if(accessExpireDate.before(new Date())) {
+		if (accessExpireDate.before(new Date())) {
 
 			RenewTokenDTO renewedToken = renewKakaoToken(foundmember);
 
-			if(renewedToken.getRefresh_token() != null) {
+			if (renewedToken.getRefresh_token() != null) {
 
 				foundmember.setRefreshToken(renewedToken.getRefresh_token());
 				foundmember.setRefreshTokenExpireDate(renewedToken.getRefresh_token_expires_in() + System.currentTimeMillis());
@@ -200,7 +205,38 @@ public class LoginService {
 		return renewToken;
 	}
 
-    public NaverAccessTokenDTO getNaverAccessToken(String code, String state) {
+	public boolean kakaoLogout(String accessToken) {
+		System.out.println(1);
+		RestTemplate rt = new RestTemplate();
+		System.out.println(2);
+		HttpHeaders headers = new HttpHeaders();
+		headers.add("Authorization", accessToken);
+		System.out.println(accessToken);
+		headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
+		System.out.println(3);
+
+		MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+		params.add("grant_type", "authorization_code");
+		params.add("redirect_uri", "http://localhost:3000/kakao/logout");
+		System.out.println(4);
+
+		HttpEntity<MultiValueMap<String, String>> kakaoLogoutRequest =
+				new HttpEntity<>(params, headers);
+		System.out.println(5);
+
+		ResponseEntity<String> kakaoLogoutResponse = rt.exchange(
+				"https://kapi.kakao.com/v1/user/logout",
+				HttpMethod.POST,
+				kakaoLogoutRequest,
+				String.class
+		);
+		System.out.println(6);
+
+		return kakaoLogoutResponse.getStatusCode().is2xxSuccessful();
+	}
+
+
+	public NaverAccessTokenDTO getNaverAccessToken(String code, String state) {
 
 		RestTemplate rt = new RestTemplate();
 
@@ -209,10 +245,10 @@ public class LoginService {
 
 		MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
 		params.add("grant_type", "authorization_code");
-		params.add("client_id", System.getenv("NaverClientIDKey"));
-		params.add("client_secret", System.getenv("NaverClientSecretKey"));
-//		params.add("client_id", "T0mWG2VjAfBH9cYz6Qrf");
-//		params.add("client_secret", "iHe8ItSSso");
+//		params.add("client_id", System.getenv("NaverClientIDKey"));
+//		params.add("client_secret", System.getenv("NaverClientSecretKey"));
+		params.add("client_id", "T0mWG2VjAfBH9cYz6Qrf");
+		params.add("client_secret", "iHe8ItSSso");
 		params.add("code", code);
 		params.add("state", state);
 
@@ -255,6 +291,8 @@ public class LoginService {
 //			newMember.setSignUpDate(LocalDateTime.now());
 			newMember.setRefreshTokenExpireDate((1000 * 60 * 60 * 6) + System.currentTimeMillis());
 			newMember.setAccessTokenExpireDate(naverAccessToken.getExpires_in() + System.currentTimeMillis());
+            newMember.setSignDate(LocalDate.now());
+            newMember.setLastVisitDate(LocalDate.now());
 //			newMember.setImageSource("https://api.dicebear.com/6.x/thumbs/svg?seed=" + newMember.getEmail().split("@")[0]);
 
 			if (naverProfileDTO.getResponse().getGender() != null) {
@@ -266,6 +304,12 @@ public class LoginService {
 
 		/* 소셜 아이디로 멤버가 있는지 조회해 가져옴 */
 		foundmember = memberService.findBySocialId("NAVER", naverProfileDTO.getResponse().getId());
+
+		foundmember.setRefreshToken(naverAccessToken.getRefresh_token());
+		foundmember.setAccessToken(naverAccessToken.getAccess_token());
+		foundmember.setRefreshTokenExpireDate(naverAccessToken.getRefresh_token_expires_in() + System.currentTimeMillis());
+		foundmember.setAccessTokenExpireDate(naverAccessToken.getExpires_in() + System.currentTimeMillis());
+
 
 		Date accessExpireDate = new Date(foundmember.getAccessTokenExpireDate());
 
@@ -282,7 +326,6 @@ public class LoginService {
 			foundmember.setAccessToken(renewedToken.getAccess_token());
 			foundmember.setAccessTokenExpireDate(renewedToken.getExpires_in() + System.currentTimeMillis());
 		}
-
 		return tokenProvider.generateMemberTokenDTO(foundmember);
 	}
 
@@ -318,7 +361,7 @@ public class LoginService {
 		return naverProfileDTO;
 	}
 
-	public RenewTokenDTO renewNaverToken(Member foundMember) {
+	public RenewTokenDTO renewNaverToken(MemberDTO foundMember) {
 
 		RestTemplate rt = new RestTemplate();
 
@@ -327,6 +370,8 @@ public class LoginService {
 		MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
 		params.add("client_id", System.getenv("NaverClientIdKey"));
 		params.add("client_secret", System.getenv("NaverClientSecretKey"));
+//		params.add("client_id", "T0mWG2VjAfBH9cYz6Qrf");
+//		params.add("client_secret", "iHe8ItSSso");
 		params.add("refresh_token", foundMember.getRefreshToken());
 		params.add("grant_type", "refresh_token");
 
@@ -350,4 +395,5 @@ public class LoginService {
 
 		return renewToken;
 	}
+
 }
