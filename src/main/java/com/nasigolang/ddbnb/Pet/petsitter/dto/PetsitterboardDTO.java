@@ -26,9 +26,10 @@ public class PetsitterboardDTO {
 
     public PetsitterboardDTO() {}
 
-    public PetsitterboardDTO(long boardId, String boardTitle, long memberId, Date boardDate, String location, String care, Date startDate,
-                             Date endDate, String signficant, byte[] img, String request, String boardCategory, int rate, String petName,
-                             int petAge, String petShape, String petGender, String petSize) {
+    public PetsitterboardDTO(long boardId, String boardTitle, long memberId, Date boardDate, String location,
+            String care, Date startDate, Date endDate, String signficant, byte[] img, String request,
+            String boardCategory, int rate, String petName, int petAge, String petShape, String petGender,
+            String petSize) {
         this.boardId = boardId;
         this.boardTitle = boardTitle;
         this.memberId = memberId;
@@ -195,25 +196,6 @@ public class PetsitterboardDTO {
 
     @Override
     public String toString() {
-        return "PetsitterboardDTO{" +
-                "boardId=" + boardId +
-                ", boardTitle='" + boardTitle + '\'' +
-                ", memberId=" + memberId +
-                ", boardDate=" + boardDate +
-                ", location='" + location + '\'' +
-                ", care='" + care + '\'' +
-                ", startDate=" + startDate +
-                ", endDate=" + endDate +
-                ", signficant='" + signficant + '\'' +
-                ", img=" + Arrays.toString(img) +
-                ", request='" + request + '\'' +
-                ", boardCategory='" + boardCategory + '\'' +
-                ", rate=" + rate +
-                ", petName='" + petName + '\'' +
-                ", petAge=" + petAge +
-                ", petShape='" + petShape + '\'' +
-                ", petGender='" + petGender + '\'' +
-                ", petSize='" + petSize + '\'' +
-                '}';
+        return "PetsitterboardDTO{" + "boardId=" + boardId + ", boardTitle='" + boardTitle + '\'' + ", memberId=" + memberId + ", boardDate=" + boardDate + ", location='" + location + '\'' + ", care='" + care + '\'' + ", startDate=" + startDate + ", endDate=" + endDate + ", signficant='" + signficant + '\'' + ", img=" + Arrays.toString(img) + ", request='" + request + '\'' + ", boardCategory='" + boardCategory + '\'' + ", rate=" + rate + ", petName='" + petName + '\'' + ", petAge=" + petAge + ", petShape='" + petShape + '\'' + ", petGender='" + petGender + '\'' + ", petSize='" + petSize + '\'' + '}';
     }
 }

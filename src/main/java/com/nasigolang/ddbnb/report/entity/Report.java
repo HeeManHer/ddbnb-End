@@ -4,7 +4,7 @@ import com.nasigolang.ddbnb.member.entity.Member;
 import lombok.*;
 
 import javax.persistence.*;
-import java.util.Date;
+import java.time.LocalDate;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -20,20 +20,17 @@ public class Report {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "REPORT_SEQ_GENERATOR")
     private int reportId;
 
-    @Column(name = "REPORT_DATE",columnDefinition = "DATE DEFAULT SYSDATE")
-    @Temporal(TemporalType.DATE)
-    private Date reportDate;
+    @Column(name = "REPORT_DATE")
+    private LocalDate reportDate;
 
     @Column(name = "REPORT_STATE")
     private String reportState;
 
-
     @Column(name = "REPORTED_CATEGORT")
-    private String  reportCategory;
+    private String reportCategory;
 
     @Column(name = "REPORTED_REASON")
     private String reportReason;
-
 
     @Column(name = "REPORTED_DETATIL")
     private String reportDetail;

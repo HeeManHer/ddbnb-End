@@ -30,20 +30,21 @@ public class PetsitterController {
     private final PetsitterService petsitterService;
 
     @GetMapping("/list")
-    @ApiOperation(value="펫시터 목록 조회")
+    @ApiOperation(value = "펫시터 목록 조회")
     public ResponseEntity<ResponseDto> findAllList(@PageableDefault Pageable page) {
 
         HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(new MediaType("application","json", Charset.forName("UTF-8")));
+        headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
 
         Page<PetsitterboardDTO> petsitterList = petsitterService.findMenuList(page);
         SelectCriteria selectCriteria = Pagenation.getSelectCriteria(petsitterList);
 
         ResponseDtoWithPaging data = new ResponseDtoWithPaging(petsitterList.getContent(), selectCriteria);
 
-        return ResponseEntity.ok().headers(headers).body(new ResponseDto
-                (HttpStatus.OK, "조회 성공", data));
+        return ResponseEntity.ok().headers(headers).body(new ResponseDto(HttpStatus.OK, "조회 성공", data));
     }
-
-
+    //
+    //    @PostMapping("/list")
+    //    @ApiOperation(value="펫시터 추가")
+    //    public ResponseEntity<ResponseDto> modify
 }
