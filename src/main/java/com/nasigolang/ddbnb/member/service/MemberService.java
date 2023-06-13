@@ -56,11 +56,18 @@ public class MemberService {
     }
 
 
-    public Page<MemberSimpleDTO> findAllMembers(Pageable pageable) {
+    public Page<MemberSimpleDTO> findAllMembers(Pageable pageable, String nickname, LocalDate signDate) {
 
         pageable = PageRequest.of(pageable.getPageNumber() <= 0 ? 0 : pageable.getPageNumber() - 1, pageable.getPageSize(), Sort.by("memberId"));
 
-        return memberRepository.findAll(pageable).map(member -> modelMapper.map(member, MemberSimpleDTO.class));
+        Page<Member> members;
+        if(nickname.equals("") && signDate == null) {
+            members = memberRepository.findAll(pageable);
+        } else {
+            members = memberRepository.findByNicknameContainingAndSignDate(pageable, nickname, signDate);
+        }
+
+        return members.map(member -> modelMapper.map(member, MemberSimpleDTO.class));
     }
 
     @Transactional
@@ -68,9 +75,9 @@ public class MemberService {
 
         Member foundMember = memberRepository.findById(memberId).get();
 
-        switch (type) {
+        switch(type) {
             case "edit":
-                if (modifyInfo.getNickname().length() > 0) {
+                if(modifyInfo.getNickname().length() > 0) {
                     foundMember.setNickname(modifyInfo.getNickname());
                 }
                 break;
@@ -80,7 +87,7 @@ public class MemberService {
                 RestTemplate rt = new RestTemplate();
 
                 /* 카카오 로그인일 때 */
-                if (foundMember.getSocialLogin().equals("KAKAO")) {
+                if(foundMember.getSocialLogin().equals("KAKAO")) {
 
                     HttpHeaders headers = new HttpHeaders();
                     headers.add("Authorization", "Bearer " + foundMember.getAccessToken());
@@ -93,7 +100,7 @@ public class MemberService {
 
                     try {
                         kakaoDeactivateResult = objectMapper.readValue(kakaoDeactivateResponse.getBody(), String.class);
-                    } catch (JsonProcessingException e) {
+                    } catch(JsonProcessingException e) {
                         throw new RuntimeException(e);
                     }
 
@@ -101,12 +108,12 @@ public class MemberService {
                     break;
 
                     /* 네이버 로그인일 때 */
-                } else if (foundMember.getSocialLogin().equals("NAVER")) {
+                } else if(foundMember.getSocialLogin().equals("NAVER")) {
 
                     /* 갱신 먼저 */
                     Date expireDate = new Date(foundMember.getAccessTokenExpireDate());
 
-                    if (expireDate.before(new Date())) {
+                    if(expireDate.before(new Date())) {
 
                         RestTemplate rtForRenew = new RestTemplate();
 
@@ -126,11 +133,11 @@ public class MemberService {
                         RenewTokenDTO renewToken = null;
                         try {
                             renewToken = objectMapper.readValue(naverRenewResponses.getBody(), RenewTokenDTO.class);
-                        } catch (JsonProcessingException e) {
+                        } catch(JsonProcessingException e) {
                             e.printStackTrace();
                         }
 
-                        if (renewToken.getRefresh_token() != null) {
+                        if(renewToken.getRefresh_token() != null) {
 
                             foundMember.setRefreshToken(renewToken.getRefresh_token());
                             foundMember.setRefreshTokenExpireDate((1000 * 60 * 60 * 6) + System.currentTimeMillis());
@@ -163,7 +170,7 @@ public class MemberService {
 
                     try {
                         naverDeactivateResult = objectMapper.readValue(naverDeactivateResponse.getBody(), String.class);
-                    } catch (JsonProcessingException e) {
+                    } catch(JsonProcessingException e) {
                         throw new RuntimeException(e);
                     }
 
@@ -177,27 +184,22 @@ public class MemberService {
         System.out.println(5);
         Member foundMember = memberRepository.findBySocialId(socialLogin, socialId);
         System.out.println(6);
-        if (foundMember == null) {
+        if(foundMember == null) {
             return null;
         } else {
             return modelMapper.map(foundMember, MemberDTO.class);
         }
     }
 
-    public int findMemberAmount() {
+    public int findAllMemberAmount() {
         return memberRepository.findMemberAmount();
     }
 
-    public int findMemberVisitant(LocalDate now) {
-        
+    public int findTodayVisitant(LocalDate now) {
         return memberRepository.findByLastVisitDate(now);
     }
 
-    public Page<MemberSimpleDTO> findMemberBySignDayIsToday(Pageable page, LocalDate now) {
-
-        page = PageRequest.of(page.getPageNumber() <= 0 ? 0 : page.getPageNumber() - 1, 5, Sort.by("signDate"));
-
-        return memberRepository.findMemberBySignDate(page, now).map(member -> modelMapper.map(member, MemberSimpleDTO.class));
-
+    public int findNewMemberAmount(LocalDate now) {
+        return memberRepository.findNewMember(now);
     }
 }
