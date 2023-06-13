@@ -20,80 +20,98 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import springfox.documentation.swagger2.mappers.ModelMapper;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.time.LocalDate;
 import java.util.Date;
 
 @Service
 public class LoginService {
 
-    private final LoginRepository loginRepository;
-    private final ModelMapper modelMapper;
-    private final MemberService memberService;
-    private final TokenProvider tokenProvider;
+	private final LoginRepository loginRepository;
+	private final ModelMapper modelMapper;
+	private final MemberService memberService;
+	private final TokenProvider tokenProvider;
 
-    @Autowired
-    public LoginService(LoginRepository loginRepository, ModelMapper modelMapper, MemberService memberService,
-            TokenProvider tokenProvider) {
-        this.loginRepository = loginRepository;
-        this.modelMapper = modelMapper;
-        this.memberService = memberService;
-        this.tokenProvider = tokenProvider;
-    }
+	@Autowired
+	public LoginService(LoginRepository loginRepository, ModelMapper modelMapper,
+						MemberService memberService, TokenProvider tokenProvider) {
+		this.loginRepository = loginRepository;
+		this.modelMapper = modelMapper;
+		this.memberService = memberService;
+		this.tokenProvider = tokenProvider;
+	}
 
-    public OauthTokenDTO getAccessToken(String code) {
+	public OauthTokenDTO getAccessToken(String code) {
 
-        RestTemplate rt = new RestTemplate();
-        rt.setRequestFactory(new HttpComponentsClientHttpRequestFactory());
+		RestTemplate rt = new RestTemplate();
+		rt.setRequestFactory(new HttpComponentsClientHttpRequestFactory());
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
+		HttpHeaders headers = new HttpHeaders();
+		headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
 
-        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-        params.add("grant_type", "authorization_code");
-        params.add("client_id", "202bf1013addf514255b52a8c9c69ebf");
-        //		params.add("client_id", System.getenv("KakaoRestAPIKey"));
-        params.add("redirect_uri", "http://localhost:3000/kakao/callback");
-        params.add("code", code);
+		MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+		params.add("grant_type", "authorization_code");
+		params.add("client_id", "202bf1013addf514255b52a8c9c69ebf");
+//		params.add("client_id", System.getenv("KakaoRestAPIKey"));
+		params.add("redirect_uri", "http://localhost:3000/kakao/callback");
+		params.add("code", code);
 
-        HttpEntity<MultiValueMap<String, String>> kakaoTokenRequest = new HttpEntity<>(params, headers);
+		HttpEntity<MultiValueMap<String, String>> kakaoTokenRequest =
+				new HttpEntity<>(params, headers);
 
-        ResponseEntity<String> accessTokenResponse = rt.exchange("https://kauth.kakao.com/oauth/token", HttpMethod.POST, kakaoTokenRequest, String.class);
+		ResponseEntity<String> accessTokenResponse = rt.exchange(
+				"https://kauth.kakao.com/oauth/token",
+				HttpMethod.POST,
+				kakaoTokenRequest,
+				String.class
+		);
 
-        ObjectMapper objectMapper = new ObjectMapper();
-        OauthTokenDTO oauthToken = null;
-        try {
-            oauthToken = objectMapper.readValue(accessTokenResponse.getBody(), OauthTokenDTO.class);
-        } catch(JsonProcessingException e) {
-            e.printStackTrace();
-        }
+		ObjectMapper objectMapper = new ObjectMapper();
+		OauthTokenDTO oauthToken = null;
+		try {
+			oauthToken = objectMapper.readValue(accessTokenResponse.getBody(), OauthTokenDTO.class);
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+		}
 
-        return oauthToken;
-    }
+		return oauthToken;
+	}
 
-    public KakaoProfileDTO findKakaoProfile(String accessToken) {
-        System.out.println(3);
-        RestTemplate rt = new RestTemplate();
+	public KakaoProfileDTO findKakaoProfile(String accessToken) {
+		System.out.println(3);
+		RestTemplate rt = new RestTemplate();
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Authorization", "Bearer " + accessToken);
-        headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
+		HttpHeaders headers = new HttpHeaders();
+		headers.add("Authorization", "Bearer " + accessToken);
+		headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
 
-        HttpEntity<MultiValueMap<String, String>> kakaoProfileRequest = new HttpEntity<>(headers);
+		HttpEntity<MultiValueMap<String, String>> kakaoProfileRequest =
+				new HttpEntity<>(headers);
 
-        ResponseEntity<String> kakaoProfileResponse = rt.exchange("https://kapi.kakao.com/v2/user/me", HttpMethod.POST, kakaoProfileRequest, String.class);
+		ResponseEntity<String> kakaoProfileResponse = rt.exchange(
+				"https://kapi.kakao.com/v2/user/me",
+				HttpMethod.POST,
+				kakaoProfileRequest,
+				String.class
+		);
 
-        KakaoProfileDTO kakaoProfileDTO = new KakaoProfileDTO();
-        ObjectMapper objectMapper = new ObjectMapper();
+		KakaoProfileDTO kakaoProfileDTO = new KakaoProfileDTO();
+		ObjectMapper objectMapper = new ObjectMapper();
 
-        try {
-            kakaoProfileDTO = objectMapper.readValue(kakaoProfileResponse.getBody(), KakaoProfileDTO.class);
-        } catch(JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
-        System.out.println(4);
-        return kakaoProfileDTO;
-    }
-
+		try {
+			kakaoProfileDTO = objectMapper.readValue(kakaoProfileResponse.getBody(),
+					KakaoProfileDTO.class);
+		} catch (JsonProcessingException e) {
+			throw new RuntimeException(e);
+		}
+		System.out.println(4);
+		return kakaoProfileDTO;
+	}
+  
     public AccessTokenDTO getJwtToken(OauthTokenDTO oauthToken) {
 
         System.out.println(1);
@@ -178,12 +196,44 @@ public class LoginService {
         return renewToken;
     }
 
-    public NaverAccessTokenDTO getNaverAccessToken(String code, String state) {
+	public boolean kakaoLogout(String accessToken) {
+		System.out.println(1);
+		RestTemplate rt = new RestTemplate();
+		System.out.println(2);
+		HttpHeaders headers = new HttpHeaders();
+		headers.add("Authorization", accessToken);
+		System.out.println(accessToken);
+		headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
+		System.out.println(3);
+
+		MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+		params.add("grant_type", "authorization_code");
+		params.add("redirect_uri", "http://localhost:3000/kakao/logout");
+		System.out.println(4);
+
+		HttpEntity<MultiValueMap<String, String>> kakaoLogoutRequest =
+				new HttpEntity<>(params, headers);
+		System.out.println(5);
+
+		ResponseEntity<String> kakaoLogoutResponse = rt.exchange(
+				"https://kapi.kakao.com/v1/user/logout",
+				HttpMethod.POST,
+				kakaoLogoutRequest,
+				String.class
+		);
+		System.out.println(6);
+
+		return kakaoLogoutResponse.getStatusCode().is2xxSuccessful();
+	}
+
+
+	public NaverAccessTokenDTO getNaverAccessToken(String code, String state) {
 
         RestTemplate rt = new RestTemplate();
 
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
+
 
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("grant_type", "authorization_code");
@@ -220,14 +270,16 @@ public class LoginService {
 
             MemberDTO newMember = new MemberDTO();
 
-            newMember.setSocialLogin("NAVER");
-            newMember.setSocialId(naverProfileDTO.getResponse().getId());
-            newMember.setRefreshToken(naverAccessToken.getRefresh_token());
-            newMember.setAccessToken(naverAccessToken.getAccess_token());
-            //			newMember.setSignUpDate(LocalDateTime.now());
-            newMember.setRefreshTokenExpireDate((1000 * 60 * 60 * 6) + System.currentTimeMillis());
-            newMember.setAccessTokenExpireDate(naverAccessToken.getExpires_in() + System.currentTimeMillis());
-            //			newMember.setImageSource("https://api.dicebear.com/6.x/thumbs/svg?seed=" + newMember.getEmail().split("@")[0]);
+			newMember.setSocialLogin("NAVER");
+			newMember.setSocialId(naverProfileDTO.getResponse().getId());
+			newMember.setRefreshToken(naverAccessToken.getRefresh_token());
+			newMember.setAccessToken(naverAccessToken.getAccess_token());
+//			newMember.setSignUpDate(LocalDateTime.now());
+			newMember.setRefreshTokenExpireDate((1000 * 60 * 60 * 6) + System.currentTimeMillis());
+			newMember.setAccessTokenExpireDate(naverAccessToken.getExpires_in() + System.currentTimeMillis());
+            newMember.setSignDate(LocalDate.now());
+            newMember.setLastVisitDate(LocalDate.now());
+//			newMember.setImageSource("https://api.dicebear.com/6.x/thumbs/svg?seed=" + newMember.getEmail().split("@")[0]);
 
             if(naverProfileDTO.getResponse().getGender() != null) {
                 newMember.setGender(naverProfileDTO.getResponse().getGender());
@@ -239,7 +291,13 @@ public class LoginService {
         /* 소셜 아이디로 멤버가 있는지 조회해 가져옴 */
         foundmember = memberService.findBySocialId("NAVER", naverProfileDTO.getResponse().getId());
 
-        Date accessExpireDate = new Date(foundmember.getAccessTokenExpireDate());
+		foundmember.setRefreshToken(naverAccessToken.getRefresh_token());
+		foundmember.setAccessToken(naverAccessToken.getAccess_token());
+		foundmember.setRefreshTokenExpireDate(naverAccessToken.getRefresh_token_expires_in() + System.currentTimeMillis());
+		foundmember.setAccessTokenExpireDate(naverAccessToken.getExpires_in() + System.currentTimeMillis());
+
+
+		Date accessExpireDate = new Date(foundmember.getAccessTokenExpireDate());
 
         if(accessExpireDate.before(new Date())) {
 
@@ -251,12 +309,11 @@ public class LoginService {
                 foundmember.setRefreshTokenExpireDate(renewedToken.getRefresh_token_expires_in() + System.currentTimeMillis());
             }
 
-            foundmember.setAccessToken(renewedToken.getAccess_token());
-            foundmember.setAccessTokenExpireDate(renewedToken.getExpires_in() + System.currentTimeMillis());
-        }
-
-        return tokenProvider.generateMemberTokenDTO(foundmember);
-    }
+			foundmember.setAccessToken(renewedToken.getAccess_token());
+			foundmember.setAccessTokenExpireDate(renewedToken.getExpires_in() + System.currentTimeMillis());
+		}
+		return tokenProvider.generateMemberTokenDTO(foundmember);
+	}
 
     public NaverProfileDTO findNaverProfile(String accessToken) {
 
@@ -283,17 +340,19 @@ public class LoginService {
         return naverProfileDTO;
     }
 
-    public RenewTokenDTO renewNaverToken(Member foundMember) {
+	public RenewTokenDTO renewNaverToken(MemberDTO foundMember) {
 
         RestTemplate rt = new RestTemplate();
 
         HttpHeaders headers = new HttpHeaders();
 
-        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-        params.add("client_id", System.getenv("NaverClientIdKey"));
-        params.add("client_secret", System.getenv("NaverClientSecretKey"));
-        params.add("refresh_token", foundMember.getRefreshToken());
-        params.add("grant_type", "refresh_token");
+		MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+		params.add("client_id", System.getenv("NaverClientIdKey"));
+		params.add("client_secret", System.getenv("NaverClientSecretKey"));
+//		params.add("client_id", "T0mWG2VjAfBH9cYz6Qrf");
+//		params.add("client_secret", "iHe8ItSSso");
+		params.add("refresh_token", foundMember.getRefreshToken());
+		params.add("grant_type", "refresh_token");
 
         HttpEntity<MultiValueMap<String, String>> naverRenewRequest = new HttpEntity<>(params, headers);
 
@@ -307,6 +366,6 @@ public class LoginService {
             e.printStackTrace();
         }
 
-        return renewToken;
-    }
+		return renewToken;
+	}
 }
