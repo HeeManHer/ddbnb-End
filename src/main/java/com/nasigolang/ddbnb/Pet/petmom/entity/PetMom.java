@@ -30,7 +30,7 @@ public class PetMom {
     @Column(name = "PETMOM_CATEGORY")
     private String petMomCategory;
 
-    @Column(name = "PETMOM_DATE",columnDefinition = "DATE DEFAULT SYSDATE")
+    @Column(name = "PETMOM_DATE", columnDefinition = "DATE DEFAULT SYSDATE")
     @Temporal(TemporalType.DATE)
     private Date petMomDate;
 
@@ -41,13 +41,13 @@ public class PetMom {
     @Column(name = "DATE_RATE")
     private int dateRate;
 
-    @Column(name= "HOUSE_TYPE")
-    private  String houseType;
+    @Column(name = "HOUSE_TYPE")
+    private String houseType;
 
     @Column(name = "PET_YN")
     private boolean petYN;
 
-    @Column(name ="LOCATION")
+    @Column(name = "LOCATION")
     private String location;
 
     @Column(name = "CARE")
@@ -70,17 +70,16 @@ public class PetMom {
     @Column(name = "IMG")
     private byte[] img;
 
-   @JoinColumn(name = "MEMBER_ID")
-   @ManyToOne
-   private Member memberId;
+    @JoinColumn(name = "MEMBER_ID")
+    @ManyToOne
+    private Member memberId;
 
 
-    @OneToMany(mappedBy = "petMom")
+    @OneToMany(mappedBy = "boardId")
     private List<ApplicantEntity> applicants;
 
     @OneToMany
     private List<OtherEntity> other;
-
 
 
 }
