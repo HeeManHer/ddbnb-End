@@ -86,7 +86,25 @@ public class MemberController {
     }
 
 
+    //일부 멤버 조회
+    @ApiOperation("멤버코드로 멤버 정보 조회")
+    @GetMapping("/member/{memberId}")
+    public ResponseEntity<ResponseDto> findMemberById(@PathVariable long memberId) {
 
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
 
+        MemberSimpleDTO foundMember = memberService.findMemberById(memberId);
 
-}
+        System.out.println(foundMember);
+
+        Map<String, Object> responseMap = new HashMap<>();
+        responseMap.put("members", foundMember);
+
+        return ResponseEntity
+                .ok()
+                .headers(headers)
+                .body(new ResponseDto(HttpStatus.OK,  "조회성공", responseMap));
+      }
+
+    }

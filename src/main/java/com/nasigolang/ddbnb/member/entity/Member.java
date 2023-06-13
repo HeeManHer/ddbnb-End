@@ -58,7 +58,7 @@ public class Member {
     @Column(name = "preferred_area")
     private String preferredArea;
 
-    @Column(name = "per_sitter_career")
+    @Column(name = "pet_sitter_career")
     private String petStitterCarrer;
 
     @Column(name = "detailed_history")

@@ -48,11 +48,12 @@ public class MemberService {
         return memberRepository.save(modelMapper.map(newMember, Member.class)).getMemberId();
     }
 
-    public MemberDTO findMemberById(long memberId) {
+    //일부 멤버 조회
+    public MemberSimpleDTO findMemberById(long memberId) {
 
-        Member member = memberRepository.findById(memberId).get();
+        Member foundMember = memberRepository.findById(memberId).get();
 
-        return modelMapper.map(member, MemberDTO.class);
+        return modelMapper.map(foundMember, MemberSimpleDTO.class);
     }
 
 

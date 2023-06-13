@@ -17,4 +17,9 @@ public class MemberSimpleDTO {
     private int reportedCount;
     private String status;
     private LocalDate signDate;
+    private String petSitterCareer;
+    private String period;
+    private String starPoint;
+    private String detailedHistory;
+
 }

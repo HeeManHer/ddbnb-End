@@ -34,7 +34,7 @@ public class ReviewService {
 
     //전체리뷰 조회
     public Page<ReviewDTO> findAllReview(Pageable page) {
-        page = PageRequest.of(page.getPageNumber() <= 0 ? 0 : page.getPageNumber() - 1, 8, Sort.by("memberId"));
+        page = PageRequest.of(page.getPageNumber() <= 0 ? 0 : page.getPageNumber() - 1, 8, Sort.by("reviewId"));
 
 //        Page<Review> reviews = reviewRepository.findAll(pageable);
         return reviewRepository.findAll(page).map(review -> modelMapper.map(review, ReviewDTO.class));
