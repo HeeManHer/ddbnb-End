@@ -1,5 +1,6 @@
 package com.nasigolang.ddbnb.Pet.petmom.entity;
 
+import com.nasigolang.ddbnb.Pet.ApplicantEntity;
 import com.nasigolang.ddbnb.member.entity.Member;
 import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
