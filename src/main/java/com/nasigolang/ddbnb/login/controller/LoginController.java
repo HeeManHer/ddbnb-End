@@ -75,5 +75,4 @@ public class LoginController {
         /* JWT와 응답 결과를 프론트에 전달*/
         return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "로그인 성공", responseMap));
     }
-
 }
