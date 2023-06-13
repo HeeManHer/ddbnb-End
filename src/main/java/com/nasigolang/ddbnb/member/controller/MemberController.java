@@ -60,7 +60,7 @@ public class MemberController {
         return ResponseEntity.ok().headers(headers).body(new ResponseDto(HttpStatus.OK, "소셜 아이디 검색 성공", responseMap));
     }
 
-    @GetMapping("/member/{memberId}")
+    @GetMapping("/member")
     public ResponseEntity<ResponseDto> findAllMember(@PageableDefault Pageable page,
             @RequestParam(name = "nickname", defaultValue = "") String nickname,
             @RequestParam(name = "signDate", defaultValue = "") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate signDate) {
@@ -89,10 +89,10 @@ public class MemberController {
 
         memberAmount.put("memberReport", reportService.findReportAmount("회원", today).size());
         memberAmount.put("boardReport", reportService.findReportAmount("게시글", today).size());
-      
+
         return ResponseEntity.ok().headers(headers).body(new ResponseDto(HttpStatus.OK, "조회 성공", memberAmount));
     }
-  
+
     //일부 멤버 조회
     @ApiOperation("멤버코드로 멤버 정보 조회")
     @GetMapping("/member/{memberId}")
@@ -108,11 +108,7 @@ public class MemberController {
         Map<String, Object> responseMap = new HashMap<>();
         responseMap.put("members", foundMember);
 
-        return ResponseEntity
-                .ok()
-                .headers(headers)
-                .body(new ResponseDto(HttpStatus.OK,  "조회성공", responseMap));
-      }
-
+        return ResponseEntity.ok().headers(headers).body(new ResponseDto(HttpStatus.OK, "조회성공", responseMap));
     }
+}
 
