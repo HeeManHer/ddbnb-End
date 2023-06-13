@@ -1,11 +1,11 @@
 package com.nasigolang.ddbnb.Pet.petsitter.controller;
 
 import com.nasigolang.ddbnb.Pet.petsitter.dto.PetsitterboardDTO;
+import com.nasigolang.ddbnb.Pet.petsitter.service.PetsitterService;
 import com.nasigolang.ddbnb.common.ResponseDto;
 import com.nasigolang.ddbnb.common.paging.Pagenation;
 import com.nasigolang.ddbnb.common.paging.ResponseDtoWithPaging;
 import com.nasigolang.ddbnb.common.paging.SelectCriteria;
-import com.nasigolang.ddbnb.Pet.petsitter.service.PetsitterService;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -16,7 +16,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -46,7 +45,5 @@ public class PetsitterController {
                 (HttpStatus.OK, "조회 성공", data));
     }
 
-    @PostMapping("/list")
-    @ApiOperation(value="펫시터 추가")
-    public ResponseEntity<ResponseDto> modify
+
 }
