@@ -8,7 +8,6 @@ import com.nasigolang.ddbnb.login.repository.LoginRepository;
 import com.nasigolang.ddbnb.member.dto.MemberDTO;
 import com.nasigolang.ddbnb.member.entity.Member;
 import com.nasigolang.ddbnb.member.service.MemberService;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -27,7 +26,6 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.Date;
 
 @Service
@@ -113,97 +111,90 @@ public class LoginService {
 		System.out.println(4);
 		return kakaoProfileDTO;
 	}
+  
+    public AccessTokenDTO getJwtToken(OauthTokenDTO oauthToken) {
 
-	public AccessTokenDTO getJwtToken(OauthTokenDTO oauthToken) {
+        System.out.println(1);
+        KakaoProfileDTO kakaoProfileDTO = findKakaoProfile(oauthToken.getAccess_token());
+        System.out.println(2);
 
-		System.out.println(1);
-		KakaoProfileDTO kakaoProfileDTO = findKakaoProfile(oauthToken.getAccess_token());
-		System.out.println(2);
-		MemberDTO foundmember = new MemberDTO();
+        /* 해당 유저의 가입 이력이 없을 경우 */
+        if(memberService.findBySocialId("KAKAO", String.valueOf(kakaoProfileDTO.getId())) == null) {
+            System.out.println(7);
+            MemberDTO newMember = new MemberDTO();
 
-		/* 해당 유저의 가입 이력이 없을 경우 */
-		if (memberService.findBySocialId("KAKAO", String.valueOf(kakaoProfileDTO.getId())) == null) {
-			System.out.println(7);
-			MemberDTO newMember = new MemberDTO();
+            newMember.setSocialLogin("KAKAO");
+            newMember.setSocialId(String.valueOf(kakaoProfileDTO.getId()));
+            newMember.setRefreshToken(oauthToken.getRefresh_token());
+            newMember.setAccessToken(oauthToken.getAccess_token());
+            newMember.setRefreshTokenExpireDate(oauthToken.getRefresh_token_expires_in() + System.currentTimeMillis());
+            newMember.setAccessTokenExpireDate(oauthToken.getExpires_in() + System.currentTimeMillis());
+            newMember.setSignDate(LocalDate.now());
+            //			newMember.setProfileImage("https://api.dicebear.com/6.x/thumbs/svg?seed=" + newMember.getSocialId().split("@")[0]);
+            newMember.setLastVisitDate(LocalDate.now());
+            if(kakaoProfileDTO.getKakao_account().getGender() != null) {
+                newMember.setGender(kakaoProfileDTO.getKakao_account().getGender());
+            }
 
-			newMember.setSocialLogin("KAKAO");
-			newMember.setSocialId(String.valueOf(kakaoProfileDTO.getId()));
-			newMember.setRefreshToken(oauthToken.getRefresh_token());
-			newMember.setAccessToken(oauthToken.getAccess_token());
-			newMember.setRefreshTokenExpireDate(oauthToken.getRefresh_token_expires_in() + System.currentTimeMillis());
-			newMember.setAccessTokenExpireDate(oauthToken.getExpires_in() + System.currentTimeMillis());
-			newMember.setSignDate(LocalDate.now());
-//			newMember.setProfileImage("https://api.dicebear.com/6.x/thumbs/svg?seed=" + newMember.getSocialId().split("@")[0]);
-			newMember.setLastVisitDate(LocalDate.now());
-			if (kakaoProfileDTO.getKakao_account().getGender() != null) {
-				newMember.setGender(kakaoProfileDTO.getKakao_account().getGender());
-			}
+            memberService.registNewUser(newMember);
+            System.out.println(8);
+        }
 
-			memberService.registNewUser(newMember);
-			System.out.println(8);
-		}
+        /* 소셜 아이디로 멤버가 있는지 조회해 가져옴 */
+        MemberDTO foundmember = memberService.findBySocialId("KAKAO", String.valueOf(kakaoProfileDTO.getId()));
 
-		/* 소셜 아이디로 멤버가 있는지 조회해 가져옴 */
-		foundmember = memberService.findBySocialId("KAKAO", String.valueOf(kakaoProfileDTO.getId()));
+        /* 액세스토큰, 리프레시 토큰 업데이트 */
+        foundmember.setRefreshToken(oauthToken.getRefresh_token());
+        foundmember.setAccessToken(oauthToken.getAccess_token());
+        foundmember.setRefreshTokenExpireDate(oauthToken.getRefresh_token_expires_in() + System.currentTimeMillis());
+        foundmember.setAccessTokenExpireDate(oauthToken.getExpires_in() + System.currentTimeMillis());
+        foundmember.setLastVisitDate(LocalDate.now());
 
-		/* 액세스토큰, 리프레시 토큰 업데이트 */
-		foundmember.setRefreshToken(oauthToken.getRefresh_token());
-		foundmember.setAccessToken(oauthToken.getAccess_token());
-		foundmember.setRefreshTokenExpireDate(oauthToken.getRefresh_token_expires_in() + System.currentTimeMillis());
-		foundmember.setAccessTokenExpireDate(oauthToken.getExpires_in() + System.currentTimeMillis());
+        Date accessExpireDate = new Date(foundmember.getAccessTokenExpireDate());
 
+        if(accessExpireDate.before(new Date())) {
 
-		Date accessExpireDate = new Date(foundmember.getAccessTokenExpireDate());
+            RenewTokenDTO renewedToken = renewKakaoToken(foundmember);
 
-		if (accessExpireDate.before(new Date())) {
+            if(renewedToken.getRefresh_token() != null) {
 
-			RenewTokenDTO renewedToken = renewKakaoToken(foundmember);
+                foundmember.setRefreshToken(renewedToken.getRefresh_token());
+                foundmember.setRefreshTokenExpireDate(renewedToken.getRefresh_token_expires_in() + System.currentTimeMillis());
+            }
 
-			if (renewedToken.getRefresh_token() != null) {
+            foundmember.setAccessToken(renewedToken.getAccess_token());
+            foundmember.setAccessTokenExpireDate(renewedToken.getExpires_in() + System.currentTimeMillis());
+        }
 
-				foundmember.setRefreshToken(renewedToken.getRefresh_token());
-				foundmember.setRefreshTokenExpireDate(renewedToken.getRefresh_token_expires_in() + System.currentTimeMillis());
-			}
+        return tokenProvider.generateMemberTokenDTO(foundmember);
+    }
 
-			foundmember.setAccessToken(renewedToken.getAccess_token());
-			foundmember.setAccessTokenExpireDate(renewedToken.getExpires_in() + System.currentTimeMillis());
-		}
+    public RenewTokenDTO renewKakaoToken(MemberDTO foundMember) {
 
-		return tokenProvider.generateMemberTokenDTO(foundmember);
-	}
+        RestTemplate rt = new RestTemplate();
 
-	public RenewTokenDTO renewKakaoToken(MemberDTO foundMember) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
 
-		RestTemplate rt = new RestTemplate();
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.add("grant_type", "refresh_token");
+        params.add("client_id", System.getenv("KakaoRestAPIKey"));
+        params.add("refresh_token", foundMember.getRefreshToken());
 
-		HttpHeaders headers = new HttpHeaders();
-		headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
+        HttpEntity<MultiValueMap<String, String>> kakaoTokenRequest = new HttpEntity<>(params, headers);
 
-		MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-		params.add("grant_type", "refresh_token");
-		params.add("client_id", System.getenv("KakaoRestAPIKey"));
-		params.add("refresh_token", foundMember.getRefreshToken());
+        ResponseEntity<String> renewTokenResponse = rt.exchange("https://kauth.kakao.com/oauth/token", HttpMethod.POST, kakaoTokenRequest, String.class);
 
-		HttpEntity<MultiValueMap<String, String>> kakaoTokenRequest =
-				new HttpEntity<>(params, headers);
+        ObjectMapper objectMapper = new ObjectMapper();
+        RenewTokenDTO renewToken = null;
+        try {
+            renewToken = objectMapper.readValue(renewTokenResponse.getBody(), RenewTokenDTO.class);
+        } catch(JsonProcessingException e) {
+            e.printStackTrace();
+        }
 
-		ResponseEntity<String> renewTokenResponse = rt.exchange(
-				"https://kauth.kakao.com/oauth/token",
-				HttpMethod.POST,
-				kakaoTokenRequest,
-				String.class
-		);
-
-		ObjectMapper objectMapper = new ObjectMapper();
-		RenewTokenDTO renewToken = null;
-		try {
-			renewToken = objectMapper.readValue(renewTokenResponse.getBody(), RenewTokenDTO.class);
-		} catch (JsonProcessingException e) {
-			e.printStackTrace();
-		}
-
-		return renewToken;
-	}
+        return renewToken;
+    }
 
 	public boolean kakaoLogout(String accessToken) {
 		System.out.println(1);
@@ -238,51 +229,46 @@ public class LoginService {
 
 	public NaverAccessTokenDTO getNaverAccessToken(String code, String state) {
 
-		RestTemplate rt = new RestTemplate();
+        RestTemplate rt = new RestTemplate();
 
-		HttpHeaders headers = new HttpHeaders();
-		headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
 
-		MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-		params.add("grant_type", "authorization_code");
-//		params.add("client_id", System.getenv("NaverClientIDKey"));
-//		params.add("client_secret", System.getenv("NaverClientSecretKey"));
-		params.add("client_id", "T0mWG2VjAfBH9cYz6Qrf");
-		params.add("client_secret", "iHe8ItSSso");
-		params.add("code", code);
-		params.add("state", state);
 
-		HttpEntity<MultiValueMap<String, String>> naverTokenRequest =
-				new HttpEntity<>(params, headers);
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.add("grant_type", "authorization_code");
+        params.add("client_id", System.getenv("NaverClientIDKey"));
+        params.add("client_secret", System.getenv("NaverClientSecretKey"));
+        //		params.add("client_id", "T0mWG2VjAfBH9cYz6Qrf");
+        //		params.add("client_secret", "iHe8ItSSso");
+        params.add("code", code);
+        params.add("state", state);
 
-		ResponseEntity<String> accessTokenResponse = rt.exchange(
-				"https://nid.naver.com/oauth2.0/token",
-				HttpMethod.POST,
-				naverTokenRequest,
-				String.class
-		);
+        HttpEntity<MultiValueMap<String, String>> naverTokenRequest = new HttpEntity<>(params, headers);
 
-		ObjectMapper objectMapper = new ObjectMapper();
-		NaverAccessTokenDTO naverAccessToken = null;
-		try {
-			naverAccessToken = objectMapper.readValue(accessTokenResponse.getBody(), NaverAccessTokenDTO.class);
-		} catch (JsonProcessingException e) {
-			e.printStackTrace();
-		}
+        ResponseEntity<String> accessTokenResponse = rt.exchange("https://nid.naver.com/oauth2.0/token", HttpMethod.POST, naverTokenRequest, String.class);
 
-		return naverAccessToken;
-	}
+        ObjectMapper objectMapper = new ObjectMapper();
+        NaverAccessTokenDTO naverAccessToken = null;
+        try {
+            naverAccessToken = objectMapper.readValue(accessTokenResponse.getBody(), NaverAccessTokenDTO.class);
+        } catch(JsonProcessingException e) {
+            e.printStackTrace();
+        }
 
-	public AccessTokenDTO getJwtToken(NaverAccessTokenDTO naverAccessToken) {
+        return naverAccessToken;
+    }
 
-		NaverProfileDTO naverProfileDTO = findNaverProfile(naverAccessToken.getAccess_token());
+    public AccessTokenDTO getJwtToken(NaverAccessTokenDTO naverAccessToken) {
 
-		MemberDTO foundmember = new MemberDTO();
+        NaverProfileDTO naverProfileDTO = findNaverProfile(naverAccessToken.getAccess_token());
 
-		/* 해당 유저의 가입 이력이 없을 경우 */
-		if (memberService.findBySocialId("NAVER", naverProfileDTO.getResponse().getId()) == null) {
+        MemberDTO foundmember = new MemberDTO();
 
-			MemberDTO newMember = new MemberDTO();
+        /* 해당 유저의 가입 이력이 없을 경우 */
+        if(memberService.findBySocialId("NAVER", naverProfileDTO.getResponse().getId()) == null) {
+
+            MemberDTO newMember = new MemberDTO();
 
 			newMember.setSocialLogin("NAVER");
 			newMember.setSocialId(naverProfileDTO.getResponse().getId());
@@ -295,15 +281,15 @@ public class LoginService {
             newMember.setLastVisitDate(LocalDate.now());
 //			newMember.setImageSource("https://api.dicebear.com/6.x/thumbs/svg?seed=" + newMember.getEmail().split("@")[0]);
 
-			if (naverProfileDTO.getResponse().getGender() != null) {
-				newMember.setGender(naverProfileDTO.getResponse().getGender());
-			}
+            if(naverProfileDTO.getResponse().getGender() != null) {
+                newMember.setGender(naverProfileDTO.getResponse().getGender());
+            }
 
-			memberService.registNewUser(newMember);
-		}
+            memberService.registNewUser(newMember);
+        }
 
-		/* 소셜 아이디로 멤버가 있는지 조회해 가져옴 */
-		foundmember = memberService.findBySocialId("NAVER", naverProfileDTO.getResponse().getId());
+        /* 소셜 아이디로 멤버가 있는지 조회해 가져옴 */
+        foundmember = memberService.findBySocialId("NAVER", naverProfileDTO.getResponse().getId());
 
 		foundmember.setRefreshToken(naverAccessToken.getRefresh_token());
 		foundmember.setAccessToken(naverAccessToken.getAccess_token());
@@ -313,15 +299,15 @@ public class LoginService {
 
 		Date accessExpireDate = new Date(foundmember.getAccessTokenExpireDate());
 
-		if(accessExpireDate.before(new Date())) {
+        if(accessExpireDate.before(new Date())) {
 
-			RenewTokenDTO renewedToken = renewKakaoToken(foundmember);
+            RenewTokenDTO renewedToken = renewKakaoToken(foundmember);
 
-			if(renewedToken.getRefresh_token() != null) {
+            if(renewedToken.getRefresh_token() != null) {
 
-				foundmember.setRefreshToken(renewedToken.getRefresh_token());
-				foundmember.setRefreshTokenExpireDate(renewedToken.getRefresh_token_expires_in() + System.currentTimeMillis());
-			}
+                foundmember.setRefreshToken(renewedToken.getRefresh_token());
+                foundmember.setRefreshTokenExpireDate(renewedToken.getRefresh_token_expires_in() + System.currentTimeMillis());
+            }
 
 			foundmember.setAccessToken(renewedToken.getAccess_token());
 			foundmember.setAccessTokenExpireDate(renewedToken.getExpires_in() + System.currentTimeMillis());
@@ -329,43 +315,36 @@ public class LoginService {
 		return tokenProvider.generateMemberTokenDTO(foundmember);
 	}
 
-	public NaverProfileDTO findNaverProfile(String accessToken) {
+    public NaverProfileDTO findNaverProfile(String accessToken) {
 
-		RestTemplate rt = new RestTemplate();
+        RestTemplate rt = new RestTemplate();
 
-		HttpHeaders headers = new HttpHeaders();
-		headers.add("Authorization", "Bearer " + accessToken);
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Authorization", "Bearer " + accessToken);
 
-		HttpEntity<MultiValueMap<String, String>> naverProfileRequest =
-				new HttpEntity<>(headers);
+        HttpEntity<MultiValueMap<String, String>> naverProfileRequest = new HttpEntity<>(headers);
 
-		ResponseEntity<String> naverProfileResponse = rt.exchange(
-				"https://openapi.naver.com/v1/nid/me",
-				HttpMethod.POST,
-				naverProfileRequest,
-				String.class
-		);
+        ResponseEntity<String> naverProfileResponse = rt.exchange("https://openapi.naver.com/v1/nid/me", HttpMethod.POST, naverProfileRequest, String.class);
 
-		System.out.println(naverProfileResponse.getBody());
+        System.out.println(naverProfileResponse.getBody());
 
-		NaverProfileDTO naverProfileDTO = new NaverProfileDTO();
-		ObjectMapper objectMapper = new ObjectMapper();
+        NaverProfileDTO naverProfileDTO = new NaverProfileDTO();
+        ObjectMapper objectMapper = new ObjectMapper();
 
-		try {
-			naverProfileDTO = objectMapper.readValue(naverProfileResponse.getBody(),
-					NaverProfileDTO.class);
-		} catch (JsonProcessingException e) {
-			throw new RuntimeException(e);
-		}
+        try {
+            naverProfileDTO = objectMapper.readValue(naverProfileResponse.getBody(), NaverProfileDTO.class);
+        } catch(JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
 
-		return naverProfileDTO;
-	}
+        return naverProfileDTO;
+    }
 
 	public RenewTokenDTO renewNaverToken(MemberDTO foundMember) {
 
-		RestTemplate rt = new RestTemplate();
+        RestTemplate rt = new RestTemplate();
 
-		HttpHeaders headers = new HttpHeaders();
+        HttpHeaders headers = new HttpHeaders();
 
 		MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
 		params.add("client_id", System.getenv("NaverClientIdKey"));
@@ -375,25 +354,18 @@ public class LoginService {
 		params.add("refresh_token", foundMember.getRefreshToken());
 		params.add("grant_type", "refresh_token");
 
-		HttpEntity<MultiValueMap<String, String>> naverRenewRequest =
-				new HttpEntity<>(params, headers);
+        HttpEntity<MultiValueMap<String, String>> naverRenewRequest = new HttpEntity<>(params, headers);
 
-		ResponseEntity<String> naverRenewResponses = rt.exchange(
-				"https://nid.naver.com/oauth2.0/token",
-				HttpMethod.GET,
-				naverRenewRequest,
-				String.class
-		);
+        ResponseEntity<String> naverRenewResponses = rt.exchange("https://nid.naver.com/oauth2.0/token", HttpMethod.GET, naverRenewRequest, String.class);
 
-		ObjectMapper objectMapper = new ObjectMapper();
-		RenewTokenDTO renewToken = null;
-		try {
-			renewToken = objectMapper.readValue(naverRenewResponses.getBody(), RenewTokenDTO.class);
-		} catch (JsonProcessingException e) {
-			e.printStackTrace();
-		}
+        ObjectMapper objectMapper = new ObjectMapper();
+        RenewTokenDTO renewToken = null;
+        try {
+            renewToken = objectMapper.readValue(naverRenewResponses.getBody(), RenewTokenDTO.class);
+        } catch(JsonProcessingException e) {
+            e.printStackTrace();
+        }
 
 		return renewToken;
 	}
-
 }
