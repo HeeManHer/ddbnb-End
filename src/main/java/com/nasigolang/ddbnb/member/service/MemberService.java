@@ -6,13 +6,11 @@ import com.nasigolang.ddbnb.login.dto.RenewTokenDTO;
 import com.nasigolang.ddbnb.member.dto.MemberDTO;
 import com.nasigolang.ddbnb.member.dto.MemberSimpleDTO;
 import com.nasigolang.ddbnb.member.entity.Member;
+import com.nasigolang.ddbnb.member.repository.MemberMapper;
 import com.nasigolang.ddbnb.member.repository.MemberRepository;
+import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -25,20 +23,22 @@ import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDate;
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 @Service
+@AllArgsConstructor
 public class MemberService {
 
+    private final MemberMapper memberMapper;
     private final MemberRepository memberRepository;
     private final ModelMapper modelMapper;
     private final ObjectMapper objectMapper;
 
-    @Autowired
-    public MemberService(MemberRepository memberRepository, ModelMapper modelMapper, ObjectMapper objectMapper) {
-        this.memberRepository = memberRepository;
-        this.modelMapper = modelMapper;
-        this.objectMapper = objectMapper;
-    }
+    //    @Value("${image.image-dir}")
+    //    private String IMAGE_DIR;
+    //    @Value("${image.image-url}")
+    //    private String IMAGE_URL;
 
     @Transactional
     public long registNewUser(MemberDTO newMember) {
@@ -56,19 +56,24 @@ public class MemberService {
         return modelMapper.map(foundMember, MemberSimpleDTO.class);
     }
 
+    public Page<MemberSimpleDTO> findAllMembers(Pageable page, Map<String, Object> searchValue) {
 
-    public Page<MemberSimpleDTO> findAllMembers(Pageable pageable, String nickname, LocalDate signDate) {
+        page = PageRequest.of(page.getPageNumber() <= 0 ? 0 : page.getPageNumber() - 1, page.getPageSize(), Sort.by("memberId"));
 
-        pageable = PageRequest.of(pageable.getPageNumber() <= 0 ? 0 : pageable.getPageNumber() - 1, pageable.getPageSize(), Sort.by("memberId"));
+        Page<MemberSimpleDTO> members;
 
-        Page<Member> members;
-        if(nickname.equals("") && signDate == null) {
-            members = memberRepository.findAll(pageable);
+        if(searchValue.isEmpty()) {
+            members = memberRepository.findAll(page).map(member -> modelMapper.map(member, MemberSimpleDTO.class));
         } else {
-            members = memberRepository.findByNicknameContainingAndSignDate(pageable, nickname, signDate);
+            List<MemberSimpleDTO> memberList = memberMapper.searchMember(searchValue);
+
+            int start = page.getPageNumber() * page.getPageSize();
+            int end = Math.min(start + page.getPageSize(), memberList.size());
+
+            members = new PageImpl<>(memberList.subList(start, end), page, memberList.size());
         }
 
-        return members.map(member -> modelMapper.map(member, MemberSimpleDTO.class));
+        return members;
     }
 
     @Transactional
@@ -203,4 +208,5 @@ public class MemberService {
     public int findNewMemberAmount(LocalDate now) {
         return memberRepository.findNewMember(now);
     }
+
 }

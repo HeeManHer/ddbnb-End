@@ -62,13 +62,20 @@ public class MemberController {
 
     @GetMapping("/member")
     public ResponseEntity<ResponseDto> findAllMember(@PageableDefault Pageable page,
-            @RequestParam(name = "nickname", defaultValue = "") String nickname,
-            @RequestParam(name = "signDate", defaultValue = "") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate signDate) {
+                                                     @RequestParam(name = "nickname", defaultValue = "") String nickname,
+                                                     @RequestParam(name = "signDate", defaultValue = "") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate signDate) {
+        Map<String, Object> searchValue = new HashMap<>();
 
-        System.out.println(page);
-        System.out.println(signDate);
+        if (!nickname.equals("")) {
+            searchValue.put("nickname", "%" + nickname + "%");
+        }
 
-        Page<MemberSimpleDTO> memberList = memberService.findAllMembers(page, nickname, signDate);
+        if (signDate != null) {
+            searchValue.put("signDate", signDate);
+        }
+
+        Page<MemberSimpleDTO> memberList = memberService.findAllMembers(page, searchValue);
+
         SelectCriteria selectCriteria = Pagenation.getSelectCriteria(memberList);
 
         ResponseDtoWithPaging data = new ResponseDtoWithPaging(memberList.getContent(), selectCriteria);

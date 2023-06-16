@@ -19,13 +19,13 @@ import org.springframework.web.bind.annotation.*;
 import java.nio.charset.Charset;
 
 @RestController
-@RequestMapping("/api/v1/sample")
+@RequestMapping("/api/v1")
 @AllArgsConstructor
 public class SampleController {
 
     private final SampleService sampleService;
 
-    @GetMapping("/list")
+    @GetMapping("/sample")
     public ResponseEntity<ResponseDto> findAllMember(@PageableDefault Pageable page) {
 
         HttpHeaders headers = new HttpHeaders();
@@ -39,7 +39,7 @@ public class SampleController {
         return ResponseEntity.ok().headers(headers).body(new ResponseDto(HttpStatus.OK, "조회 성공", data));
     }
 
-    @PostMapping("/regist")
+    @PostMapping("/sample")
     public ResponseEntity<ResponseDto> registNewMember(@RequestBody SampleDTO newMember) {
 
         HttpHeaders headers = new HttpHeaders();
@@ -51,7 +51,7 @@ public class SampleController {
 
     }
 
-    @PutMapping("/modify")
+    @PutMapping("/sample")
     public ResponseEntity<ResponseDto> modifySample(@RequestBody SampleDTO menu) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
@@ -62,7 +62,7 @@ public class SampleController {
         return ResponseEntity.ok().headers(headers).body(new ResponseDto(HttpStatus.OK, "수정 성공", null));
     }
 
-    @DeleteMapping("/delete")
+    @DeleteMapping("/sample")
     public ResponseEntity<ResponseDto> deleteSample(@PathVariable int memberId) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
