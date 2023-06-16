@@ -1,6 +1,6 @@
 package com.nasigolang.ddbnb.login.dto;
 
-public class OauthTokenDTO {
+public class KakaoAcessTokenDTO {
 
 	private String access_token;
 	private String token_type;
@@ -10,9 +10,9 @@ public class OauthTokenDTO {
 	private String scope;
 	private int refresh_token_expires_in;
 
-	public OauthTokenDTO() {}
+	public KakaoAcessTokenDTO() {}
 
-	public OauthTokenDTO(String access_token, String token_type, String refresh_token,
+	public KakaoAcessTokenDTO(String access_token, String token_type, String refresh_token,
 		String id_token,
 		int expires_in, String scope, int refresh_token_expires_in) {
 		this.access_token = access_token;

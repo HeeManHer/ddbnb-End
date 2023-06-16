@@ -6,6 +6,7 @@ import com.nasigolang.ddbnb.common.paging.ResponseDtoWithPaging;
 import com.nasigolang.ddbnb.common.paging.SelectCriteria;
 import com.nasigolang.ddbnb.member.dto.MemberDTO;
 import com.nasigolang.ddbnb.member.dto.MemberSimpleDTO;
+import com.nasigolang.ddbnb.member.entity.Member;
 import com.nasigolang.ddbnb.member.service.MemberService;
 import com.nasigolang.ddbnb.report.service.ReportService;
 import io.swagger.annotations.Api;
@@ -50,9 +51,9 @@ public class MemberController {
 
     @ApiOperation(value = "멤버 소셜 id로 조회")
     @GetMapping("/members/{socialLogin}/{socialId}")
-    public ResponseEntity<ResponseDto> findBySocialId(@PathVariable String socialLogin, @PathVariable String socialId) {
+    public ResponseEntity<ResponseDto> findBySocialId(@PathVariable String social_Login, @PathVariable String social_Id) {
 
-        MemberDTO foundMember = memberService.findBySocialId(socialLogin, socialId);
+        Member foundMember = memberService.findBySocialId(social_Login, social_Id);
 
         Map<String, Object> responseMap = new HashMap<>();
         responseMap.put("member", foundMember);
