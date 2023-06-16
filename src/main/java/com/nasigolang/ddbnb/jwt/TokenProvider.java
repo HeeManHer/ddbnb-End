@@ -4,6 +4,7 @@ package com.nasigolang.ddbnb.jwt;
 import com.nasigolang.ddbnb.exception.TokenException;
 import com.nasigolang.ddbnb.member.dto.MemberDTO;
 
+import com.nasigolang.ddbnb.member.entity.Member;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -27,7 +28,7 @@ public class TokenProvider {
 	private static final Logger log = LoggerFactory.getLogger(TokenProvider.class);
 	private static final String AUTHORITIES_KEY = "Auth";
 	private static final String BEARER_TYPE = "bearer";
-	private static final long ACCESS_TOKEN_EXPIRE_TIME = 1000 * 21599;	// 30분 정도가 이상적이나 Redis 사용 이전까지는 카카오 액세스 토큰과 시간을 같게 함
+	private static final long ACCESS_TOKEN_EXPIRE_TIME = 1000 * 21599;    // 30분 정도가 이상적이나 Redis 사용 이전까지는 카카오 액세스 토큰과 시간을 같게 함
 
 	private final UserDetailsService userDetailsService;
 
@@ -39,7 +40,7 @@ public class TokenProvider {
 		this.key = Keys.hmacShaKeyFor(keyBytes);
 	}
 
-	public AccessTokenDTO generateMemberTokenDTO(MemberDTO foundmember) {
+	public AccessTokenDTO generateMemberTokenDTO(Member foundmember) {
 		log.info("[TokenProvider] generateTokenDto Start ===================================");
 
 		Claims claims = Jwts
@@ -55,6 +56,7 @@ public class TokenProvider {
 				.signWith(key, SignatureAlgorithm.HS512)
 				.compact();
 
+		System.out.println(jwtToken);
 		return new AccessTokenDTO(BEARER_TYPE, foundmember.getMemberId(), jwtToken,
 				accessTokenExpiresIn.getTime());
 	}
