@@ -6,8 +6,11 @@ import com.nasigolang.ddbnb.jwt.TokenProvider;
 import com.nasigolang.ddbnb.login.dto.*;
 import com.nasigolang.ddbnb.login.repository.LoginRepository;
 import com.nasigolang.ddbnb.member.dto.MemberDTO;
+import com.nasigolang.ddbnb.member.dto.MemberSimpleDTO;
 import com.nasigolang.ddbnb.member.entity.Member;
 import com.nasigolang.ddbnb.member.service.MemberService;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.*;
@@ -133,19 +136,21 @@ public class LoginService {
             newMember.setSignDate(LocalDate.now());
             newMember.setProfileImage("https://api.dicebear.com/6.x/thumbs/svg?seed=" + newMember.getSocialId().split("@")[0]);
             newMember.setLastVisitDate(LocalDate.now());
+//            newMember.setMemberId(newMember.getMemberId());
             if(kakaoProfileDTO.getKakao_account().getGender() != null) {
                 newMember.setGender(kakaoProfileDTO.getKakao_account().getGender());
             }
-
             memberService.registNewUser(newMember);
+
             System.out.println(8);
         }
 
         /* 소셜 아이디로 멤버가 있는지 조회해 가져옴 */
         Member foundmember = memberService.findBySocialId("KAKAO", String.valueOf(kakaoProfileDTO.getId()));
 
-
+        kakaoToken.setMemberId(foundmember.getMemberId());
         /* 액세스토큰, 리프레시 토큰 업데이트 */
+//        foundmember.setMemberId(foundmember.getMemberId());
         foundmember.setRefreshToken(kakaoToken.getRefresh_token());
         foundmember.setAccessToken(kakaoToken.getAccess_token());
         foundmember.setRefreshTokenExpireDate(kakaoToken.getRefresh_token_expires_in() + System.currentTimeMillis());
@@ -291,6 +296,8 @@ public class LoginService {
 
         /* 소셜 아이디로 멤버가 있는지 조회해 가져옴 */
         Member foundmember = memberService.findBySocialId("NAVER", naverProfileDTO.getResponse().getId());
+
+        naverAccessToken.setMemberId(foundmember.getMemberId());
         foundmember.setRefreshToken(naverAccessToken.getRefresh_token());
         foundmember.setAccessToken(naverAccessToken.getAccess_token());
         foundmember.setRefreshTokenExpireDate(naverAccessToken.getRefresh_token_expires_in() + System.currentTimeMillis());
