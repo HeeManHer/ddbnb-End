@@ -2,13 +2,14 @@ package com.nasigolang.ddbnb.Pet.petmom.controller;
 
 import com.nasigolang.ddbnb.Pet.petmom.dto.PetMomDTO;
 import com.nasigolang.ddbnb.Pet.petmom.service.PetMomService;
+
 import com.nasigolang.ddbnb.common.ResponseDto;
 import com.nasigolang.ddbnb.common.paging.Pagenation;
 import com.nasigolang.ddbnb.common.paging.ResponseDtoWithPaging;
 import com.nasigolang.ddbnb.common.paging.SelectCriteria;
-import com.nasigolang.ddbnb.review.dto.ReviewDTO;
+
 import lombok.AllArgsConstructor;
-import org.apache.ibatis.annotations.Delete;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -60,21 +61,52 @@ public class PetMomController {
 
         return new ResponseEntity<>(new ResponseDto(HttpStatus.OK, "조회성공", data), headers, HttpStatus.OK);
     }
-    @GetMapping("/list/find")
-    public  ResponseEntity<ResponseDto> findPetMom(@PageableDefault Pageable pageable,
-                                                   @RequestParam(name= "location",defaultValue ="")String location,
-                                                   @RequestParam(name ="startDate",defaultValue = "")@DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate,
-                                                   @RequestParam(name = "endDate",defaultValue = "")@DateTimeFormat(pattern = "yyyy-MM-dd")LocalDate endDate,
-                                                   @RequestParam(name="petYN", defaultValue = "")Boolean petYN,
-                                                   @RequestParam(name="other", defaultValue = "")String other){
+
+
+//    @GetMapping("/list/find")
+//    public  ResponseEntity<ResponseDto> findPetMom(@PageableDefault Pageable pageable,
+//                                                   @RequestParam(name= "location",defaultValue ="")String location,
+//                                                   @RequestParam(name ="startDate",defaultValue = "")@DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate,
+//                                                   @RequestParam(name = "endDate",defaultValue = "")@DateTimeFormat(pattern = "yyyy-MM-dd")LocalDate endDate,
+//                                                   @RequestParam(name="petYN", defaultValue = "")String  petYN,
+//                                                   @RequestParam(name="other", defaultValue = "")String other){
+//        HttpHeaders headers = new HttpHeaders();
+//        headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
+//
+//        System.out.println(location);
+//        System.out.println(startDate);
+//        System.out.println(endDate);
+//        System.out.println(petYN);
+//        System.out.println(other);
+//
+//        boolean isPetYN = Boolean.parseBoolean(petYN);
+//        Page<PetMomDTO> petMoms = petmomService.findPetMom(pageable,location,startDate,endDate,isPetYN,other);
+//        SelectCriteria selectCriteria = Pagenation.getSelectCriteria(petMoms);
+//
+//        ResponseDtoWithPaging data = new ResponseDtoWithPaging(petMoms.getContent(), selectCriteria);
+//        return new ResponseEntity<>(new ResponseDto(HttpStatus.OK, "조회성공", data), headers, HttpStatus.OK);
+//    }
+
+    @PutMapping("/modify/{petMomId}")
+    public ResponseEntity<ResponseDto> modifyPetMom(@RequestBody PetMomDTO modifyPetMom) {
+
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
 
-        Page<PetMomDTO> petMoms = petmomService.findPetMom(pageable,location,startDate,endDate,petYN,other);
-        SelectCriteria selectCriteria = Pagenation.getSelectCriteria(petMoms);
+        petmomService.modifypetMom(modifyPetMom);
 
-        ResponseDtoWithPaging data = new ResponseDtoWithPaging(petMoms.getContent(), selectCriteria);
-        return new ResponseEntity<>(new ResponseDto(HttpStatus.OK, "조회성공", data), headers, HttpStatus.OK);
+        return ResponseEntity.ok().headers(headers).body(new ResponseDto(HttpStatus.OK, "수정 성공", null));
+
+    }
+
+    @DeleteMapping("/delete/{petMomId}")
+    public ResponseEntity<ResponseDto> deletePetMom(@PathVariable int petMomId){
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
+
+        petmomService.deletePetMom(petMomId);
+
+        return ResponseEntity.ok().headers(headers).body(new ResponseDto(HttpStatus.OK, "삭제 성공", null));
     }
 }
 

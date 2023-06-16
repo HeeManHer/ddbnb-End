@@ -21,5 +21,8 @@ public class OtherEntity {
     @Column(name = "OTHER")
     private String other;
 
+    @ManyToOne
+    @JoinColumn(name = "PETMOM_ID")
+    private PetMom petMom;
 
 }
