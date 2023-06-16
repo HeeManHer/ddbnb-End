@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nasigolang.ddbnb.member.repository.MemberMapper">
+
+    <resultMap id="memberResultMap" type="com.nasigolang.ddbnb.member.dto.MemberSimpleDTO">
+        <id property="memberId" column="MEMBER_ID"/>
+        <result property="nickname" column="NICKNAME"/>
+        <result property="preferredArea" column="PREFERRED_AREA"/>
+        <result property="reportedCount" column="REPORTED_COUNT"/>
+        <result property="status" column="STATUS"/>
+        <result property="signDate" column="SIGN_DATE"/>
+        <result property="petSitterCareer" column="PER_SITTER_CAREER"/>
+        <result property="period" column="PERIOD"/>
+        <result property="starPoint" column="STAR_POINT"/>
+        <result property="detailedHistory" column="DETAILED_HISTORY"/>
+    </resultMap>
+
+    <select id="searchMember" parameterType="hashmap" resultMap="memberResultMap">
+       SELECT M.MEMBER_ID
+            , M.NICKNAME
+            , M.PREFERRED_AREA
+            , M.REPORTED_COUNT
+            , M.STATUS
+            , M.SIGN_DATE
+            , M.PER_SITTER_CAREER
+            , M.PERIOD
+            , M.STAR_POINT
+            , M.DETAILED_HISTORY
+         FROM MEMBER M
+        <trim prefix="WHERE" prefixOverrides="AND">
+             <if test="nickname != null">
+                 NICKNAME LIKE #{nickname}
+             </if>
+             <if test="signDate != null">
+                 AND SIGN_DATE = #{signDate}
+             </if>
+        </trim>
+        ORDER BY M.MEMBER_ID
+    </select>
+
+</mapper>

@@ -38,6 +38,8 @@ dependencies {
     //'org.bouncycastle:bcprov-jdk15on:1.60',
     runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.2' // or 'io.jsonwebtoken:jjwt-gson:0.11.2' for gson
     implementation group: 'org.modelmapper', name: 'modelmapper', version: '3.0.0'
+    implementation group: 'commons-io', name: 'commons-io', version: '2.11.0'
+
 }
 
 tasks.named('test') {

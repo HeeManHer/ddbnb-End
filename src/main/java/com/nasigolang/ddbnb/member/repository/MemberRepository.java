@@ -22,7 +22,5 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     @Query("SELECT COUNT(*) FROM Member m WHERE m.signDate = :now")
     int findNewMember(LocalDate now);
 
-    Page<Member> findBySignDate(Pageable page, LocalDate now);
-
-    Page<Member> findByNicknameContainingAndSignDate(Pageable pageable, String nickname, LocalDate signDate);
+    Page<Member> findByNicknameContainingAndSignDate(Pageable page, String nickname, LocalDate signDate);
 }

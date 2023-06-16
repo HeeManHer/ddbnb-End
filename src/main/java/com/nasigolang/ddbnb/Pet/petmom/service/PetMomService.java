@@ -4,17 +4,16 @@ import com.nasigolang.ddbnb.Pet.petmom.dto.OtherDTO;
 import com.nasigolang.ddbnb.Pet.petmom.dto.PetMomDTO;
 import com.nasigolang.ddbnb.Pet.petmom.entity.PetMom;
 import com.nasigolang.ddbnb.Pet.petmom.repositroy.PetMomRepository;
-
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.data.domain.*;
-import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.util.List;
-import java.util.stream.Collectors;
 
 
 @Service
@@ -31,7 +30,7 @@ public class PetMomService {
     }
 
     public Page<PetMomDTO> findAllPetMoms(Pageable page) {
-        page = PageRequest.of(page.getPageNumber() <= 0 ? 0 : page.getPageNumber() - 1, 8, Sort.by("memberId"));
+        page = PageRequest.of(page.getPageNumber() <= 0 ? 0 : page.getPageNumber() - 1, page.getPageSize(), Sort.by("memberId"));
 
         return petMomRepository.findAll(page).map(petMom -> modelMapper.map(petMom, PetMomDTO.class));
 

@@ -15,11 +15,11 @@ public class Pagenation {
 
         endPage = startPage + buttonAmount - 1;
 
-        if(maxPage < endPage) {
+        if (maxPage < endPage) {
             endPage = maxPage;
         }
 
-        if(maxPage == 0 && endPage == 0) {
+        if (maxPage == 0 && endPage == 0) {
             maxPage = startPage;
             endPage = startPage;
         }
@@ -28,4 +28,5 @@ public class Pagenation {
 
         return selectCriteria;
     }
+
 }

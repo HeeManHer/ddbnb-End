@@ -2,9 +2,10 @@ package com.nasigolang.ddbnb.jwt;
 
 
 import com.nasigolang.ddbnb.exception.TokenException;
+import com.nasigolang.ddbnb.login.dto.AccessTokenDTO;
 import com.nasigolang.ddbnb.member.dto.MemberDTO;
-
 import com.nasigolang.ddbnb.member.entity.Member;
+
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -19,8 +20,6 @@ import org.springframework.stereotype.Component;
 
 import java.security.Key;
 import java.util.Date;
-
-import com.nasigolang.ddbnb.login.dto.AccessTokenDTO;
 
 @Component
 public class TokenProvider {

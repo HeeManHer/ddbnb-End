@@ -15,14 +15,10 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.nio.charset.Charset;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Date;
 
 @RestController
 @RequestMapping("/api/v1")
@@ -42,19 +38,13 @@ public class ReviewController {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
 
-        Map<String, Object> responseMap = new HashMap<>();
-
         Page<ReviewDTO> reviews = reviewService.findAllReview(pageable);
         SelectCriteria selectCriteria = Pagenation.getSelectCriteria(reviews);
 
         ResponseDtoWithPaging data = new ResponseDtoWithPaging(reviews.getContent(), selectCriteria);
-//        responseMap.put("reviews", reviews.getContent());
+        //        responseMap.put("reviews", reviews.getContent());
 
-        return new ResponseEntity<>(
-                new ResponseDto(HttpStatus.OK, "조회성공", data),
-                headers,
-                HttpStatus.OK
-        );
+        return new ResponseEntity<>(new ResponseDto(HttpStatus.OK, "조회성공", data), headers, HttpStatus.OK);
     }
 
     @ApiOperation("리뷰코드로 리뷰 조회")
@@ -64,17 +54,20 @@ public class ReviewController {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
 
-        ReviewDTO foundReview = reviewService.findReviewById(reviewId);
+        return ResponseEntity.ok().headers(headers).body(new ResponseDto(HttpStatus.OK, "조회성공", reviewService.findReviewById(reviewId)));
+    }
 
-        System.out.println(foundReview);
+    @ApiOperation("리뷰 작성")
+    @PostMapping("/reviews")
+    public ResponseEntity<ResponseDto> registNewReview(@RequestBody ReviewDTO newReview) {
 
-        Map<String, Object> responseMap = new HashMap<>();
-        responseMap.put("reviews", foundReview);
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
 
-        return ResponseEntity
-                .ok()
-                .headers(headers)
-                .body(new ResponseDto(HttpStatus.OK,  "조회성공", responseMap));
+        newReview.setReviewWriteDate(new Date());
+        reviewService.postReview(newReview);
+
+        return ResponseEntity.ok().headers(headers).body(new ResponseDto(HttpStatus.OK, "생성성공", newReview));
     }
 
 }
