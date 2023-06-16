@@ -1,8 +1,6 @@
 package com.nasigolang.ddbnb.config;
 
 
-import java.util.Arrays;
-
 import com.nasigolang.ddbnb.jwt.JwtAccessDeniedHandler;
 import com.nasigolang.ddbnb.jwt.JwtAuthenticationEntryPoint;
 import com.nasigolang.ddbnb.jwt.TokenProvider;
@@ -21,6 +19,8 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.Arrays;
 
 @Configuration
 @EnableWebSecurity(debug = true)
