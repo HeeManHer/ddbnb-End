@@ -1,6 +1,9 @@
 package com.nasigolang.ddbnb.Pet.petmom.dto;
 
+
+//import com.nasigolang.ddbnb.Pet.Applicant.ApplicantDTO;
 import com.nasigolang.ddbnb.member.dto.MemberDTO;
+import com.nasigolang.ddbnb.Pet.petmom.dto.OtherDTO;
 import lombok.*;
 
 import java.time.LocalDate;
@@ -12,6 +15,8 @@ import java.util.Date;
 @Getter
 @ToString
 public class PetMomDTO {
+
+
 
     private int petMomId;
 
@@ -45,4 +50,7 @@ public class PetMomDTO {
 
     private MemberDTO memberId;
 
+    private OtherDTO otherId;
+
+//    private ApplicantDTO joinMemberId;
 }

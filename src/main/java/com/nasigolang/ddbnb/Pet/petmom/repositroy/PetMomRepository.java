@@ -16,7 +16,7 @@ public interface PetMomRepository extends JpaRepository<PetMom, Integer> {
 
 
 
-    Page<PetMom> findPetMomByLocationOrStartDateOrEndDateOrPetYNOrOther(Pageable page, String location, LocalDate startDate, LocalDate endDate, boolean petYN, String other);
+//    Page<PetMom> findPetMomByLocationOrStartDateOrEndDateOrPetYNOrOther(Pageable page, String location, LocalDate startDate, LocalDate endDate, boolean isPetYN, String other);
 
 
 }

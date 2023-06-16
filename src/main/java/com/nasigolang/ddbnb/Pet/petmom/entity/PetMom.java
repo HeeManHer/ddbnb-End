@@ -74,12 +74,9 @@ public class PetMom {
     @ManyToOne
     private Member memberId;
 
-
-    @OneToMany(mappedBy = "boardId")
-    private List<ApplicantEntity> applicants;
-
+    @JoinColumn(name = "OTHER")
     @OneToMany
-    private List<OtherEntity> other;
+    private List<OtherEntity> OtherEntity;
 
 
 }
