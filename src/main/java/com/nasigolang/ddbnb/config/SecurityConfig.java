@@ -1,8 +1,6 @@
 package com.nasigolang.ddbnb.config;
 
 
-import java.util.Arrays;
-
 import com.nasigolang.ddbnb.jwt.JwtAccessDeniedHandler;
 import com.nasigolang.ddbnb.jwt.JwtAuthenticationEntryPoint;
 import com.nasigolang.ddbnb.jwt.TokenProvider;
@@ -21,6 +19,8 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.Arrays;
 
 @Configuration
 @EnableWebSecurity(debug = true)
@@ -78,16 +78,16 @@ public class SecurityConfig {
                 // 시큐리티는 기본적으로 세션을 사용하지만 API 서버에선 세션을 사용하지 않기 때문에 세션 설정을 Stateless 로 설정
                 .and()
                 .sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
-                // 로그인, 회원가입 API 는 토큰이 없는 상태에서 요청이 들어오기 때문에 permitAll 설정
-                .and()
-                .formLogin().disable()
-                .httpBasic().disable()
-                .cors()
-                .and()
-                //JwtFilter 를 addFilterBefore 로 등록했던 JwtSecurityConfig 클래스를 적용
-                .apply(new JwtSecurityConfig(tokenProvider));
+//                // 로그인, 회원가입 API 는 토큰이 없는 상태에서 요청이 들어오기 때문에 permitAll 설정
+//                .and()
+//                .formLogin().disable()
+//                .httpBasic().disable()
+//                .cors()
+//                .and()
+//                //JwtFilter 를 addFilterBefore 로 등록했던 JwtSecurityConfig 클래스를 적용
+//                .apply(new JwtSecurityConfig(tokenProvider));
 
         return http.build();
     }
