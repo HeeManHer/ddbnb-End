@@ -1,5 +1,6 @@
 package com.nasigolang.ddbnb.Pet.petsitter.service;
 
+import com.nasigolang.ddbnb.Pet.petsitter.dto.PetsitterDTO;
 import com.nasigolang.ddbnb.Pet.petsitter.dto.PetsitterboardDTO;
 import com.nasigolang.ddbnb.Pet.petsitter.entity.PetsitterEntity;
 import com.nasigolang.ddbnb.Pet.petsitter.repository.PetsitterRepository;
@@ -13,6 +14,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 
 
 @Service
@@ -26,14 +29,9 @@ public class PetsitterService {
 
         page = PageRequest.of(page.getPageNumber() <= 0 ? 0 : page.getPageNumber() - 1, page.getPageSize(), Sort.by("memberId"));
 
-        return petSitterRepository.findPetsitterEntityByLocationAndPetSizeAndCareAndStartDateAndEndDate(
+        return petSitterRepository.findPetsitterEntityByLocationOrPetSizeOrCareOrStartDateOrEndDate(
                 page, location, petSize, care, startDate, endDate).map(list -> modelMapper.map(list, PetsitterboardDTO.class));
     }
-
-
-
-
-
 
 
     @Transactional
@@ -64,5 +62,14 @@ public class PetsitterService {
     @Transactional
     public void deletePetSitter(Long borderId) {
         petSitterRepository.deleteById(borderId);
+    }
+
+    public PetsitterboardDTO findPetsitterByBoardNo(Long boardId) {
+
+//        return modelMapper.map(petSitterRepository.findById(boardId),PetsitterboardDTO.class);
+        return petSitterRepository.findById(boardId)
+                .map(petsitterboard -> modelMapper.map(petsitterboard, PetsitterboardDTO.class))
+                .orElseThrow(() -> new NoSuchElementException("펫시터를 찾을 수 없습니다."));
+
     }
 }

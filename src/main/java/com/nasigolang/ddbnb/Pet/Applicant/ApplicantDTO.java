@@ -1,16 +1,17 @@
-package com.nasigolang.ddbnb.Pet.Applicant;
+package com.nasigolang.ddbnb.Pet.applicant;
+
+import com.nasigolang.ddbnb.member.entity.Member;
 import lombok.*;
 
 @AllArgsConstructor
 @NoArgsConstructor
-@Setter
 @Getter
+@Setter
 @ToString
 public class ApplicantDTO {
 
-    private int joinMemberId;
+    private int applicantId;
+    private Member member;
+    private long boardId;
 
 }
-
-
-
