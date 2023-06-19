@@ -1,51 +1,47 @@
 package com.nasigolang.ddbnb.Pet.petmom.entity;
 
-import com.nasigolang.ddbnb.Pet.ApplicantEntity;
+
 import com.nasigolang.ddbnb.member.entity.Member;
 import lombok.*;
-import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import java.time.LocalDate;
-import java.util.Date;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter
 @Setter
+@Getter
 @ToString
-@Table(name = "PETMOM")
 @Entity(name = "PetMom")
-@SequenceGenerator(name = "PETMOM_SEQ_GENERATOR", initialValue = 1, allocationSize = 1, sequenceName = "SEQ_PETMOM_ID")
+@Table(name = "PET_MOM")
 public class PetMom {
-    @Id
-    @Column(name = "PETMOM_ID")
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "PETMOM_SEQ_GENERATOR")
-    private int petMomId;
-
-    @Column(name = "PETMOM_TITLE")
-    private String petMomTitle;
-
-    @Column(name = "PETMOM_CATEGORY")
-    private String petMomCategory;
-
-    @Column(name = "PETMOM_DATE", columnDefinition = "DATE DEFAULT SYSDATE")
-    @Temporal(TemporalType.DATE)
-    private Date petMomDate;
-
 
     @Column(name = "HOURLY_RATE")
-    private int hourlyRate;
+    private int hourlyRate; // 시간 당 요금`
 
     @Column(name = "DATE_RATE")
-    private int dateRate;
+    private int dateRate;  // 1일 요금
 
     @Column(name = "HOUSE_TYPE")
-    private String houseType;
+    private String houseType; // 주거형태
 
     @Column(name = "PET_YN")
-    private boolean petYN;
+    private boolean petYN; // 펫 유무
+    @Id
+    @Column(name = "BOARD_ID")
+    private int boardId;
+
+    @Column(name = "BOARD_TITLE")
+    private String boardTitle;
+
+    @Column(name = "BOARD_CATEGORY")
+    private String boardCategory;
+
+    @Column(name = "BOARD_DATE")
+    private LocalDate boardDate;
 
     @Column(name = "LOCATION")
     private String location;
@@ -54,32 +50,22 @@ public class PetMom {
     private String care;
 
     @Column(name = "START_DATE")
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate startDate;
 
     @Column(name = "END_DATE")
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate endDate;
 
     @Column(name = "SIGNFICANT")
-    private String signficant;
+    private String signficant; // 특이사항
 
     @Column(name = "REQUEST")
-    private String request;
+    private String request; // 요청사항
 
-    @Column(name = "IMG")
-    private byte[] img;
-
-    @JoinColumn(name = "MEMBER_ID")
     @ManyToOne
+    @JoinColumn(name = "MEMBER_ID")
     private Member memberId;
 
-
-    @OneToMany(mappedBy = "boardId")
-    private List<ApplicantEntity> applicants;
-
-    @OneToMany
-    private List<OtherEntity> other;
-
-
+    @ManyToMany
+    @JoinTable(name = "OTHER", joinColumns = @JoinColumn(name = "BOARD_ID"), inverseJoinColumns = @JoinColumn(name = "TYPE_ID"))
+    private List<OtherType> otherCondition = new ArrayList<>();
 }

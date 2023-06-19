@@ -36,8 +36,10 @@ public class PetMomController {
     public ResponseEntity<ResponseDto> registNewReport(@RequestBody PetMomDTO newPetmom){
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
-        newPetmom.setPetMomDate(new Date());
+//        newPetmom.setBoardDate(new Date());
+        System.out.println(newPetmom);
         petmomService.registNewPetMom(newPetmom);
+
 
         return ResponseEntity.ok().headers(headers).body(new ResponseDto(HttpStatus.OK, "생성 성공", null));
 
@@ -60,22 +62,22 @@ public class PetMomController {
 
         return new ResponseEntity<>(new ResponseDto(HttpStatus.OK, "조회성공", data), headers, HttpStatus.OK);
     }
-    @GetMapping("/list/find")
-    public  ResponseEntity<ResponseDto> findPetMom(@PageableDefault Pageable pageable,
-                                                   @RequestParam(name= "location",defaultValue ="")String location,
-                                                   @RequestParam(name ="startDate",defaultValue = "")@DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate,
-                                                   @RequestParam(name = "endDate",defaultValue = "")@DateTimeFormat(pattern = "yyyy-MM-dd")LocalDate endDate,
-                                                   @RequestParam(name="petYN", defaultValue = "")Boolean petYN,
-                                                   @RequestParam(name="other", defaultValue = "")String other){
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
-
-        Page<PetMomDTO> petMoms = petmomService.findPetMom(pageable,location,startDate,endDate,petYN,other);
-        SelectCriteria selectCriteria = Pagenation.getSelectCriteria(petMoms);
-
-        ResponseDtoWithPaging data = new ResponseDtoWithPaging(petMoms.getContent(), selectCriteria);
-        return new ResponseEntity<>(new ResponseDto(HttpStatus.OK, "조회성공", data), headers, HttpStatus.OK);
-    }
+//    @GetMapping("/list/find")
+//    public  ResponseEntity<ResponseDto> findPetMom(@PageableDefault Pageable pageable,
+//                                                   @RequestParam(name= "location",defaultValue ="")String location,
+//                                                   @RequestParam(name ="startDate",defaultValue = "")@DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate,
+//                                                   @RequestParam(name = "endDate",defaultValue = "")@DateTimeFormat(pattern = "yyyy-MM-dd")LocalDate endDate,
+//                                                   @RequestParam(name="petYN", defaultValue = "")Boolean petYN,
+//                                                   @RequestParam(name="other", defaultValue = "")String other){
+//        HttpHeaders headers = new HttpHeaders();
+//        headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
+//
+//        Page<PetMomDTO> petMoms = petmomService.findPetMom(pageable,location,startDate,endDate,petYN,other);
+//        SelectCriteria selectCriteria = Pagenation.getSelectCriteria(petMoms);
+//
+//        ResponseDtoWithPaging data = new ResponseDtoWithPaging(petMoms.getContent(), selectCriteria);
+//        return new ResponseEntity<>(new ResponseDto(HttpStatus.OK, "조회성공", data), headers, HttpStatus.OK);
+//    }
 }
 
 
