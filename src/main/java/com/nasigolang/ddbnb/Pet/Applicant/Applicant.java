@@ -1,40 +1,37 @@
-package com.nasigolang.ddbnb.Pet.Applicant;
+package com.nasigolang.ddbnb.Pet.applicant;
 
 import com.nasigolang.ddbnb.member.entity.Member;
-import com.nasigolang.ddbnb.Pet.petmom.entity.PetMom;
 import lombok.*;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
 @ToString
-@Entity(name = "APPLICANT")
-@Table(name = "Applicant")
+@Table(name = "APPLICANT")
+@Entity(name="Applicant")
 @SequenceGenerator(
-        name = "applicant_sequence_generator",
+        name="applicant_sequence_generator",
         sequenceName = "sequence_applicant_id",
         initialValue = 1,
         allocationSize = 50
 )
-public class Applicant{
+public class Applicant implements Serializable {
 
     @Id
-    @Column(name = "JOIN_MEMBER_ID")
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "applicant_sequence_generator")
-    private int joinMemberId;
+    @Column(name="APPLICANT_ID")
+    @GeneratedValue(
+            strategy = GenerationType.SEQUENCE,
+            generator = "applicant_sequence_generator")
+    private long applicantId;
 
-
+    @JoinColumn(name="MEMBER_ID")
     @ManyToOne
-    @JoinColumn(name = "MEMBER_ID")
-    private Member member;
+    private Member memberId;
 
-    @ManyToOne
-    @JoinColumn(name = "PETMOM_ID")
-    private PetMom petMom;
-
+    @Column(name="BOARD_ID")
+    private long boardId;
 }
