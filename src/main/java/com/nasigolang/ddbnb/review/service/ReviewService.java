@@ -31,9 +31,9 @@ public class ReviewService {
 
     private long reviewId;
 
-    public ReviewService(ReviewRepository reviewRepository, ModelMapper modelMapper,
-            MemberRepository memberRepository) {
+    public ReviewService(ReviewRepository reviewRepository, MemberRepository memberRepository, ModelMapper modelMapper) {
         this.reviewRepository = reviewRepository;
+        this.memberRepository = memberRepository;
         this.modelMapper = modelMapper;
         this.memberRepository = memberRepository;
     }
