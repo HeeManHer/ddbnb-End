@@ -56,6 +56,20 @@ public class MemberService {
         return modelMapper.map(foundMember, MemberSimpleDTO.class);
     }
 
+    @Transactional
+    public MemberSimpleDTO updateprofile(long memberId, MemberSimpleDTO updateMember) {
+
+        Member member = memberRepository.findById(memberId).get();
+
+        member.setNickname(updateMember.getNickname());
+        member.setPetSitterCareer(updateMember.getPetSitterCareer());
+        member.setExperience(updateMember.getExperience());
+        member.setDetailedHistory(updateMember.getDetailedHistory());
+        member.setPreferredArea(updateMember.getPreferredArea());
+
+        return modelMapper.map(member, MemberSimpleDTO.class);
+    }
+
     public Page<MemberSimpleDTO> findAllMembers(Pageable page, Map<String, Object> searchValue) {
 
         page = PageRequest.of(page.getPageNumber() <= 0 ? 0 : page.getPageNumber() - 1, page.getPageSize(), Sort.by("memberId"));
@@ -185,6 +199,8 @@ public class MemberService {
                 }
         }
     }
+
+
 
     public Member findBySocialId(String socialLogin, String socialId) {
         System.out.println(5);
