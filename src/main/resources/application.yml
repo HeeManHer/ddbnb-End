@@ -11,14 +11,21 @@ spring:
     password: GOLANG
     hikari:
       auto-commit: false
-  web:
-    resources:
-      static-locations: classpath:/imgs/
   servlet:
     multipart:
       enabled: true
       max-file-size: 10MB
       max-request-size: 10MB
+  devtools:
+    restart:
+      enabled: false
+    livereload:
+      enabled: true
+  freemarker:
+    cache: false
+  web:
+    resources:
+      static-locations: classpath:/imgs/
 
   jpa:
     generate-ddl: true

@@ -14,6 +14,7 @@ import java.time.LocalDate;
 @Table(name = "MEMBER")
 @SequenceGenerator(name = "member_sequence_generator", sequenceName = "sequence_member_id", initialValue = 1, allocationSize = 50)
 public class Member {
+
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "member_sequence_generator")
     @Column(name = "MEMBER_ID")
