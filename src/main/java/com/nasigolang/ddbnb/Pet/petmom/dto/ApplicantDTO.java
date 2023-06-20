@@ -1,4 +1,4 @@
-package com.nasigolang.ddbnb.Pet.petmom.dto;
+package com.nasigolang.ddbnb.pet.petmom.dto;
 
 import com.nasigolang.ddbnb.member.entity.Member;
 import lombok.*;

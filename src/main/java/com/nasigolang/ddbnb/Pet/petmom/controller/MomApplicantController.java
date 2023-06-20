@@ -1,13 +1,12 @@
 package com.nasigolang.ddbnb.pet.petmom.controller;
 
 
-
-import com.nasigolang.ddbnb.Pet.petmom.dto.ApplicantDTO;
-import com.nasigolang.ddbnb.Pet.petmom.service.MomApplicantService;
 import com.nasigolang.ddbnb.common.ResponseDto;
 import com.nasigolang.ddbnb.common.paging.Pagenation;
 import com.nasigolang.ddbnb.common.paging.ResponseDtoWithPaging;
 import com.nasigolang.ddbnb.common.paging.SelectCriteria;
+import com.nasigolang.ddbnb.pet.petmom.dto.ApplicantDTO;
+import com.nasigolang.ddbnb.pet.petmom.service.MomApplicantService;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -29,14 +28,14 @@ public class MomApplicantController {
     private final MomApplicantService momApplicantService;
 
     @GetMapping("/{boardId}")
-    @ApiOperation(value="신청자 목록 조회")
+    @ApiOperation(value = "신청자 목록 조회")
     public ResponseEntity<ResponseDto> findMomApplicantList(@PageableDefault Pageable page,
-                                                         @PathVariable ("boardId")int boardId){
+            @PathVariable("boardId") int boardId) {
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
 
-        Page<ApplicantDTO> applicantList = momApplicantService.findMomApplicantList(page,boardId);
+        Page<ApplicantDTO> applicantList = momApplicantService.findMomApplicantList(page, boardId);
         SelectCriteria selectCriteria = Pagenation.getSelectCriteria(applicantList);
         ResponseDtoWithPaging data = new ResponseDtoWithPaging(applicantList.getContent(), selectCriteria);
 
@@ -44,7 +43,7 @@ public class MomApplicantController {
     }
 
     @PostMapping("regist")
-    public ResponseEntity<ResponseDto> registApllicant(@RequestBody ApplicantDTO newApplicant){
+    public ResponseEntity<ResponseDto> registApllicant(@RequestBody ApplicantDTO newApplicant) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
 

@@ -24,6 +24,5 @@ public class MemberSimpleDTO {
     private String petSitterCareer;
     private String starPoint;
     private String detailedHistory;
-    private String gender;
 
 }

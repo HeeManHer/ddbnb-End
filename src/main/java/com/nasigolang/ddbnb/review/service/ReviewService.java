@@ -31,11 +31,11 @@ public class ReviewService {
 
     private long reviewId;
 
-    public ReviewService(ReviewRepository reviewRepository, MemberRepository memberRepository, ModelMapper modelMapper) {
+    public ReviewService(ReviewRepository reviewRepository, MemberRepository memberRepository,
+            ModelMapper modelMapper) {
         this.reviewRepository = reviewRepository;
         this.memberRepository = memberRepository;
         this.modelMapper = modelMapper;
-        this.memberRepository = memberRepository;
     }
 
     //전체리뷰 조회

@@ -1,11 +1,10 @@
-package com.nasigolang.ddbnb.Pet.petmom.dto;
+package com.nasigolang.ddbnb.pet.petmom.dto;
 
 
 import com.nasigolang.ddbnb.member.dto.MemberDTO;
 import lombok.*;
 
 import java.time.LocalDate;
-import java.util.Date;
 import java.util.List;
 
 @AllArgsConstructor

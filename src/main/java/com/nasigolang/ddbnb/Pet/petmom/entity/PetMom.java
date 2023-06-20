@@ -1,5 +1,4 @@
-
-package com.nasigolang.ddbnb.Pet.petmom.entity;
+package com.nasigolang.ddbnb.pet.petmom.entity;
 
 import com.nasigolang.ddbnb.member.entity.Member;
 import lombok.*;
@@ -31,9 +30,7 @@ public class PetMom {
     private boolean petYN; // 펫 유무
     @Id
     @Column(name = "BOARD_ID")
-    @GeneratedValue(
-            strategy = GenerationType.SEQUENCE,
-            generator = "petmom_sequence_generator")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "petmom_sequence_generator")
     private int boardId;
 
     @Column(name = "BOARD_TITLE")
