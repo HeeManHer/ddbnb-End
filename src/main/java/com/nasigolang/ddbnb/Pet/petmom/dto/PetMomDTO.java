@@ -1,13 +1,12 @@
 package com.nasigolang.ddbnb.Pet.petmom.dto;
 
 
-//import com.nasigolang.ddbnb.Pet.Applicant.ApplicantDTO;
 import com.nasigolang.ddbnb.member.dto.MemberDTO;
-import com.nasigolang.ddbnb.Pet.petmom.dto.OtherDTO;
 import lombok.*;
 
 import java.time.LocalDate;
 import java.util.Date;
+import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -15,42 +14,21 @@ import java.util.Date;
 @Getter
 @ToString
 public class PetMomDTO {
-
-
-
-    private int petMomId;
-
-    private String petMomTitle;
-
-    private String petMomCategory;
-
-    private Date petMomDate;
-
-    private String Care;
-
-    private LocalDate startDate;
-
-    private LocalDate endDate;
-
+    private int boardId;
+    private String boardTitle;
+    private String boardCategory;
+    private LocalDate boardDate;
     private String location;
-
-    private String signficant;
-
-    private String request;
-
-    private byte[] img;
-
-    private int hourlyRate;
-
-    private int dateRate;
-
-    private String  houseType;
-
-    private boolean petYN;
-
+    private String care;
+    private LocalDate startDate;
+    private LocalDate endDate;
+    private String signficant; // 특이사항
+    private String request; // 요청사항
     private MemberDTO memberId;
-
-    private OtherDTO otherId;
-
-//    private ApplicantDTO joinMemberId;
+    private List<ApplicantDTO> apllicantList;
+    private int hourlyRate;
+    private int dateRate;
+    private String houseType;
+    private boolean petYN;
+    private List<OtherTypeDTO> otherCondition;
 }

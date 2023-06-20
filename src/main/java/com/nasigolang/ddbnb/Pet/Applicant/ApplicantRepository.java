@@ -1,4 +1,4 @@
-package com.nasigolang.ddbnb.Pet.Applicant;
+package com.nasigolang.ddbnb.Pet.applicant;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
