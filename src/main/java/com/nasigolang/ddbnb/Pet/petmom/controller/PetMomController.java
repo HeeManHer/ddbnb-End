@@ -1,4 +1,4 @@
-package com.nasigolang.ddbnb.Pet.petmom.controller;
+package com.nasigolang.ddbnb.pet.petmom.controller;
 
 import com.nasigolang.ddbnb.Pet.petmom.dto.PetMomDTO;
 import com.nasigolang.ddbnb.Pet.petmom.service.PetMomService;
