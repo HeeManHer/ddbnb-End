@@ -1,4 +1,4 @@
-package com.nasigolang.ddbnb.Pet.applicant;
+package com.nasigolang.ddbnb.pet.applicant;
 
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
