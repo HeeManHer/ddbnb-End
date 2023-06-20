@@ -11,6 +11,6 @@ public interface PetsitterRepository extends JpaRepository<PetsitterEntity, Long
 
 
 
-    Page <PetsitterEntity> findPetsitterEntityByLocationAndPetSizeAndCareAndStartDateAndEndDate(Pageable page, String location, String petSize, String care, LocalDate startDate, LocalDate endDate);
+    Page <PetsitterEntity> findPetsitterEntityByLocationOrPetSizeOrCareOrStartDateOrEndDate(Pageable page, String location, String petSize, String care, LocalDate startDate, LocalDate endDate);
 
 }

@@ -43,7 +43,7 @@ public class Review {
     @Column(name = "REVIEW_STAR_POINT")
     private int reviewStarPoint;
 
-    @Column(name = "REVIEW_IMAGE")
+    @Column(name = "REVIEW_IMAGE_URL")
     private String reviewImageUrl;
 
 }

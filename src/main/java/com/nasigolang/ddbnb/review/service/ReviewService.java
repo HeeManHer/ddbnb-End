@@ -21,7 +21,6 @@ import java.util.UUID;
 public class ReviewService {
 
     private final ReviewRepository reviewRepository;
-
     private final MemberRepository memberRepository;
     private final ModelMapper modelMapper;
 
@@ -36,6 +35,7 @@ public class ReviewService {
         this.reviewRepository = reviewRepository;
         this.memberRepository = memberRepository;
         this.modelMapper = modelMapper;
+        this.memberRepository = memberRepository;
     }
 
     //전체리뷰 조회
@@ -66,6 +66,7 @@ public class ReviewService {
             } catch(IOException e) {
                 throw new RuntimeException(e);
             }
+
         }
         reviewRepository.save(modelMapper.map(newReview, Review.class));
 

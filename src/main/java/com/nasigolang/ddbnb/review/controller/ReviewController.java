@@ -61,11 +61,14 @@ public class ReviewController {
     @PostMapping("/reviews")
     public ResponseEntity<ResponseDto> registNewReview(@RequestBody ReviewDTO newReview) {
 
+
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
 
         newReview.setReviewWriteDate(new Date());
         reviewService.postReview(newReview);
+        
+        System.out.println(newReview);
 
         return ResponseEntity.ok().headers(headers).body(new ResponseDto(HttpStatus.OK, "생성성공", newReview));
     }

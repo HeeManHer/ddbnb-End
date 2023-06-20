@@ -1,19 +1,21 @@
+
 package com.nasigolang.ddbnb.Pet.petmom.service;
 
-import com.nasigolang.ddbnb.Pet.petmom.dto.OtherDTO;
 import com.nasigolang.ddbnb.Pet.petmom.dto.PetMomDTO;
+import com.nasigolang.ddbnb.Pet.petmom.entity.OtherType;
 import com.nasigolang.ddbnb.Pet.petmom.entity.PetMom;
 import com.nasigolang.ddbnb.Pet.petmom.repositroy.PetMomRepository;
+
+import com.nasigolang.ddbnb.Pet.petsitter.dto.PetsitterboardDTO;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -30,40 +32,48 @@ public class PetMomService {
     }
 
     public Page<PetMomDTO> findAllPetMoms(Pageable page) {
-        page = PageRequest.of(page.getPageNumber() <= 0 ? 0 : page.getPageNumber() - 1, page.getPageSize(), Sort.by("memberId"));
+        page = PageRequest.of(page.getPageNumber() <= 0 ? 0 : page.getPageNumber() - 1, 8, Sort.by("memberId"));
 
+//        System.out.println(petMomRepository.findById(3));
         return petMomRepository.findAll(page).map(petMom -> modelMapper.map(petMom, PetMomDTO.class));
 
     }
+
     @Transactional
-    public void modifypetMom(PetMomDTO modifypetmom) {
+    public void modifyPetMom(PetMomDTO modifyPetMom) {
 
-        PetMom foundPetMom = petMomRepository.findById(modifypetmom.getPetMomId()).get();
+        PetMom foundPetMom = petMomRepository.findById(modifyPetMom.getBoardId()).get();
 
-        foundPetMom.setPetMomTitle((modifypetmom.getPetMomTitle()));
-        foundPetMom.setLocation(modifypetmom.getLocation());
-//        foundPetMom.setPetYN(modifypetmom.getPetYN());
-        foundPetMom.setPetMomCategory(modifypetmom.getPetMomCategory());
-        foundPetMom.setCare(modifypetmom.getCare());
-        foundPetMom.setEndDate(modifypetmom.getEndDate());
-        foundPetMom.setDateRate(modifypetmom.getDateRate());
-        foundPetMom.setHourlyRate(modifypetmom.getHourlyRate());
-//        foundPetMom.setOther(modifypetmom.getother());
-        foundPetMom.setRequest(modifypetmom.getRequest());
-        foundPetMom.setImg(modifypetmom.getImg());
-        foundPetMom.setSignficant(modifypetmom.getSignficant());
-        foundPetMom.setStartDate(modifypetmom.getStartDate());
-        foundPetMom.setPetMomCategory(modifypetmom.getPetMomCategory());
-        foundPetMom.setHouseType(modifypetmom.getHouseType());
+        foundPetMom.setHouseType(modifyPetMom.getHouseType());
+        foundPetMom.setPetYN(modifyPetMom.isPetYN());
+        foundPetMom.setStartDate(modifyPetMom.getStartDate());
+        foundPetMom.setRequest(modifyPetMom.getRequest());
+        foundPetMom.setSignficant(modifyPetMom.getSignficant());
+        foundPetMom.setCare(modifyPetMom.getCare());
+        foundPetMom.setDateRate(modifyPetMom.getDateRate());
+        foundPetMom.setLocation(modifyPetMom.getLocation());
+        foundPetMom.setEndDate(modifyPetMom.getEndDate());
+        foundPetMom.setHourlyRate(modifyPetMom.getHourlyRate());
+        foundPetMom.setBoardCategory(modifyPetMom.getBoardCategory());
+        foundPetMom.setBoardTitle(modifyPetMom.getBoardTitle());
+        foundPetMom.setOtherCondition(modifyPetMom.getOtherCondition().stream().map(list -> modelMapper.map(list, OtherType.class)).collect(Collectors.toList()));
+    }
+    @Transactional
+    public void deletePetMom(int borderId) { petMomRepository.deleteById(borderId);
+
     }
 
-    public void deletePetMom(int petMomId) { petMomRepository.deleteById(petMomId);
+    public PetMomDTO findPetMomByBoardNo(int boardId) {
+        return petMomRepository.findById(boardId)
+                .map(petMomboard -> modelMapper.map(petMomboard, PetMomDTO.class))
+                .orElseThrow(() -> new NoSuchElementException("펫시터를 찾을 수 없습니다."));
+
     }
 
 
-//    public Page<PetMomDTO> findPetMom(Pageable page, String location, LocalDate startDate, LocalDate endDate, boolean isPetYN, String other) {
+//    public Page<PetMomDTO> findPetMom(Pageable page, String location, LocalDate startDate, LocalDate endDate, boolean petYN, String other) {
 //        page = PageRequest.of(page.getPageNumber() <= 0 ? 0 : page.getPageNumber() - 1, 8, Sort.by("memberId"));
-//        return petMomRepository.findPetMomByLocationOrStartDateOrEndDateOrPetYNOrOther(page, location, startDate, endDate, isPetYN, other).map(list -> modelMapper.map(list, PetMomDTO.class));
+//        return petMomRepository.findBoardByLocationOrStartDateOrEndDateOrPetYNOrOther(page, location, startDate, endDate, petYN, other).map(list -> modelMapper.map(list, PetMomDTO.class));
 //    }
 }
 

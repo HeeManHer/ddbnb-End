@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
 import java.nio.charset.Charset;
 import java.time.LocalDate;
 import java.util.Date;
+import java.util.Optional;
 
 
 @RestController
@@ -50,6 +51,17 @@ public class PetsitterController {
         ResponseDtoWithPaging data = new ResponseDtoWithPaging(petsitterList.getContent(), selectCriteria);
 
         return ResponseEntity.ok().headers(headers).body(new ResponseDto(HttpStatus.OK, "조회 성공", data));
+    }
+
+    @GetMapping("/list/{boardid}")
+    @ApiOperation(value="펫시터 상세 조회")
+    public ResponseEntity<ResponseDto> findList(@PathVariable("boardid") Long boardId) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
+
+        PetsitterboardDTO petsitter = petsitterService.findPetsitterByBoardNo(boardId);
+
+        return ResponseEntity.ok().headers(headers).body(new ResponseDto(HttpStatus.OK, "조회 성공", petsitter));
     }
 
     @PostMapping("/regist")
@@ -84,4 +96,5 @@ public class PetsitterController {
 
         return ResponseEntity.ok().headers(headers).body(new ResponseDto(HttpStatus.OK, "삭제 성공", null));
     }
+
 }
