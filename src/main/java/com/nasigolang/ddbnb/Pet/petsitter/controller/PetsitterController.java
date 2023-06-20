@@ -1,13 +1,11 @@
-package com.nasigolang.ddbnb.Pet.petsitter.controller;
+package com.nasigolang.ddbnb.pet.petsitter.controller;
 
-import com.nasigolang.ddbnb.Pet.petsitter.dto.PetsitterDTO;
-import com.nasigolang.ddbnb.Pet.petsitter.dto.PetsitterboardDTO;
-import com.nasigolang.ddbnb.Pet.petsitter.service.PetsitterService;
+import com.nasigolang.ddbnb.pet.petsitter.dto.PetsitterboardDTO;
+import com.nasigolang.ddbnb.pet.petsitter.service.PetsitterService;
 import com.nasigolang.ddbnb.common.ResponseDto;
 import com.nasigolang.ddbnb.common.paging.Pagenation;
 import com.nasigolang.ddbnb.common.paging.ResponseDtoWithPaging;
 import com.nasigolang.ddbnb.common.paging.SelectCriteria;
-import com.nasigolang.ddbnb.member.entity.Member;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -22,8 +20,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.nio.charset.Charset;
 import java.time.LocalDate;
-import java.util.Date;
-import java.util.Optional;
 
 
 @RestController

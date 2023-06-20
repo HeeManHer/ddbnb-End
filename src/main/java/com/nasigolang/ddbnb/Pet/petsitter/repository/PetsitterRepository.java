@@ -1,6 +1,6 @@
-package com.nasigolang.ddbnb.Pet.petsitter.repository;
+package com.nasigolang.ddbnb.pet.petsitter.repository;
 
-import com.nasigolang.ddbnb.Pet.petsitter.entity.PetsitterEntity;
+import com.nasigolang.ddbnb.pet.petsitter.entity.PetsitterEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

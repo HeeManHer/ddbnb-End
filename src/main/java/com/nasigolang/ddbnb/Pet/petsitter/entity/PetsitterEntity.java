@@ -1,4 +1,4 @@
-package com.nasigolang.ddbnb.Pet.petsitter.entity;
+package com.nasigolang.ddbnb.pet.petsitter.entity;
 
 import com.nasigolang.ddbnb.member.entity.Member;
 import lombok.*;
@@ -7,7 +7,6 @@ import org.springframework.format.annotation.DateTimeFormat;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDate;
-import java.util.Date;
 
 
 @AllArgsConstructor

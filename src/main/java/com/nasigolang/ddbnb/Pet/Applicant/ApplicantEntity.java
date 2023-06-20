@@ -1,4 +1,4 @@
-package com.nasigolang.ddbnb.Pet.applicant;
+package com.nasigolang.ddbnb.pet.applicant;
 
 import com.nasigolang.ddbnb.member.entity.Member;
 import lombok.*;
@@ -19,7 +19,7 @@ import java.io.Serializable;
         initialValue = 1,
         allocationSize = 50
 )
-public class Applicant implements Serializable {
+public class ApplicantEntity implements Serializable {
 
     @Id
     @Column(name="APPLICANT_ID")

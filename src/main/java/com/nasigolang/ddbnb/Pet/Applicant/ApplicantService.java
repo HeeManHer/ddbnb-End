@@ -7,6 +7,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @AllArgsConstructor
@@ -14,12 +15,17 @@ public class ApplicantService {
 
     private final ApplicantRepository applicantRepository;
     private final ModelMapper modelMapper;
-    public Page<com.nasigolang.ddbnb.Pet.applicant.ApplicantDTO> findApplicantList(Pageable page, long boardId) {
+    public Page<ApplicantDTO> findApplicantList(Pageable page, long boardId) {
 
         page = PageRequest.of(page.getPageNumber() <= 0 ? 0 : page.getPageNumber() - 1, page.getPageSize(), Sort.by("memberId"));
 
         return applicantRepository.findByBoardId(
-                page, boardId).map(list -> modelMapper.map(list, com.nasigolang.ddbnb.Pet.applicant.ApplicantDTO.class));
+                page, boardId).map(list -> modelMapper.map(list, ApplicantDTO.class));
+    }
+
+    @Transactional
+    public void registApplicant(ApplicantDTO applicant) {
+        applicantRepository.save(modelMapper.map(applicant, ApplicantEntity.class));
     }
 
 }
