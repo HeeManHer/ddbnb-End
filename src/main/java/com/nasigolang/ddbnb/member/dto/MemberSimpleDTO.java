@@ -12,14 +12,18 @@ import java.time.LocalDate;
 public class MemberSimpleDTO {
 
     private long memberId;
+    private String experience;
+    private String socialLogin;
+    private String profileImage;
+    private String gender;
     private String nickname;
     private String preferredArea;
     private int reportedCount;
     private String status;
     private LocalDate signDate;
     private String petSitterCareer;
-    private String period;
     private String starPoint;
     private String detailedHistory;
+    private String gender;
 
 }

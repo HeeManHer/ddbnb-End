@@ -7,11 +7,11 @@ import lombok.*;
 @Setter
 @Getter
 @ToString
-public class OtherDTO {
+public class OtherTypeDTO {
 
-    private int otherId;
+    private int typeId;
 
-    private String other;
+    private String typeContent;
 
 
 }

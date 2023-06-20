@@ -1,6 +1,5 @@
 package com.nasigolang.ddbnb.pet.applicant;
 
-
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
@@ -28,5 +27,6 @@ public class ApplicantService {
     public void registApplicant(ApplicantDTO applicant) {
         applicantRepository.save(modelMapper.map(applicant, ApplicantEntity.class));
     }
+
 }
 

@@ -1,5 +1,6 @@
 package com.nasigolang.ddbnb.review.service;
 
+import com.nasigolang.ddbnb.member.repository.MemberRepository;
 import com.nasigolang.ddbnb.review.dto.ReviewDTO;
 import com.nasigolang.ddbnb.review.entity.Review;
 import com.nasigolang.ddbnb.review.repository.ReviewRepository;
@@ -20,6 +21,7 @@ import java.util.UUID;
 public class ReviewService {
 
     private final ReviewRepository reviewRepository;
+    private final MemberRepository memberRepository;
     private final ModelMapper modelMapper;
 
     @Value("${image.image-dir}")
@@ -29,17 +31,19 @@ public class ReviewService {
 
     private long reviewId;
 
-    public ReviewService(ReviewRepository reviewRepository, ModelMapper modelMapper) {
+    public ReviewService(ReviewRepository reviewRepository, MemberRepository memberRepository, ModelMapper modelMapper) {
         this.reviewRepository = reviewRepository;
+        this.memberRepository = memberRepository;
         this.modelMapper = modelMapper;
+        this.memberRepository = memberRepository;
     }
 
     //전체리뷰 조회
-    public Page<ReviewDTO> findAllReview(Pageable page) {
+    public Page<ReviewDTO> findAllReview(Pageable page, long memberId) {
         page = PageRequest.of(page.getPageNumber() <= 0 ? 0 : page.getPageNumber() - 1, 8, Sort.by("reviewId"));
 
         //        Page<Review> reviews = reviewRepository.findAll(pageable);
-        return reviewRepository.findAll(page).map(review -> modelMapper.map(review, ReviewDTO.class));
+        return reviewRepository.findByMember(page, memberRepository.findById(memberId)).map(review -> modelMapper.map(review, ReviewDTO.class));
     }
 
     /*일부 조회*/
@@ -62,6 +66,7 @@ public class ReviewService {
             } catch(IOException e) {
                 throw new RuntimeException(e);
             }
+
         }
         reviewRepository.save(modelMapper.map(newReview, Review.class));
 

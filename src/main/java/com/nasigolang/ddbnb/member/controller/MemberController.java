@@ -25,7 +25,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.nio.charset.Charset;
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Api(tags = "멤버 관련 기능 API")
@@ -117,6 +119,13 @@ public class MemberController {
         responseMap.put("members", foundMember);
 
         return ResponseEntity.ok().headers(headers).body(new ResponseDto(HttpStatus.OK, "조회성공", responseMap));
+    }
+
+    @ApiOperation("프로필 등록")
+    @PutMapping("/member/{memberId}/postprofile")
+    public ResponseEntity<ResponseDto> updateprofile(@PathVariable long memberId, @RequestBody MemberSimpleDTO memberSimpleDTO) {
+
+        return ResponseEntity.ok().body(new ResponseDto(HttpStatus.CREATED, "프로필 수정 성공", memberService.updateprofile(memberId, memberSimpleDTO)));
     }
 }
 
