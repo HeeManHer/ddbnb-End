@@ -1,4 +1,4 @@
-package com.nasigolang.ddbnb.Pet.Applicant;
+package com.nasigolang.ddbnb.Pet.applicant;
 
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -21,5 +21,6 @@ public class ApplicantService {
         return applicantRepository.findByBoardId(
                 page, boardId).map(list -> modelMapper.map(list, com.nasigolang.ddbnb.Pet.applicant.ApplicantDTO.class));
     }
+
 }
 
