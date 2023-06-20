@@ -1,4 +1,4 @@
-package com.nasigolang.ddbnb.Pet.applicant;
+package com.nasigolang.ddbnb.pet.applicant;
 
 import com.nasigolang.ddbnb.common.ResponseDto;
 import com.nasigolang.ddbnb.common.paging.Pagenation;
