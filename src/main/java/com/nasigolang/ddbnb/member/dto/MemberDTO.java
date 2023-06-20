@@ -18,7 +18,7 @@ public class MemberDTO {
     private String gender;
 
     private String preferredArea;
-    private String petSitterCarrer;
+    private String petSitterCareer;
     private String detailedHistory;
     private String period;
 

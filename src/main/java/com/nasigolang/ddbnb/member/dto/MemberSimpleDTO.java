@@ -21,5 +21,6 @@ public class MemberSimpleDTO {
     private String period;
     private String starPoint;
     private String detailedHistory;
+    private String gender;
 
 }

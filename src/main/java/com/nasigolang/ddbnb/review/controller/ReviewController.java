@@ -33,12 +33,12 @@ public class ReviewController {
 
     @ApiOperation(value = "모든 리뷰 목록 조회")
     @GetMapping("/reviews")
-    public ResponseEntity<ResponseDto> findAllReview(@PageableDefault Pageable pageable) {
+    public ResponseEntity<ResponseDto> findAllReview(@PageableDefault Pageable pageable, @RequestParam long memberId) {
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
 
-        Page<ReviewDTO> reviews = reviewService.findAllReview(pageable);
+        Page<ReviewDTO> reviews = reviewService.findAllReview(pageable, memberId);
         SelectCriteria selectCriteria = Pagenation.getSelectCriteria(reviews);
 
         ResponseDtoWithPaging data = new ResponseDtoWithPaging(reviews.getContent(), selectCriteria);
