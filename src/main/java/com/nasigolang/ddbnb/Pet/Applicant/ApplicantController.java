@@ -1,4 +1,4 @@
-package com.nasigolang.ddbnb.Pet.Applicant;
+package com.nasigolang.ddbnb.pet.applicant;
 
 import com.nasigolang.ddbnb.common.ResponseDto;
 import com.nasigolang.ddbnb.common.paging.Pagenation;
@@ -13,11 +13,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
+import org.springframework.web.bind.annotation.*;
 import java.nio.charset.Charset;
 
 @RestController
@@ -35,11 +31,24 @@ public class ApplicantController {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
 
-        Page<com.nasigolang.ddbnb.Pet.applicant.ApplicantDTO> applicantList = applicantService.findApplicantList(page,boardId);
+        Page<ApplicantDTO> applicantList = applicantService.findApplicantList(page,boardId);
         SelectCriteria selectCriteria = Pagenation.getSelectCriteria(applicantList);
 
         ResponseDtoWithPaging data = new ResponseDtoWithPaging(applicantList.getContent(), selectCriteria);
 
         return ResponseEntity.ok().headers(headers).body(new ResponseDto(HttpStatus.OK, "조회 성공", data));
+    }
+
+
+    @PostMapping("/regist")
+    public ResponseEntity<ResponseDto> findApplicant(@RequestBody ApplicantDTO applicant) {
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(new MediaType("application", "json",Charset.forName("UTF-8")));
+
+        applicantService.registApplicant(applicant);
+
+        return ResponseEntity.ok().headers(headers).body(new ResponseDto(HttpStatus.OK, "생성 성공", null));
+
     }
 }

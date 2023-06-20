@@ -1,9 +1,8 @@
-package com.nasigolang.ddbnb.Pet.petsitter.service;
+package com.nasigolang.ddbnb.pet.petsitter.service;
 
-import com.nasigolang.ddbnb.Pet.petsitter.dto.PetsitterDTO;
-import com.nasigolang.ddbnb.Pet.petsitter.dto.PetsitterboardDTO;
-import com.nasigolang.ddbnb.Pet.petsitter.entity.PetsitterEntity;
-import com.nasigolang.ddbnb.Pet.petsitter.repository.PetsitterRepository;
+import com.nasigolang.ddbnb.pet.petsitter.dto.PetsitterboardDTO;
+import com.nasigolang.ddbnb.pet.petsitter.entity.PetsitterEntity;
+import com.nasigolang.ddbnb.pet.petsitter.repository.PetsitterRepository;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
@@ -15,7 +14,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.NoSuchElementException;
-import java.util.Optional;
 
 
 @Service
@@ -25,13 +23,26 @@ public class PetsitterService {
     private final PetsitterRepository petSitterRepository;
     private final ModelMapper modelMapper;
 
+//    public Page<PetsitterboardDTO> findMenuList(Pageable page, String location, String petSize, String care, LocalDate startDate, LocalDate endDate) {
+//
+//        page = PageRequest.of(page.getPageNumber() <= 0 ? 0 : page.getPageNumber() - 1, page.getPageSize(), Sort.by("boardId"));
+//
+//        return petSitterRepository.findPetsitterEntityByLocationOrPetSizeOrCareOrStartDateOrEndDate(
+//                page, location, petSize, care, startDate, endDate).map(list -> modelMapper.map(list, PetsitterboardDTO.class));
+//        return petSitterRepository.findAll(page).map(list -> modelMapper.map(list,PetsitterboardDTO.class));
+//    }
+
     public Page<PetsitterboardDTO> findMenuList(Pageable page, String location, String petSize, String care, LocalDate startDate, LocalDate endDate) {
+        page = PageRequest.of(page.getPageNumber() <= 0 ? 0 : page.getPageNumber() - 1, page.getPageSize(), Sort.by("borderId"));
 
-        page = PageRequest.of(page.getPageNumber() <= 0 ? 0 : page.getPageNumber() - 1, page.getPageSize(), Sort.by("memberId"));
-
-        return petSitterRepository.findPetsitterEntityByLocationOrPetSizeOrCareOrStartDateOrEndDate(
-                page, location, petSize, care, startDate, endDate).map(list -> modelMapper.map(list, PetsitterboardDTO.class));
+        if (location != null && !location.isEmpty() || petSize != null && !petSize.isEmpty() || care != null && !care.isEmpty() || startDate != null || endDate != null) {
+            return petSitterRepository.findPetsitterEntityByLocationOrPetSizeOrCareOrStartDateOrEndDate(
+                    page, location, petSize, care, startDate, endDate).map(list -> modelMapper.map(list, PetsitterboardDTO.class));
+        } else {
+            return petSitterRepository.findAll(page).map(list -> modelMapper.map(list, PetsitterboardDTO.class));
+        }
     }
+
 
 
     @Transactional
