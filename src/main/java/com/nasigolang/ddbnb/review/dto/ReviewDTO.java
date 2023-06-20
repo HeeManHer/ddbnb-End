@@ -20,8 +20,8 @@ public class ReviewDTO {
     private MemberSimpleDTO reviewer;
 
     private String reviewDetail;
-    private int reviewStarPoint;
     private Date reviewWriteDate;
+    private int reviewStarPoint;
 
     private String reviewImageUrl;
     private MultipartFile reviewImage;
