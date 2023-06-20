@@ -22,6 +22,9 @@ public class Member {
     @Column(name = "nickname", unique = true, nullable = false)
     private String nickname;
 
+    @Column(name = "experience")
+    private String experience;
+
     @Column(name = "profile_image")
     private String profileImage;
 
@@ -59,13 +62,10 @@ public class Member {
     private String preferredArea;
 
     @Column(name = "pet_sitter_career")
-    private String petStitterCarrer;
+    private String petSitterCareer;
 
     @Column(name = "detailed_history")
     private String detailedHistory;
-
-    @Column(name = "period")
-    private String period;
 
     @Column(name = "star_point")
     private String starPoint;
