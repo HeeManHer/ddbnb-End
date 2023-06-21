@@ -1,6 +1,5 @@
 package com.nasigolang.ddbnb.pet.petmom.controller;
 
-
 import com.nasigolang.ddbnb.common.ResponseDto;
 import com.nasigolang.ddbnb.common.paging.Pagenation;
 import com.nasigolang.ddbnb.common.paging.ResponseDtoWithPaging;
@@ -51,6 +50,4 @@ public class MomApplicantController {
         momApplicantService.registNewApplicant(newApplicant);
         return ResponseEntity.ok().headers(headers).body(new ResponseDto(HttpStatus.OK, "생성 성공", null));
     }
-
-
 }

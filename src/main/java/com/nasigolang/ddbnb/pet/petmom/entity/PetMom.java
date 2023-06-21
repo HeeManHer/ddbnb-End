@@ -14,9 +14,15 @@ import java.util.List;
 @Getter
 @ToString
 @Entity(name = "PetMom")
-@Table(name = "PET_MOM")
+@Table(name = "PETMOM")
+@SequenceGenerator(name = "petMom_sequence_generator", sequenceName = "sequence_petMom_id", initialValue = 1, allocationSize = 50)
 public class PetMom {
 
+    @Id
+    @Column(name = "BOARD_ID")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "petMom_sequence_generator")
+    private long boardId;
+  
     @Column(name = "HOURLY_RATE")
     private int hourlyRate; // 시간 당 요금`
 
@@ -28,10 +34,6 @@ public class PetMom {
 
     @Column(name = "PET_YN")
     private boolean petYN; // 펫 유무
-    @Id
-    @Column(name = "BOARD_ID")
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "petmom_sequence_generator")
-    private int boardId;
 
     @Column(name = "BOARD_TITLE")
     private String boardTitle;
@@ -61,8 +63,8 @@ public class PetMom {
     private String request; // 요청사항
 
     @ManyToOne
-    @JoinColumn(name = "MEMBER_ID")
-    private Member memberId;
+    @JoinColumn(name = "MEMBER_ID", referencedColumnName = "MEMBER_ID")
+    private Member member;
 
     @ManyToMany
     @JoinTable(name = "OTHER", joinColumns = @JoinColumn(name = "BOARD_ID"), inverseJoinColumns = @JoinColumn(name = "TYPE_ID"))

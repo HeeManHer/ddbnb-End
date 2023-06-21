@@ -30,7 +30,7 @@ import java.util.Map;
 @AllArgsConstructor
 public class PetMomController {
     private final PetMomService petmomService;
-
+  
     @PostMapping("/regist")
     public ResponseEntity<ResponseDto> registNewReport(@RequestBody PetMomDTO newPetmom) {
         HttpHeaders headers = new HttpHeaders();
@@ -119,5 +119,21 @@ public class PetMomController {
 //
 //        return ResponseEntity.created(URI.create("/api/v1/petmom/" + borderId)).build();
 //    }
+
+    @ApiOperation(value = "모든 리뷰 목록 조회")
+    @GetMapping("/mypetmoms")
+    public ResponseEntity<ResponseDto> findMyPetMom(@PageableDefault Pageable pageable, @RequestParam long memberId) {
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
+
+        Page<PetMomDTO> petMoms = petmomService.findMyPetMom(pageable, memberId);
+        SelectCriteria selectCriteria = Pagenation.getSelectCriteria(petMoms);
+
+        ResponseDtoWithPaging data = new ResponseDtoWithPaging(petMoms.getContent(), selectCriteria);
+        //        responseMap.put("reviews", reviews.getContent());
+
+        return new ResponseEntity<>(new ResponseDto(HttpStatus.OK, "조회성공", data), headers, HttpStatus.OK);
+    }
 
 }

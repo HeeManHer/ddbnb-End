@@ -4,7 +4,6 @@ import com.nasigolang.ddbnb.common.ResponseDto;
 import com.nasigolang.ddbnb.common.paging.Pagenation;
 import com.nasigolang.ddbnb.common.paging.ResponseDtoWithPaging;
 import com.nasigolang.ddbnb.common.paging.SelectCriteria;
-import com.nasigolang.ddbnb.member.dto.MemberDTO;
 import com.nasigolang.ddbnb.member.dto.MemberSimpleDTO;
 import com.nasigolang.ddbnb.member.entity.Member;
 import com.nasigolang.ddbnb.member.service.MemberService;
@@ -25,9 +24,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.nio.charset.Charset;
 import java.time.LocalDate;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @Api(tags = "멤버 관련 기능 API")
@@ -53,7 +50,8 @@ public class MemberController {
 
     @ApiOperation(value = "멤버 소셜 id로 조회")
     @GetMapping("/members/{socialLogin}/{socialId}")
-    public ResponseEntity<ResponseDto> findBySocialId(@PathVariable String social_Login, @PathVariable String social_Id) {
+    public ResponseEntity<ResponseDto> findBySocialId(@PathVariable String social_Login,
+                                                      @PathVariable String social_Id) {
 
         Member foundMember = memberService.findBySocialId(social_Login, social_Id);
 
@@ -69,11 +67,11 @@ public class MemberController {
                                                      @RequestParam(name = "signDate", defaultValue = "") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate signDate) {
         Map<String, Object> searchValue = new HashMap<>();
 
-        if (!nickname.equals("")) {
+        if(!nickname.equals("")) {
             searchValue.put("nickname", "%" + nickname + "%");
         }
 
-        if (signDate != null) {
+        if(signDate != null) {
             searchValue.put("signDate", signDate);
         }
 
@@ -92,12 +90,18 @@ public class MemberController {
         LocalDate today = LocalDate.now();
 
         Map<String, Integer> memberAmount = new HashMap<>();
+        System.out.println(1);
         memberAmount.put("allMember", memberService.findAllMemberAmount());
+        System.out.println(2);
         memberAmount.put("todayVisitant", memberService.findTodayVisitant(today));
+        System.out.println(3);
         memberAmount.put("newMember", memberService.findNewMemberAmount(today));
+        System.out.println(4);
 
         memberAmount.put("memberReport", reportService.findReportAmount("회원", today).size());
+        System.out.println(5);
         memberAmount.put("boardReport", reportService.findReportAmount("게시글", today).size());
+        System.out.println(6);
 
         return ResponseEntity.ok().headers(headers).body(new ResponseDto(HttpStatus.OK, "조회 성공", memberAmount));
     }
@@ -122,8 +126,8 @@ public class MemberController {
 
     @ApiOperation("프로필 등록")
     @PutMapping("/member/{memberId}/postprofile")
-    public ResponseEntity<ResponseDto> updateprofile(@PathVariable long memberId, @RequestBody MemberSimpleDTO memberSimpleDTO) {
-
+    public ResponseEntity<ResponseDto> updateprofile(@PathVariable long memberId,
+                                                     @RequestBody MemberSimpleDTO memberSimpleDTO) {
         return ResponseEntity.ok().body(new ResponseDto(HttpStatus.CREATED, "프로필 수정 성공", memberService.updateprofile(memberId, memberSimpleDTO)));
 
     }
