@@ -7,6 +7,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.Date;
 
 
 @AllArgsConstructor
@@ -17,7 +18,7 @@ import java.time.LocalDate;
 @Table(name = "PETSITTER")
 @Entity(name="Petsitter")
 @SequenceGenerator(
-        name="petsitter_sequence_generator",
+        name="Petsitter_sequence_generator",
         sequenceName = "sequence_board_id",
         initialValue = 1,
         allocationSize = 50
@@ -29,7 +30,7 @@ public class PetsitterEntity implements Serializable {
     @GeneratedValue(
             strategy = GenerationType.SEQUENCE,
             generator = "petsitter_sequence_generator")
-    private Long borderId;
+    private Long boardId;
 
     @Column(name="BOARD_TILE")
     private String boardTitle;
@@ -39,7 +40,7 @@ public class PetsitterEntity implements Serializable {
     private Member memberId;
 
     @Column(name = "BOARD_DATE",columnDefinition = "DATE DEFAULT SYSDATE")
-    private LocalDate boardDate;
+    private Date boardDate;
 
     @Column(name="LOCATION")
     private String location;

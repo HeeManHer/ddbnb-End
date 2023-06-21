@@ -33,7 +33,7 @@ public class PetsitterService {
 //    }
 
     public Page<PetsitterboardDTO> findMenuList(Pageable page, String location, String petSize, String care, LocalDate startDate, LocalDate endDate) {
-        page = PageRequest.of(page.getPageNumber() <= 0 ? 0 : page.getPageNumber() - 1, page.getPageSize(), Sort.by("borderId"));
+        page = PageRequest.of(page.getPageNumber() <= 0 ? 0 : page.getPageNumber() - 1, page.getPageSize(), Sort.by("boardId"));
 
         if (location != null && !location.isEmpty() || petSize != null && !petSize.isEmpty() || care != null && !care.isEmpty() || startDate != null || endDate != null) {
             return petSitterRepository.findPetsitterEntityByLocationOrPetSizeOrCareOrStartDateOrEndDate(
