@@ -1,5 +1,6 @@
 package com.nasigolang.ddbnb.pet.petmom.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.nasigolang.ddbnb.common.ResponseDto;
 import com.nasigolang.ddbnb.common.paging.Pagenation;
 import com.nasigolang.ddbnb.common.paging.ResponseDtoWithPaging;
@@ -7,6 +8,8 @@ import com.nasigolang.ddbnb.common.paging.SelectCriteria;
 import com.nasigolang.ddbnb.pet.petmom.dto.PetMomDTO;
 import com.nasigolang.ddbnb.pet.petmom.service.PetMomService;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -17,6 +20,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
 import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Map;
@@ -96,13 +100,24 @@ public class PetMomController {
         return ResponseEntity.ok().headers(headers).body(new ResponseDto(HttpStatus.OK, "수정 성공", null));
     }
 
-    @DeleteMapping("/{borderId}")
-    public ResponseEntity<ResponseDto> deletePetMom(@PathVariable int borderId) {
+    @DeleteMapping("/{boardId}")
+    public ResponseEntity<ResponseDto> deletePetMom(@PathVariable int boardId) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
 
-        petmomService.deletePetMom(borderId);
+        petmomService.deletePetMom(boardId);
 
         return ResponseEntity.ok().headers(headers).body(new ResponseDto(HttpStatus.OK, "삭제 성공", null));
     }
+
+//    @PutMapping("/petmom/{borderId}")
+//    public ResponseEntity<?> modifyRally(PetMomDTO modifyPetmom,
+//                                         @PathVariable int borderId, @RequestHeader(value = "Auth") String auth)
+//            throws JsonProcessingException {
+//
+//        PetMomService.modifyPetmom(modifyPetmom, borderId, auth);
+//
+//        return ResponseEntity.created(URI.create("/api/v1/petmom/" + borderId)).build();
+//    }
+
 }

@@ -1,5 +1,6 @@
 package com.nasigolang.ddbnb.pet.petmom.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.nasigolang.ddbnb.pet.petmom.dto.PetMomDTO;
 import com.nasigolang.ddbnb.pet.petmom.entity.OtherType;
 import com.nasigolang.ddbnb.pet.petmom.entity.PetMom;
@@ -13,6 +14,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
@@ -60,14 +62,20 @@ public class PetMomService {
 
     @Transactional
     public void deletePetMom(int borderId) {
+
         petMomRepository.deleteById(borderId);
 
     }
+
 
     public PetMomDTO findPetMomByBoardNo(int boardId) {
         return petMomRepository.findById(boardId).map(petMomboard -> modelMapper.map(petMomboard, PetMomDTO.class)).orElseThrow(() -> new NoSuchElementException("펫시터를 찾을 수 없습니다."));
 
     }
+
+
+
+
 
 
     //    public Page<PetMomDTO> findPetMom(Pageable page, String location, LocalDate startDate, LocalDate endDate, boolean petYN, String other) {

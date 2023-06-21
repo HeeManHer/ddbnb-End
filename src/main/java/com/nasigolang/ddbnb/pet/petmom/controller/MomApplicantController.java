@@ -50,6 +50,7 @@ public class MomApplicantController {
 
         momApplicantService.registNewApplicant(newApplicant);
         return ResponseEntity.ok().headers(headers).body(new ResponseDto(HttpStatus.OK, "생성 성공", null));
-
     }
+
+
 }
