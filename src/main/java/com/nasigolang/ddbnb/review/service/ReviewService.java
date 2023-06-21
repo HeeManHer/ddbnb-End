@@ -13,6 +13,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.UUID;
@@ -32,7 +33,7 @@ public class ReviewService {
     private long reviewId;
 
     public ReviewService(ReviewRepository reviewRepository, MemberRepository memberRepository,
-            ModelMapper modelMapper) {
+                         ModelMapper modelMapper) {
         this.reviewRepository = reviewRepository;
         this.memberRepository = memberRepository;
         this.modelMapper = modelMapper;
@@ -42,8 +43,13 @@ public class ReviewService {
     public Page<ReviewDTO> findAllReview(Pageable page, long memberId) {
         page = PageRequest.of(page.getPageNumber() <= 0 ? 0 : page.getPageNumber() - 1, 8, Sort.by("reviewId"));
 
-        //        Page<Review> reviews = reviewRepository.findAll(pageable);
-        return reviewRepository.findByMember(page, memberRepository.findById(memberId)).map(review -> modelMapper.map(review, ReviewDTO.class));
+        Page<Review> reviews = reviewRepository.findByMember(page, memberRepository.findById(memberId));
+
+        for(int i = 0; i < reviews.getContent().size(); i++) {
+            reviews.getContent().get(i).setReviewImageUrl(IMAGE_URL + reviews.getContent().get(i).getReviewImageUrl());
+        }
+
+        return reviews.map(review -> modelMapper.map(review, ReviewDTO.class));
     }
 
     /*일부 조회*/
@@ -55,18 +61,17 @@ public class ReviewService {
     }
 
     @Transactional
-    public void postReview(ReviewDTO newReview) {
-        if(newReview.getReviewImage() != null) {
+    public void postReview(ReviewDTO newReview, MultipartFile image) {
+        if(image != null) {
             String imageName = UUID.randomUUID().toString().replace("-", "");
             String replaceFileName = null;
 
             try {
-                replaceFileName = FileUploadUtils.saveFile(IMAGE_DIR, imageName, newReview.getReviewImage());
+                replaceFileName = FileUploadUtils.saveFile(IMAGE_DIR, imageName, image);
                 newReview.setReviewImageUrl(replaceFileName);
             } catch(IOException e) {
                 throw new RuntimeException(e);
             }
-
         }
         reviewRepository.save(modelMapper.map(newReview, Review.class));
 

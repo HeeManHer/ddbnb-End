@@ -18,14 +18,14 @@ spring:
       max-request-size: 10MB
   devtools:
     restart:
-      enabled: false
+      enabled: true
     livereload:
       enabled: true
   freemarker:
     cache: false
   web:
     resources:
-      static-locations: classpath:/imgs/
+      static-locations: classpath:/images/
 
   jpa:
     generate-ddl: true
@@ -40,32 +40,14 @@ spring:
 # 이미지 저장할 위치와 응답할 때 이미지 주소 세팅
 image:
   # WebConfig에 세팅
-  add-resource-locations: classpath:/static/imgs/
-  add-resource-handler: /imgs/**
+  add-resource-locations: classpath:/static/images/
+  add-resource-handler: /images/**
   # ProductService에 세팅
-  image-dir: src/main/resources/static/imgs
-  image-url: http://localhost:8080/imgs/
+  image-dir: src/main/resources/static/images
+  image-url: http://localhost:8080/images/
 
-
-jwt:
-  secret: asdfjp298pafo1320efqw0udvnh0er0h412r08byfdq9dsvh02143908hfeqwn80fdqs0nfdqs0n412013rq0nqefn08dfas0das730732g86923kjefho43y592y095r2wofhw92yt832y5r920woqhjfwoty28rt02ty230hwot92ty0923752rywohr9wyf823y8329yt0wyf9stgf932y20gfy9w8yh28it2y3y239836y25720hw8fy83r49y23y8
-
-#oauth:
-#  kakao:
-#    client-id: 202bf1013addf514255b52a8c9c69ebf
-#    url:
-#      auth: https://kauth.kakao.com
-#      api: https://kapi.kakao.com
-#  naver:
-#    secret: W_2DmcLfYU
-#    client-id: Y2i4SlApP7A1KZsUoott
-#    url:
-#      auth: https://nid.naver.com
-#      api: https://openapi.naver.com
 
 
 # mybatis config
 mybatis:
   mapper-locations: mybatis/*.xml
-
-

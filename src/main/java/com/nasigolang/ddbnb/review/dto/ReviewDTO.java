@@ -2,7 +2,6 @@ package com.nasigolang.ddbnb.review.dto;
 
 import com.nasigolang.ddbnb.member.dto.MemberSimpleDTO;
 import lombok.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Date;
 
@@ -24,5 +23,4 @@ public class ReviewDTO {
     private int reviewStarPoint;
 
     private String reviewImageUrl;
-    private MultipartFile reviewImage;
 }
