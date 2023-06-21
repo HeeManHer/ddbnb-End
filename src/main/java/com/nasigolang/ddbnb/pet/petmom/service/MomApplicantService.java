@@ -19,11 +19,11 @@ public class MomApplicantService {
     private final MomApplicantRepository momApplicantRepository;
     private final ModelMapper modelMapper;
 
-//    public Page<ApplicantDTO> findMomApplicantList(Pageable page, long boardId) {
-//
-//        page = PageRequest.of(page.getPageNumber() <= 0 ? 0 : page.getPageNumber() - 1, page.getPageSize(), Sort.by("memberId"));
-//        return momApplicantRepository.findByBoardId(page, boardId).map(list -> modelMapper.map(list, ApplicantDTO.class));
-//    }
+    public Page<ApplicantDTO> findMomApplicantList(Pageable page, long boardId) {
+
+        page = PageRequest.of(page.getPageNumber() <= 0 ? 0 : page.getPageNumber() - 1, page.getPageSize(), Sort.by("memberId"));
+        return momApplicantRepository.findByBoardId(page, boardId).map(list -> modelMapper.map(list, ApplicantDTO.class));
+    }
 
 
     public void registNewApplicant(ApplicantDTO newApplicant) {
