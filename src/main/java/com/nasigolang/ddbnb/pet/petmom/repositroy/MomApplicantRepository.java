@@ -5,8 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface MomApplicantRepository extends JpaRepository<MomApplicant, Integer> {
+public interface MomApplicantRepository extends JpaRepository<MomApplicant, Long> {
 
-    Page<MomApplicant> findByBoardId(Pageable page, int boardId);
 
 }
