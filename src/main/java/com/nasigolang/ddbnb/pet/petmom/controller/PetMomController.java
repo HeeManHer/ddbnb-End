@@ -16,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.nio.charset.Charset;
 import java.util.HashMap;
@@ -23,9 +24,13 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/petmom")
-@AllArgsConstructor
 public class PetMomController {
     private final PetMomService petmomService;
+
+    @Autowired
+    public PetMomController(PetMomService petmomService) {
+        this.petmomService = petmomService;
+    }
 
     @PostMapping("/regist")
     public ResponseEntity<ResponseDto> registNewReport(@RequestBody PetMomDTO newPetmom) {
@@ -105,4 +110,21 @@ public class PetMomController {
 
         return ResponseEntity.ok().headers(headers).body(new ResponseDto(HttpStatus.OK, "삭제 성공", null));
     }
+
+    @ApiOperation(value = "모든 리뷰 목록 조회")
+    @GetMapping("/mypetmoms")
+    public ResponseEntity<ResponseDto> findMyPetMom(@PageableDefault Pageable pageable, @RequestParam long memberId) {
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
+
+        Page<PetMomDTO> petMoms = petmomService.findMyPetMom(pageable, memberId);
+        SelectCriteria selectCriteria = Pagenation.getSelectCriteria(petMoms);
+
+        ResponseDtoWithPaging data = new ResponseDtoWithPaging(petMoms.getContent(), selectCriteria);
+        //        responseMap.put("reviews", reviews.getContent());
+
+        return new ResponseEntity<>(new ResponseDto(HttpStatus.OK, "조회성공", data), headers, HttpStatus.OK);
+    }
+
 }
