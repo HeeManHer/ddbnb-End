@@ -25,11 +25,6 @@ public class MemberService {
     private final ModelMapper modelMapper;
     private final ObjectMapper objectMapper;
 
-    //    @Value("${image.image-dir}")
-    //    private String IMAGE_DIR;
-    //    @Value("${image.image-url}")
-    //    private String IMAGE_URL;
-
     @Transactional
     public long registNewUser(MemberDTO newMember) {
         System.out.println(9);
@@ -60,6 +55,14 @@ public class MemberService {
         return modelMapper.map(member, MemberSimpleDTO.class);
     }
 
+    @Transactional
+    public void deleteMember(long memberId) {
+
+        Member foundMember = memberRepository.findById(memberId).get();
+
+        memberRepository.delete(foundMember);
+    }
+
     public Page<MemberSimpleDTO> findAllMembers(Pageable page, Map<String, Object> searchValue) {
 
         page = PageRequest.of(page.getPageNumber() <= 0 ? 0 : page.getPageNumber() - 1, page.getPageSize(), Sort.by("memberId"));
@@ -79,7 +82,7 @@ public class MemberService {
 
         return members;
     }
-
+  
     public Member findBySocialId(String socialLogin, String socialId) {
         System.out.println(5);
         Member foundMember = memberRepository.findBySocialId(socialLogin, socialId);
@@ -102,5 +105,6 @@ public class MemberService {
     public int findNewMemberAmount(LocalDate now) {
         return memberRepository.findNewMember(now);
     }
+
 
 }

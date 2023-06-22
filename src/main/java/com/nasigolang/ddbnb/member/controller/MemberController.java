@@ -86,7 +86,6 @@ public class MemberController {
         return ResponseEntity.ok().headers(headers).body(new ResponseDto(HttpStatus.OK, "조회 성공", data));
     }
 
-
     @GetMapping("/amount")
     public ResponseEntity<ResponseDto> findMemberAmount() {
 
@@ -126,6 +125,30 @@ public class MemberController {
     public ResponseEntity<ResponseDto> updateprofile(@PathVariable long memberId, @RequestBody MemberSimpleDTO memberSimpleDTO) {
 
         return ResponseEntity.ok().body(new ResponseDto(HttpStatus.CREATED, "프로필 수정 성공", memberService.updateprofile(memberId, memberSimpleDTO)));
+
+    }
+
+    @DeleteMapping("/member/{memberId}")
+    public ResponseEntity<?> deleteMember(@PathVariable long memberId) {
+
+        memberService.deleteMember(memberId);
+
+        return ResponseEntity
+                .noContent()
+                .build();
+    }
+
+    @PutMapping("/members/{memberId}")
+    public ResponseEntity<?> modifyMember(MemberSimpleDTO modifyInfo, @PathVariable long memberId, @RequestParam String type) {
+
+        System.out.println("modifyInfo = " + modifyInfo);
+
+        System.out.println("type = " + type);
+
+        memberService.modifyMember(modifyInfo, memberId, type);
+
+        return ResponseEntity
+                .noContent()
+                .build();
     }
 }
-

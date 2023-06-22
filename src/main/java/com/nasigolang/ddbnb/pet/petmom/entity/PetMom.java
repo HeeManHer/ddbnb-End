@@ -64,6 +64,9 @@ public class PetMom {
     @Column(name = "REQUEST")
     private String request; // 요청사항
 
+    @Column(name = "MOM_STATUS")
+    private String momStatus;
+
     @ManyToOne
     @JoinColumn(name = "MEMBER_ID", referencedColumnName = "MEMBER_ID")
     private Member member;
@@ -71,4 +74,6 @@ public class PetMom {
     @ManyToMany
     @JoinTable(name = "OTHER", joinColumns = @JoinColumn(name = "BOARD_ID"), inverseJoinColumns = @JoinColumn(name = "TYPE_ID"))
     private List<OtherType> otherCondition = new ArrayList<>();
+
+
 }

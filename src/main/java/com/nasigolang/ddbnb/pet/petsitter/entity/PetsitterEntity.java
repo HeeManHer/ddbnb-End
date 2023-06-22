@@ -85,5 +85,7 @@ public class PetsitterEntity implements Serializable {
     @Column(name = "PET_SIZE")
     private String petSize;
 
+    @Column(name = "SITTER_STATUS")
+    private String sitterStatus;
 
 }
