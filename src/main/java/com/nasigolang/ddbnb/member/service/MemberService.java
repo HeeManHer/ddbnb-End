@@ -35,11 +35,6 @@ public class MemberService {
     private final ModelMapper modelMapper;
     private final ObjectMapper objectMapper;
 
-    //    @Value("${image.image-dir}")
-    //    private String IMAGE_DIR;
-    //    @Value("${image.image-url}")
-    //    private String IMAGE_URL;
-
     @Transactional
     public long registNewUser(MemberDTO newMember) {
         System.out.println(9);
@@ -70,6 +65,14 @@ public class MemberService {
         return modelMapper.map(member, MemberSimpleDTO.class);
     }
 
+    @Transactional
+    public void deleteMember(long memberId) {
+
+        Member foundMember = memberRepository.findById(memberId).get();
+
+        memberRepository.delete(foundMember);
+    }
+
     public Page<MemberSimpleDTO> findAllMembers(Pageable page, Map<String, Object> searchValue) {
 
         page = PageRequest.of(page.getPageNumber() <= 0 ? 0 : page.getPageNumber() - 1, page.getPageSize(), Sort.by("memberId"));
@@ -91,13 +94,13 @@ public class MemberService {
     }
 
     @Transactional
-    public void modifyMember(MemberDTO modifyInfo, long memberId, String type) {
+    public void modifyMember(MemberSimpleDTO modifyInfo, long memberId, String type) {
 
         Member foundMember = memberRepository.findById(memberId).get();
 
-        switch(type) {
+        switch (type) {
             case "edit":
-                if(modifyInfo.getNickname().length() > 0) {
+                if (modifyInfo.getNickname().length() > 0) {
                     foundMember.setNickname(modifyInfo.getNickname());
                 }
                 break;
@@ -107,20 +110,28 @@ public class MemberService {
                 RestTemplate rt = new RestTemplate();
 
                 /* 카카오 로그인일 때 */
-                if(foundMember.getSocialLogin().equals("KAKAO")) {
+                if (foundMember.getSocialLogin().equals("KAKAO")) {
 
                     HttpHeaders headers = new HttpHeaders();
                     headers.add("Authorization", "Bearer " + foundMember.getAccessToken());
 
-                    HttpEntity<MultiValueMap<String, String>> kakaoDeactivateRequest = new HttpEntity<>(headers);
+                    HttpEntity<MultiValueMap<String, String>> kakaoDeactivateRequest =
+                            new HttpEntity<>(headers);
 
-                    ResponseEntity<String> kakaoDeactivateResponse = rt.exchange("https://kapi.kakao.com/v1/user/unlink", HttpMethod.POST, kakaoDeactivateRequest, String.class);
+                    ResponseEntity<String> kakaoDeactivateResponse = rt.exchange(
+                            "https://kapi.kakao.com/v1/user/unlink",
+                            HttpMethod.POST,
+                            kakaoDeactivateRequest,
+                            String.class
+                    );
 
                     String kakaoDeactivateResult = "";
 
                     try {
-                        kakaoDeactivateResult = objectMapper.readValue(kakaoDeactivateResponse.getBody(), String.class);
-                    } catch(JsonProcessingException e) {
+                        kakaoDeactivateResult = objectMapper.readValue(
+                                kakaoDeactivateResponse.getBody(),
+                                String.class);
+                    } catch (JsonProcessingException e) {
                         throw new RuntimeException(e);
                     }
 
@@ -128,12 +139,12 @@ public class MemberService {
                     break;
 
                     /* 네이버 로그인일 때 */
-                } else if(foundMember.getSocialLogin().equals("NAVER")) {
+                } else if (foundMember.getSocialLogin().equals("NAVER")) {
 
                     /* 갱신 먼저 */
                     Date expireDate = new Date(foundMember.getAccessTokenExpireDate());
 
-                    if(expireDate.before(new Date())) {
+                    if (expireDate.before(new Date())) {
 
                         RestTemplate rtForRenew = new RestTemplate();
 
@@ -145,26 +156,34 @@ public class MemberService {
                         params.add("refresh_token", foundMember.getRefreshToken());
                         params.add("grant_type", "refresh_token");
 
-                        HttpEntity<MultiValueMap<String, String>> naverRenewRequest = new HttpEntity<>(params, headers);
+                        HttpEntity<MultiValueMap<String, String>> naverRenewRequest =
+                                new HttpEntity<>(params, headers);
 
-                        ResponseEntity<String> naverRenewResponses = rtForRenew.exchange("https://nid.naver.com/oauth2.0/token", HttpMethod.GET, naverRenewRequest, String.class);
+                        ResponseEntity<String> naverRenewResponses = rtForRenew.exchange(
+                                "https://nid.naver.com/oauth2.0/token",
+                                HttpMethod.GET,
+                                naverRenewRequest,
+                                String.class
+                        );
 
                         ObjectMapper objectMapper = new ObjectMapper();
                         RenewTokenDTO renewToken = null;
                         try {
                             renewToken = objectMapper.readValue(naverRenewResponses.getBody(), RenewTokenDTO.class);
-                        } catch(JsonProcessingException e) {
+                        } catch (JsonProcessingException e) {
                             e.printStackTrace();
                         }
 
-                        if(renewToken.getRefresh_token() != null) {
+                        if (renewToken.getRefresh_token() != null) {
 
                             foundMember.setRefreshToken(renewToken.getRefresh_token());
-                            foundMember.setRefreshTokenExpireDate((1000 * 60 * 60 * 6) + System.currentTimeMillis());
+                            foundMember.setRefreshTokenExpireDate(
+                                    (1000 * 60 * 60 * 6) + System.currentTimeMillis());
                         }
 
                         foundMember.setAccessToken(renewToken.getAccess_token());
-                        foundMember.setAccessTokenExpireDate(renewToken.getExpires_in() + System.currentTimeMillis());
+                        foundMember.setAccessTokenExpireDate(
+                                renewToken.getExpires_in() + System.currentTimeMillis());
 
                     }
 
@@ -180,17 +199,25 @@ public class MemberService {
                     params.add("access_token", foundMember.getAccessToken());
                     params.add("grant_type", "delete");
 
-                    HttpEntity<MultiValueMap<String, String>> naverDeactivateRequest = new HttpEntity<>(headers, params);
+                    HttpEntity<MultiValueMap<String, String>> naverDeactivateRequest =
+                            new HttpEntity<>(headers, params);
 
-                    ResponseEntity<String> naverDeactivateResponse = rt.exchange("https://nid.naver.com/oauth2.0/token", HttpMethod.POST, naverDeactivateRequest, String.class);
+                    ResponseEntity<String> naverDeactivateResponse = rt.exchange(
+                            "https://nid.naver.com/oauth2.0/token",
+                            HttpMethod.POST,
+                            naverDeactivateRequest,
+                            String.class
+                    );
 
                     System.out.println(naverDeactivateResponse.getBody());
 
                     String naverDeactivateResult = "";
 
                     try {
-                        naverDeactivateResult = objectMapper.readValue(naverDeactivateResponse.getBody(), String.class);
-                    } catch(JsonProcessingException e) {
+                        naverDeactivateResult = objectMapper.readValue(
+                                naverDeactivateResponse.getBody(),
+                                String.class);
+                    } catch (JsonProcessingException e) {
                         throw new RuntimeException(e);
                     }
 
@@ -199,7 +226,6 @@ public class MemberService {
                 }
         }
     }
-
 
 
     public Member findBySocialId(String socialLogin, String socialId) {
@@ -224,5 +250,6 @@ public class MemberService {
     public int findNewMemberAmount(LocalDate now) {
         return memberRepository.findNewMember(now);
     }
+
 
 }

@@ -31,4 +31,6 @@ public class PetMomDTO {
     private String houseType;
     private boolean petYN;
     private List<OtherTypeDTO> otherCondition;
+    private String momStatus;
+
 }

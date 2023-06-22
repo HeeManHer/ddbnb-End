@@ -48,7 +48,7 @@ public class LoginController {
         System.out.println(kakaoToken.getAccess_token());
 
         /* 액세스 토큰으로 DB 저장or 확인 후 JWT 생성 */
-       loginService.getJwtToken(kakaoToken);
+        loginService.getJwtToken(kakaoToken);
 
         Map<String, Object> responseMap = new HashMap<>();
         responseMap.put("token", kakaoToken);
@@ -93,15 +93,15 @@ public class LoginController {
         NaverAccessTokenDTO naverAccessToken = loginService.getNaverAccessToken(codeAndState.get("code"), codeAndState.get("state"));
         System.out.println(naverAccessToken.getAccess_token());
 
-      /* 액세스 토큰으로 DB 저장or 확인 후 JWT 생성 */
-      loginService.getJwtToken(naverAccessToken);
+        /* 액세스 토큰으로 DB 저장or 확인 후 JWT 생성 */
+        loginService.getJwtToken(naverAccessToken);
 
-      Map<String, Object> responseMap = new HashMap<>();
-      responseMap.put("token", naverAccessToken);
+        Map<String, Object> responseMap = new HashMap<>();
+        responseMap.put("token", naverAccessToken);
 
-      /* JWT와 응답 결과를 프론트에 전달*/
-      return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "로그인 성공", responseMap));
-  }
+        /* JWT와 응답 결과를 프론트에 전달*/
+        return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "로그인 성공", responseMap));
+    }
 
     @PostMapping("/naverlogout")
     public ResponseEntity<?> naverLogout(@RequestHeader("Authorization") String accessToken) {
@@ -122,5 +122,3 @@ public class LoginController {
         }
     }
 }
-
-

@@ -136,7 +136,6 @@ public class LoginService {
             newMember.setSignDate(LocalDate.now());
             newMember.setProfileImage("https://api.dicebear.com/6.x/thumbs/svg?seed=" + newMember.getSocialId().split("@")[0]);
             newMember.setLastVisitDate(LocalDate.now());
-//            newMember.setMemberId(newMember.getMemberId());
             if(kakaoProfileDTO.getKakao_account().getGender() != null) {
                 newMember.setGender(kakaoProfileDTO.getKakao_account().getGender());
             }
@@ -147,10 +146,9 @@ public class LoginService {
 
         /* 소셜 아이디로 멤버가 있는지 조회해 가져옴 */
         Member foundmember = memberService.findBySocialId("KAKAO", String.valueOf(kakaoProfileDTO.getId()));
-
         kakaoToken.setMemberId(foundmember.getMemberId());
+
         /* 액세스토큰, 리프레시 토큰 업데이트 */
-//        foundmember.setMemberId(foundmember.getMemberId());
         foundmember.setRefreshToken(kakaoToken.getRefresh_token());
         foundmember.setAccessToken(kakaoToken.getAccess_token());
         foundmember.setRefreshTokenExpireDate(kakaoToken.getRefresh_token_expires_in() + System.currentTimeMillis());
@@ -159,7 +157,7 @@ public class LoginService {
 
         Date accessExpireDate = new Date(foundmember.getAccessTokenExpireDate());
 
-        if(accessExpireDate.before(new Date())) {
+        if(accessExpireDate.before(new Date(System.currentTimeMillis()))) {
 
             RenewTokenDTO renewedToken = renewKakaoToken(foundmember);
 
@@ -211,17 +209,19 @@ public class LoginService {
     }
 
     public boolean kakaoLogout(String accessToken) {
+
         RestTemplate rt = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
-        headers.add("Authorization", "Bearer " + accessToken);
 
+        headers.add("Authorization", "Bearer " + accessToken);
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
 
         HttpEntity<MultiValueMap<String, String>> kakaoLogoutRequest =
                 new HttpEntity<>(params, headers);
 
         ResponseEntity<String> kakaoLogoutResponse = rt.exchange(
-                "https://kapi.kakao.com/v1/user/logout",
+//                "https://kapi.kakao.com/v1/user/logout",
+                "https://kapi.kakao.com/v1/user/unlink",
                 HttpMethod.POST,
                 kakaoLogoutRequest,
                 String.class

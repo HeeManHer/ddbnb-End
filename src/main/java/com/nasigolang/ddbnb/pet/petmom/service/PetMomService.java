@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -83,6 +84,19 @@ public class PetMomService {
 
         //        Page<Review> reviews = reviewRepository.findAll(pageable);
         return petMomRepository.findByMember(page, memberRepository.findById(memberId)).map(petMom -> modelMapper.map(petMom, PetMomDTO.class));
+    }
+
+
+    @Transactional
+    public void updateMomCancle(PetMomDTO momCancle, long boardId) {
+        Optional<PetMom> optionalPetMom = petMomRepository.findById(boardId);
+        if (optionalPetMom.isPresent()) {
+            PetMom foundPetMom = optionalPetMom.get();
+            foundPetMom.setMomStatus("모집취소");
+            foundPetMom.setOtherCondition(momCancle.getOtherCondition().stream().map(list -> modelMapper.map(list, OtherType.class)).collect(Collectors.toList()));
+        } else {
+            throw new RuntimeException("게시글을 찾을 수 없습니다.");
+        }
     }
 
 
