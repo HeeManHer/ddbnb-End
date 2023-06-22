@@ -39,10 +39,10 @@ public class PetMomService {
     }
 
     public Page<PetMomDTO> findAllPetMoms(Pageable page) {
-        page = PageRequest.of(page.getPageNumber() <= 0 ? 0 : page.getPageNumber() - 1, 8, Sort.by("memberId"));
+        page = PageRequest.of(page.getPageNumber() <= 0 ? 0 : page.getPageNumber() - 1, 8, Sort.by("member"));
 
         //        System.out.println(petMomRepository.findById(3));
-        return petMomRepository.findAll(page).map(petMom -> modelMapper.map(petMom, PetMomDTO.class));
+        return petMomRepository.findAll(page).map(petMoms -> modelMapper.map(petMoms, PetMomDTO.class));
 
     }
 
