@@ -83,12 +83,12 @@ public class PetsitterController {
         return ResponseEntity.ok().headers(headers).body(new ResponseDto(HttpStatus.OK, "수정 성공", null));
     }
 
-    @DeleteMapping("/{borderId}")
-    public ResponseEntity<ResponseDto> deletePetSitter(@PathVariable Long borderId){
+    @DeleteMapping("/{boardId}")
+    public ResponseEntity<ResponseDto> deletePetSitter(@PathVariable Long boardId){
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
 
-        petsitterService.deletePetSitter(borderId);
+        petsitterService.deletePetSitter(boardId);
 
         return ResponseEntity.ok().headers(headers).body(new ResponseDto(HttpStatus.OK, "삭제 성공", null));
     }
