@@ -16,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.nio.charset.Charset;
 import java.util.Date;
@@ -54,20 +55,23 @@ public class ReviewController {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
 
-        return ResponseEntity.ok().headers(headers).body(new ResponseDto(HttpStatus.OK, "조회성공", reviewService.findReviewById(reviewId)));
+        return ResponseEntity.ok()
+                             .headers(headers)
+                             .body(new ResponseDto(HttpStatus.OK, "조회성공", reviewService.findReviewById(reviewId)));
     }
 
     @ApiOperation("리뷰 작성")
     @PostMapping("/reviews")
-    public ResponseEntity<ResponseDto> registNewReview(@RequestBody ReviewDTO newReview) {
+    public ResponseEntity<ResponseDto> registNewReview(@RequestPart("newReview") ReviewDTO newReview,
+                                                       @RequestPart(value = "img", required = false) MultipartFile image) {
 
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
 
         newReview.setReviewWriteDate(new Date());
-        reviewService.postReview(newReview);
-        
+        reviewService.postReview(newReview, image);
+
         System.out.println(newReview);
 
         return ResponseEntity.ok().headers(headers).body(new ResponseDto(HttpStatus.OK, "생성성공", newReview));
