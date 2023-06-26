@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.nio.charset.Charset;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -36,7 +37,7 @@ public class PetMomController {
     public ResponseEntity<ResponseDto> registNewReport(@RequestBody PetMomDTO newPetmom) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
-        //        newPetmom.setBoardDate(new Date());
+        newPetmom.setBoardDate(new Date());
         petmomService.registNewPetMom(newPetmom);
 
 

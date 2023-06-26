@@ -52,7 +52,7 @@ public class PetMomService {
         PetMom foundPetMom = petMomRepository.findById((long) modifyPetMom.getBoardId()).get();
 
         foundPetMom.setHouseType(modifyPetMom.getHouseType());
-        foundPetMom.setPetYN(modifyPetMom.isPetYN());
+        foundPetMom.setPetYN(modifyPetMom.getPetYN());
         foundPetMom.setStartDate(modifyPetMom.getStartDate());
         foundPetMom.setRequest(modifyPetMom.getRequest());
         foundPetMom.setSignficant(modifyPetMom.getSignficant());
