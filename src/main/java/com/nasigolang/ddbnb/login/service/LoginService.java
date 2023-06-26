@@ -131,6 +131,7 @@ public class LoginService {
             newMember.setSocialId(String.valueOf(kakaoProfileDTO.getId()));
             newMember.setRefreshToken(kakaoToken.getRefresh_token());
             newMember.setAccessToken(kakaoToken.getAccess_token());
+            newMember.setStatus("정상");
             newMember.setRefreshTokenExpireDate(kakaoToken.getRefresh_token_expires_in() + System.currentTimeMillis());
             newMember.setAccessTokenExpireDate(kakaoToken.getExpires_in() + System.currentTimeMillis());
             newMember.setSignDate(LocalDate.now());

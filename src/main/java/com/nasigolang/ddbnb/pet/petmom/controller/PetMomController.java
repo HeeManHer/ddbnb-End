@@ -127,15 +127,15 @@ public class PetMomController {
         return new ResponseEntity<>(new ResponseDto(HttpStatus.OK, "조회성공", data), headers, HttpStatus.OK);
     }
 
-    @ApiOperation(value = "펫맘 모집취소")
-    @PutMapping("/list/{boardid}/collectcancle")
+    @ApiOperation(value = "펫맘 모집상태변경")
+    @PutMapping("/list/{boardId}/status")
     public ResponseEntity<ResponseDto> updateMomCancle(@RequestBody PetMomDTO cancleMom, @PathVariable("boardId") long boardId) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
 
         petmomService.updateMomCancle(cancleMom, boardId);
 
-        return ResponseEntity.ok().headers(headers).body(new ResponseDto(HttpStatus.OK, "취소상태로 변경 성공", null));
+        return ResponseEntity.ok().headers(headers).body(new ResponseDto(HttpStatus.OK, "상태 변경 성공", null));
     }
 
 

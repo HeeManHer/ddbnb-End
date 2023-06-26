@@ -64,7 +64,7 @@ public class PetMom {
     @Column(name = "REQUEST")
     private String request; // 요청사항
 
-    @Column(name = "MOM_STATUS")
+    @Column(name = "MOM_STATUS", columnDefinition = "VARCHAR(255) DEFAULT '모집중'")
     private String momStatus;
 
     @ManyToOne

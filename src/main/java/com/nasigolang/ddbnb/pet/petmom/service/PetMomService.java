@@ -1,5 +1,7 @@
 package com.nasigolang.ddbnb.pet.petmom.service;
 
+import com.nasigolang.ddbnb.member.dto.MemberSimpleDTO;
+import com.nasigolang.ddbnb.member.entity.Member;
 import com.nasigolang.ddbnb.member.repository.MemberRepository;
 import com.nasigolang.ddbnb.pet.petmom.dto.PetMomDTO;
 import com.nasigolang.ddbnb.pet.petmom.entity.OtherType;
@@ -89,14 +91,10 @@ public class PetMomService {
 
     @Transactional
     public void updateMomCancle(PetMomDTO momCancle, long boardId) {
-        Optional<PetMom> optionalPetMom = petMomRepository.findById(boardId);
-        if (optionalPetMom.isPresent()) {
-            PetMom foundPetMom = optionalPetMom.get();
-            foundPetMom.setMomStatus("모집취소");
-            foundPetMom.setOtherCondition(momCancle.getOtherCondition().stream().map(list -> modelMapper.map(list, OtherType.class)).collect(Collectors.toList()));
-        } else {
-            throw new RuntimeException("게시글을 찾을 수 없습니다.");
-        }
+        PetMom petMom = petMomRepository.findById(boardId).get();
+
+        petMom.setMomStatus(momCancle.getMomStatus());
+
     }
 
 
