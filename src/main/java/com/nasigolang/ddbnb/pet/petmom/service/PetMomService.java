@@ -39,7 +39,7 @@ public class PetMomService {
     }
 
     public Page<PetMomDTO> findAllPetMoms(Pageable page) {
-        page = PageRequest.of(page.getPageNumber() <= 0 ? 0 : page.getPageNumber() - 1, 8, Sort.by("member"));
+        page = PageRequest.of(page.getPageNumber() <= 0 ? 0 : page.getPageNumber() - 1, page.getPageSize(), Sort.by("boardId"));
 
         //        System.out.println(petMomRepository.findById(3));
         return petMomRepository.findAll(page).map(petMoms -> modelMapper.map(petMoms, PetMomDTO.class));
@@ -63,7 +63,10 @@ public class PetMomService {
         foundPetMom.setHourlyRate(modifyPetMom.getHourlyRate());
         foundPetMom.setBoardCategory(modifyPetMom.getBoardCategory());
         foundPetMom.setBoardTitle(modifyPetMom.getBoardTitle());
-        foundPetMom.setOtherCondition(modifyPetMom.getOtherCondition().stream().map(list -> modelMapper.map(list, OtherType.class)).collect(Collectors.toList()));
+        foundPetMom.setOtherCondition(modifyPetMom.getOtherCondition()
+                                                  .stream()
+                                                  .map(list -> modelMapper.map(list, OtherType.class))
+                                                  .collect(Collectors.toList()));
     }
 
     @Transactional
@@ -73,7 +76,9 @@ public class PetMomService {
     }
 
     public PetMomDTO findPetMomByBoardNo(long boardId) {
-        return petMomRepository.findById(boardId).map(petMomboard -> modelMapper.map(petMomboard, PetMomDTO.class)).orElseThrow(() -> new NoSuchElementException("펫시터를 찾을 수 없습니다."));
+        return petMomRepository.findById(boardId)
+                               .map(petMomboard -> modelMapper.map(petMomboard, PetMomDTO.class))
+                               .orElseThrow(() -> new NoSuchElementException("펫시터를 찾을 수 없습니다."));
 
     }
 
@@ -83,22 +88,25 @@ public class PetMomService {
         page = PageRequest.of(page.getPageNumber() <= 0 ? 0 : page.getPageNumber() - 1, 8, Sort.by("boardId"));
 
         //        Page<Review> reviews = reviewRepository.findAll(pageable);
-        return petMomRepository.findByMember(page, memberRepository.findById(memberId)).map(petMom -> modelMapper.map(petMom, PetMomDTO.class));
+        return petMomRepository.findByMember(page, memberRepository.findById(memberId))
+                               .map(petMom -> modelMapper.map(petMom, PetMomDTO.class));
     }
 
 
     @Transactional
     public void updateMomCancle(PetMomDTO momCancle, long boardId) {
         Optional<PetMom> optionalPetMom = petMomRepository.findById(boardId);
-        if (optionalPetMom.isPresent()) {
+        if(optionalPetMom.isPresent()) {
             PetMom foundPetMom = optionalPetMom.get();
             foundPetMom.setMomStatus("모집취소");
-            foundPetMom.setOtherCondition(momCancle.getOtherCondition().stream().map(list -> modelMapper.map(list, OtherType.class)).collect(Collectors.toList()));
+            foundPetMom.setOtherCondition(momCancle.getOtherCondition()
+                                                   .stream()
+                                                   .map(list -> modelMapper.map(list, OtherType.class))
+                                                   .collect(Collectors.toList()));
         } else {
             throw new RuntimeException("게시글을 찾을 수 없습니다.");
         }
     }
-
 
 
     //    public Page<PetMomDTO> findPetMom(Pageable page, String location, LocalDate startDate, LocalDate endDate, boolean petYN, String other) {

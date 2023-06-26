@@ -1,11 +1,11 @@
 package com.nasigolang.ddbnb.pet.petsitter.controller;
 
-import com.nasigolang.ddbnb.pet.petsitter.dto.PetsitterboardDTO;
-import com.nasigolang.ddbnb.pet.petsitter.service.PetsitterService;
 import com.nasigolang.ddbnb.common.ResponseDto;
 import com.nasigolang.ddbnb.common.paging.Pagenation;
 import com.nasigolang.ddbnb.common.paging.ResponseDtoWithPaging;
 import com.nasigolang.ddbnb.common.paging.SelectCriteria;
+import com.nasigolang.ddbnb.pet.petsitter.dto.PetsitterboardDTO;
+import com.nasigolang.ddbnb.pet.petsitter.service.PetsitterService;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -30,18 +30,18 @@ public class PetsitterController {
     private final PetsitterService petsitterService;
 
     @GetMapping("/list")
-    @ApiOperation(value="펫시터 목록 조회")
+    @ApiOperation(value = "펫시터 목록 조회")
     public ResponseEntity<ResponseDto> findAllList(@PageableDefault Pageable page,
                                                    @RequestParam(name = "location", defaultValue = "") String location,
-                                                   @RequestParam(name = "petSize", defaultValue="") String petSize,
-                                                   @RequestParam(name= "care", defaultValue= "") String care,
-                                                   @RequestParam(name= "startDate", defaultValue= "")@DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate,
-                                                   @RequestParam(name= "endDate",defaultValue="")@DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate endDate) {
+                                                   @RequestParam(name = "petSize", defaultValue = "") String petSize,
+                                                   @RequestParam(name = "care", defaultValue = "") String care,
+                                                   @RequestParam(name = "startDate", defaultValue = "") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate,
+                                                   @RequestParam(name = "endDate", defaultValue = "") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate endDate) {
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
-
-        Page<PetsitterboardDTO> petsitterList = petsitterService.findMenuList(page,location,petSize,care,startDate,endDate);
+        
+        Page<PetsitterboardDTO> petsitterList = petsitterService.findMenuList(page, location, petSize, care, startDate, endDate);
         SelectCriteria selectCriteria = Pagenation.getSelectCriteria(petsitterList);
 
         ResponseDtoWithPaging data = new ResponseDtoWithPaging(petsitterList.getContent(), selectCriteria);
@@ -50,7 +50,7 @@ public class PetsitterController {
     }
 
     @GetMapping("/list/{boardid}")
-    @ApiOperation(value="펫시터 상세 조회")
+    @ApiOperation(value = "펫시터 상세 조회")
     public ResponseEntity<ResponseDto> findList(@PathVariable("boardid") Long boardId) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
@@ -61,11 +61,11 @@ public class PetsitterController {
     }
 
     @PostMapping("/regist")
-    @ApiOperation(value="펫시터 추가")
+    @ApiOperation(value = "펫시터 추가")
     public ResponseEntity<ResponseDto> registPetSitter(@RequestBody PetsitterboardDTO petSitter) {
 
         HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(new MediaType("application", "json",Charset.forName("UTF-8")));
+        headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
 
         petsitterService.registPetSitter(petSitter);
 
@@ -84,7 +84,7 @@ public class PetsitterController {
     }
 
     @DeleteMapping("/{boardId}")
-    public ResponseEntity<ResponseDto> deletePetSitter(@PathVariable Long boardId){
+    public ResponseEntity<ResponseDto> deletePetSitter(@PathVariable Long boardId) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
 

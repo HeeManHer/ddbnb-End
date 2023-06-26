@@ -43,15 +43,22 @@ public class ReviewService {
     public Page<ReviewDTO> findAllReview(Pageable page, long memberId) {
         page = PageRequest.of(page.getPageNumber() <= 0 ? 0 : page.getPageNumber() - 1, 8, Sort.by("reviewId"));
 
-        //        Page<Review> reviews = reviewRepository.findAll(pageable);
-        return reviewRepository.findByMember(page, memberRepository.findById(memberId))
-                               .map(review -> modelMapper.map(review, ReviewDTO.class));
+        Page<Review> reviews = reviewRepository.findByMember(page, memberRepository.findById(memberId));
+
+        for(int i = 0; i < reviews.getContent().size(); i++) {
+            reviews.getContent().get(i).setReviewImageUrl(IMAGE_URL + reviews.getContent().get(i).getReviewImageUrl());
+        }
+
+        return reviews.map(review -> modelMapper.map(review, ReviewDTO.class));
     }
 
     /*일부 조회*/
     //    @Transactional
     public ReviewDTO findReviewById(long reviewId) {
         Review foundReview = reviewRepository.findById(reviewId).get();
+
+        foundReview.setReviewImageUrl(IMAGE_URL + foundReview.getReviewImageUrl());
+        
         return modelMapper.map(foundReview, ReviewDTO.class);
 
     }
