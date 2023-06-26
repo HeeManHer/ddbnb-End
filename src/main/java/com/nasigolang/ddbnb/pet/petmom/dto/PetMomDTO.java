@@ -30,7 +30,7 @@ public class PetMomDTO {
     private int hourlyRate;
     private int dateRate;
     private String houseType;
-    private boolean petYN;
+    private String petYN;
     private List<OtherTypeDTO> otherCondition;
     private String momStatus;
 
