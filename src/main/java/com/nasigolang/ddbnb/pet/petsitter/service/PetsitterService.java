@@ -1,5 +1,7 @@
 package com.nasigolang.ddbnb.pet.petsitter.service;
 
+import com.nasigolang.ddbnb.pet.petmom.dto.PetMomDTO;
+import com.nasigolang.ddbnb.pet.petmom.entity.PetMom;
 import com.nasigolang.ddbnb.pet.petsitter.dto.PetsitterboardDTO;
 import com.nasigolang.ddbnb.pet.petsitter.entity.PetsitterEntity;
 import com.nasigolang.ddbnb.pet.petsitter.repository.PetsitterRepository;
@@ -48,6 +50,7 @@ public class PetsitterService {
 
     @Transactional
     public void registPetSitter(PetsitterboardDTO petSitter) {
+
         petSitterRepository.save(modelMapper.map(petSitter, PetsitterEntity.class));
     }
 
@@ -82,6 +85,14 @@ public class PetsitterService {
         return petSitterRepository.findById(boardId)
                                   .map(petsitterboard -> modelMapper.map(petsitterboard, PetsitterboardDTO.class))
                                   .orElseThrow(() -> new NoSuchElementException("펫시터를 찾을 수 없습니다."));
+
+    }
+
+    @Transactional
+    public void updateSitterCancle(PetsitterboardDTO sitterCancle, long boardId) {
+        PetsitterEntity petsitter = petSitterRepository.findById(boardId).get();
+
+        petsitter.setSitterStatus(sitterCancle.getSitterStatus());
 
     }
 }

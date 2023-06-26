@@ -1,5 +1,7 @@
 package com.nasigolang.ddbnb.pet.petmom.service;
 
+import com.nasigolang.ddbnb.member.dto.MemberSimpleDTO;
+import com.nasigolang.ddbnb.member.entity.Member;
 import com.nasigolang.ddbnb.member.repository.MemberRepository;
 import com.nasigolang.ddbnb.pet.petmom.dto.PetMomDTO;
 import com.nasigolang.ddbnb.pet.petmom.entity.OtherType;
@@ -52,7 +54,7 @@ public class PetMomService {
         PetMom foundPetMom = petMomRepository.findById((long) modifyPetMom.getBoardId()).get();
 
         foundPetMom.setHouseType(modifyPetMom.getHouseType());
-        foundPetMom.setPetYN(modifyPetMom.isPetYN());
+        foundPetMom.setPetYN(modifyPetMom.getPetYN());
         foundPetMom.setStartDate(modifyPetMom.getStartDate());
         foundPetMom.setRequest(modifyPetMom.getRequest());
         foundPetMom.setSignficant(modifyPetMom.getSignficant());
@@ -85,7 +87,7 @@ public class PetMomService {
 
     //내 펫맘 조회
     public Page<PetMomDTO> findMyPetMom(Pageable page, long memberId) {
-        page = PageRequest.of(page.getPageNumber() <= 0 ? 0 : page.getPageNumber() - 1, 8, Sort.by("boardId"));
+        page = PageRequest.of(page.getPageNumber() <= 0 ? 0 : page.getPageNumber() - 1, page.getPageSize(), Sort.by("boardId"));
 
         //        Page<Review> reviews = reviewRepository.findAll(pageable);
         return petMomRepository.findByMember(page, memberRepository.findById(memberId))
@@ -95,22 +97,14 @@ public class PetMomService {
 
     @Transactional
     public void updateMomCancle(PetMomDTO momCancle, long boardId) {
-        Optional<PetMom> optionalPetMom = petMomRepository.findById(boardId);
-        if(optionalPetMom.isPresent()) {
-            PetMom foundPetMom = optionalPetMom.get();
-            foundPetMom.setMomStatus("모집취소");
-            foundPetMom.setOtherCondition(momCancle.getOtherCondition()
-                                                   .stream()
-                                                   .map(list -> modelMapper.map(list, OtherType.class))
-                                                   .collect(Collectors.toList()));
-        } else {
-            throw new RuntimeException("게시글을 찾을 수 없습니다.");
-        }
+        PetMom petMom = petMomRepository.findById(boardId).get();
+
+        petMom.setMomStatus(momCancle.getMomStatus());
     }
 
 
     //    public Page<PetMomDTO> findPetMom(Pageable page, String location, LocalDate startDate, LocalDate endDate, boolean petYN, String other) {
-    //        page = PageRequest.of(page.getPageNumber() <= 0 ? 0 : page.getPageNumber() - 1, 8, Sort.by("memberId"));
+    //        page = PageRequest.of(page.getPageNumber() <= 0 ? 0 : page.getPageNumber() - 1, page.getPageSize(), Sort.by("memberId"));
     //        return petMomRepository.findBoardByLocationOrStartDateOrEndDateOrPetYNOrOther(page, location, startDate, endDate, petYN, other).map(list -> modelMapper.map(list, PetMomDTO.class));
     //    }
 }

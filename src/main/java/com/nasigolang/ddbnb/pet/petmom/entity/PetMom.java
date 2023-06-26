@@ -6,6 +6,7 @@ import lombok.*;
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @AllArgsConstructor
@@ -34,7 +35,7 @@ public class PetMom {
     private String houseType; // 주거형태
 
     @Column(name = "PET_YN")
-    private boolean petYN; // 펫 유무
+    private String petYN; // 펫 유무
 
 
     @Column(name = "BOARD_TITLE")
@@ -44,7 +45,7 @@ public class PetMom {
     private String boardCategory;
 
     @Column(name = "BOARD_DATE")
-    private LocalDate boardDate;
+    private Date boardDate;
 
     @Column(name = "LOCATION")
     private String location;
@@ -64,7 +65,7 @@ public class PetMom {
     @Column(name = "REQUEST")
     private String request; // 요청사항
 
-    @Column(name = "MOM_STATUS")
+    @Column(name = "MOM_STATUS", columnDefinition = "VARCHAR(255) DEFAULT '모집중'")
     private String momStatus;
 
     @ManyToOne

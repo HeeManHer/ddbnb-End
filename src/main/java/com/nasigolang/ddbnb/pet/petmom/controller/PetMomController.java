@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.nio.charset.Charset;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -36,7 +37,7 @@ public class PetMomController {
     public ResponseEntity<ResponseDto> registNewReport(@RequestBody PetMomDTO newPetmom) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
-        //        newPetmom.setBoardDate(new Date());
+        newPetmom.setBoardDate(new Date());
         petmomService.registNewPetMom(newPetmom);
 
 
@@ -65,7 +66,7 @@ public class PetMomController {
 
     @GetMapping("/list/{boardid}")
     @ApiOperation(value = "펫시터 상세 조회")
-    public ResponseEntity<ResponseDto> findList(@PathVariable("boardid") int boardId) {
+    public ResponseEntity<ResponseDto> findList(@PathVariable("boardId") long boardId) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
 
@@ -101,7 +102,7 @@ public class PetMomController {
         return ResponseEntity.ok().headers(headers).body(new ResponseDto(HttpStatus.OK, "수정 성공", null));
     }
 
-    @DeleteMapping("/{borderId}")
+    @DeleteMapping("/{borderid}")
     public ResponseEntity<ResponseDto> deletePetMom(@PathVariable int borderId) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
@@ -127,15 +128,15 @@ public class PetMomController {
         return new ResponseEntity<>(new ResponseDto(HttpStatus.OK, "조회성공", data), headers, HttpStatus.OK);
     }
 
-    @ApiOperation(value = "펫맘 모집취소")
-    @PutMapping("/list/{boardid}/collectcancle")
+    @ApiOperation(value = "펫맘 모집상태변경")
+    @PutMapping("/list/{boardId}/status")
     public ResponseEntity<ResponseDto> updateMomCancle(@RequestBody PetMomDTO cancleMom, @PathVariable("boardId") long boardId) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
 
         petmomService.updateMomCancle(cancleMom, boardId);
 
-        return ResponseEntity.ok().headers(headers).body(new ResponseDto(HttpStatus.OK, "취소상태로 변경 성공", null));
+        return ResponseEntity.ok().headers(headers).body(new ResponseDto(HttpStatus.OK, "상태 변경 성공", null));
     }
 
 

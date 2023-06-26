@@ -6,6 +6,7 @@ import com.nasigolang.ddbnb.member.dto.MemberSimpleDTO;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
 
 @AllArgsConstructor
@@ -18,7 +19,7 @@ public class PetMomDTO {
     private String boardTitle;
     private String boardCategory;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-    private LocalDate boardDate;
+    private Date boardDate;
     private String location;
     private String care;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
@@ -32,7 +33,7 @@ public class PetMomDTO {
     private int hourlyRate;
     private int dateRate;
     private String houseType;
-    private boolean petYN;
+    private String petYN;
     private List<OtherTypeDTO> otherCondition;
     private String momStatus;
 

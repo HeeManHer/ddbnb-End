@@ -1,5 +1,9 @@
 package com.nasigolang.ddbnb.pet.petsitter.controller;
 
+
+import com.nasigolang.ddbnb.pet.petmom.dto.PetMomDTO;
+import com.nasigolang.ddbnb.pet.petsitter.dto.PetsitterboardDTO;
+import com.nasigolang.ddbnb.pet.petsitter.service.PetsitterService;
 import com.nasigolang.ddbnb.common.ResponseDto;
 import com.nasigolang.ddbnb.common.paging.Pagenation;
 import com.nasigolang.ddbnb.common.paging.ResponseDtoWithPaging;
@@ -91,6 +95,17 @@ public class PetsitterController {
         petsitterService.deletePetSitter(boardId);
 
         return ResponseEntity.ok().headers(headers).body(new ResponseDto(HttpStatus.OK, "삭제 성공", null));
+    }
+
+    @ApiOperation(value = "펫맘 모집취소")
+    @PutMapping("/list/{boardId}/status")
+    public ResponseEntity<ResponseDto> updateSitterCancle(@RequestBody PetsitterboardDTO cancleSitter, @PathVariable("boardId") long boardId) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
+
+        petsitterService.updateSitterCancle(cancleSitter, boardId);
+
+        return ResponseEntity.ok().headers(headers).body(new ResponseDto(HttpStatus.OK, "상태 변경 성공", null));
     }
 
 }
