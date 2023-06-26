@@ -41,7 +41,7 @@ public class PetMomService {
     }
 
     public Page<PetMomDTO> findAllPetMoms(Pageable page) {
-        page = PageRequest.of(page.getPageNumber() <= 0 ? 0 : page.getPageNumber() - 1, 8, Sort.by("boardId"));
+        page = PageRequest.of(page.getPageNumber() <= 0 ? 0 : page.getPageNumber() - 1, page.getPageSize(), Sort.by("boardId"));
 
         //        System.out.println(petMomRepository.findById(3));
         return petMomRepository.findAll(page).map(petMoms -> modelMapper.map(petMoms, PetMomDTO.class));
@@ -65,7 +65,10 @@ public class PetMomService {
         foundPetMom.setHourlyRate(modifyPetMom.getHourlyRate());
         foundPetMom.setBoardCategory(modifyPetMom.getBoardCategory());
         foundPetMom.setBoardTitle(modifyPetMom.getBoardTitle());
-        foundPetMom.setOtherCondition(modifyPetMom.getOtherCondition().stream().map(list -> modelMapper.map(list, OtherType.class)).collect(Collectors.toList()));
+        foundPetMom.setOtherCondition(modifyPetMom.getOtherCondition()
+                                                  .stream()
+                                                  .map(list -> modelMapper.map(list, OtherType.class))
+                                                  .collect(Collectors.toList()));
     }
 
     @Transactional
@@ -75,17 +78,20 @@ public class PetMomService {
     }
 
     public PetMomDTO findPetMomByBoardNo(long boardId) {
-        return petMomRepository.findById(boardId).map(petMomboard -> modelMapper.map(petMomboard, PetMomDTO.class)).orElseThrow(() -> new NoSuchElementException("펫시터를 찾을 수 없습니다."));
+        return petMomRepository.findById(boardId)
+                               .map(petMomboard -> modelMapper.map(petMomboard, PetMomDTO.class))
+                               .orElseThrow(() -> new NoSuchElementException("펫시터를 찾을 수 없습니다."));
 
     }
 
 
     //내 펫맘 조회
     public Page<PetMomDTO> findMyPetMom(Pageable page, long memberId) {
-        page = PageRequest.of(page.getPageNumber() <= 0 ? 0 : page.getPageNumber() - 1, 8, Sort.by("boardId"));
+        page = PageRequest.of(page.getPageNumber() <= 0 ? 0 : page.getPageNumber() - 1, page.getPageSize(), Sort.by("boardId"));
 
         //        Page<Review> reviews = reviewRepository.findAll(pageable);
-        return petMomRepository.findByMember(page, memberRepository.findById(memberId)).map(petMom -> modelMapper.map(petMom, PetMomDTO.class));
+        return petMomRepository.findByMember(page, memberRepository.findById(memberId))
+                               .map(petMom -> modelMapper.map(petMom, PetMomDTO.class));
     }
 
 
@@ -94,13 +100,11 @@ public class PetMomService {
         PetMom petMom = petMomRepository.findById(boardId).get();
 
         petMom.setMomStatus(momCancle.getMomStatus());
-
     }
 
 
-
     //    public Page<PetMomDTO> findPetMom(Pageable page, String location, LocalDate startDate, LocalDate endDate, boolean petYN, String other) {
-    //        page = PageRequest.of(page.getPageNumber() <= 0 ? 0 : page.getPageNumber() - 1, 8, Sort.by("memberId"));
+    //        page = PageRequest.of(page.getPageNumber() <= 0 ? 0 : page.getPageNumber() - 1, page.getPageSize(), Sort.by("memberId"));
     //        return petMomRepository.findBoardByLocationOrStartDateOrEndDateOrPetYNOrOther(page, location, startDate, endDate, petYN, other).map(list -> modelMapper.map(list, PetMomDTO.class));
     //    }
 }
