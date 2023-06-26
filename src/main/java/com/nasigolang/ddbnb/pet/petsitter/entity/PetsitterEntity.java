@@ -38,7 +38,7 @@ public class PetsitterEntity implements Serializable {
     @ManyToOne
     private Member memberId;
 
-    @Column(name = "BOARD_DATE",columnDefinition = "DATE DEFAULT SYSDATE")
+    @Column(name = "BOARD_DATE")
     private LocalDate boardDate;
 
     @Column(name="LOCATION")
@@ -85,7 +85,7 @@ public class PetsitterEntity implements Serializable {
     @Column(name = "PET_SIZE")
     private String petSize;
 
-    @Column(name = "SITTER_STATUS")
+    @Column(name = "SITTER_STATUS", columnDefinition = "VARCHAR(255) DEFAULT '모집중'")
     private String sitterStatus;
 
 }
