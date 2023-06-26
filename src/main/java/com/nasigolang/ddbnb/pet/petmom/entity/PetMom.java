@@ -6,6 +6,7 @@ import lombok.*;
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @AllArgsConstructor
@@ -44,7 +45,7 @@ public class PetMom {
     private String boardCategory;
 
     @Column(name = "BOARD_DATE")
-    private LocalDate boardDate;
+    private Date boardDate;
 
     @Column(name = "LOCATION")
     private String location;

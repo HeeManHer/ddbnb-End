@@ -6,6 +6,7 @@ import com.nasigolang.ddbnb.member.dto.MemberSimpleDTO;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
 
 @AllArgsConstructor
@@ -17,7 +18,7 @@ public class PetMomDTO {
     private long boardId;
     private String boardTitle;
     private String boardCategory;
-    private LocalDate boardDate;
+    private Date boardDate;
     private String location;
     private String care;
     private LocalDate startDate;

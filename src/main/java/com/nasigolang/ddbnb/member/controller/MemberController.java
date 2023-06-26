@@ -138,17 +138,17 @@ public class MemberController {
                 .build();
     }
 
-    @PutMapping("/members/{memberId}")
-    public ResponseEntity<?> modifyMember(MemberSimpleDTO modifyInfo, @PathVariable long memberId, @RequestParam String type) {
-
-        System.out.println("modifyInfo = " + modifyInfo);
-
-        System.out.println("type = " + type);
-
-        memberService.modifyMember(modifyInfo, memberId, type);
-
-        return ResponseEntity
-                .noContent()
-                .build();
-    }
+//    @PutMapping("/members/{memberId}")
+//    public ResponseEntity<?> modifyMember(MemberSimpleDTO modifyInfo, @PathVariable long memberId, @RequestParam String type) {
+//
+//        System.out.println("modifyInfo = " + modifyInfo);
+//
+//        System.out.println("type = " + type);
+//
+//        memberService.modifyMember(modifyInfo, memberId, type);
+//
+//        return ResponseEntity
+//                .noContent()
+//                .build();
+//    }
 }
