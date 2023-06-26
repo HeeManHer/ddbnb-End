@@ -66,7 +66,7 @@ public class PetMomController {
 
     @GetMapping("/list/{boardid}")
     @ApiOperation(value = "펫시터 상세 조회")
-    public ResponseEntity<ResponseDto> findList(@PathVariable("boardid") int boardId) {
+    public ResponseEntity<ResponseDto> findList(@PathVariable("boardId") long boardId) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
 
@@ -102,7 +102,7 @@ public class PetMomController {
         return ResponseEntity.ok().headers(headers).body(new ResponseDto(HttpStatus.OK, "수정 성공", null));
     }
 
-    @DeleteMapping("/{borderId}")
+    @DeleteMapping("/{borderid}")
     public ResponseEntity<ResponseDto> deletePetMom(@PathVariable int borderId) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
