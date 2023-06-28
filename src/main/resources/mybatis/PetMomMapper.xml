@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nasigolang.ddbnb.pet.petmom.repositroy.PetMomMapper">
+
+    <resultMap id="petMomResultMap" type="com.nasigolang.ddbnb.pet.petmom.dto.PetMomDTO">
+        <id property="boardId" column="BOARD_ID"/>
+        <result property="hourlyRate" column="HOURLY_RATE"/>
+        <result property="dateRate" column="DATE_RATE"/>
+        <result property="houseType" column="HOUSE_TYPE"/>
+        <result property="petYN" column="PET_YN"/>
+        <result property="boardTitle" column="BOARD_TITLE"/>
+        <result property="boardDate" column="BOARD_DATE"/>
+        <result property="location" column="LOCATION"/>
+        <result property="care" column="CARE"/>
+        <result property="startDate" column="START_DATE"/>
+        <result property="endDate" column="END_DATE"/>
+        <result property="signficant" column="SIGNFICANT"/>
+        <result property="momStatus" column="MOM_STATUS"/>
+
+        <association property="member" javaType="com.nasigolang.ddbnb.member.dto.MemberSimpleDTO">
+            <id property="memberId" column="MEMBER_ID"/>
+            <result property="experience" column="EXPERIENCE"/>
+            <result property="socialLogin" column="SOCIAL_LOGIN"/>
+            <result property="profileImage" column="PROFILE_IMAGE"/>
+            <result property="gender" column="GENDER"/>
+            <result property="nickname" column="NICKNAME"/>
+            <result property="preferredArea" column="PREFERRED_AREA"/>
+            <result property="reportedCount" column="REPORTED_COUNT"/>
+            <result property="status" column="STATUS"/>
+            <result property="signDate" column="SIGN_DATE"/>
+            <result property="petSitterCareer" column="PER_SITTER_CAREER"/>
+            <result property="starPoint" column="STAR_POINT"/>
+            <result property="detailedHistory" column="DETAILED_HISTORY"/>
+        </association>
+        <collection property="OtherType" ofType="com.nasigolang.ddbnb.pet.petmom.dto.OtherTypeDTO">
+            <id property="typeId" column="TYPE_ID"/>
+            <result property="typeContent" column="TYPE_CONTENT"/>
+
+        </collection>
+    </resultMap>
+
+    <select id="searchPetMom" parameterType="hashmap" resultMap="petMomResultMap">
+        SELECT M.BOARD_ID
+        , M.HOURLY_RATE
+        , M.DATE_RATE
+        , M.HOUSE_TYPE
+        , M.PET_YN
+        , M.BOARD_TITLE
+        , M.BOARD_CATEGORY
+        , M.BOARD_DATE
+        , M.LOCATION
+        , M.CARE
+        , M.START_DATE
+        , M.END_DATE
+        , M.SIGNFICANT
+        , M.REQUEST
+        , M.MOM_STATUS
+        , ME.MEMBER_ID
+        , O.BOARD_ID
+        FROM PET_MOM M
+        JOIN MEMBER ME ON (M.MEMBER_ID = ME.MEMBER_ID)
+        JOIN OTHER O 
+
+        <trim prefix="WHERE" prefixOverrides="AND">
+            <if test="petYN != null">
+                M.PET_YN LIKE #{petYN}
+            </if>
+            <if test="location != null">
+                AND M.LOCATION = #{location}
+            </if>
+            <if test="startDate != null">
+                AND M.START_DATE = #{startDate}
+            </if>
+            <if test="endDate != null">
+                AND M.END_DATE = #{endDate}
+            </if>
+            <if test="otherCondition != null">
+                AND O.OTHER = #{otherCondition}
+            </if>
+        </trim>
+        ORDER BY M.BOARD_ID
+    </select>
+
+</mapper>
