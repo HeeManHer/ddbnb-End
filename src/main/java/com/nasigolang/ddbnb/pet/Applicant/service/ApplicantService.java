@@ -18,12 +18,12 @@ public class ApplicantService {
 
     private final ApplicantRepository applicantRepository;
     private final ModelMapper modelMapper;
+
     public Page<ApplicantDTO> findApplicantList(Pageable page, long boardId) {
 
         page = PageRequest.of(page.getPageNumber() <= 0 ? 0 : page.getPageNumber() - 1, page.getPageSize(), Sort.by("boardId"));
 
-        return applicantRepository.findByBoardId(
-                page, boardId).map(list -> modelMapper.map(list, ApplicantDTO.class));
+        return applicantRepository.findByBoardId(page, boardId).map(list -> modelMapper.map(list, ApplicantDTO.class));
     }
 
     @Transactional

@@ -1,7 +1,6 @@
 package com.nasigolang.ddbnb.pet.petsitter.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.nasigolang.ddbnb.member.dto.MemberDTO;
 import com.nasigolang.ddbnb.member.dto.MemberSimpleDTO;
 import lombok.*;
 

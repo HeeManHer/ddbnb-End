@@ -47,7 +47,7 @@ public class ApplicantController {
     public ResponseEntity<ResponseDto> findApplicant(@RequestBody ApplicantDTO applicant) {
 
         HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(new MediaType("application", "json",Charset.forName("UTF-8")));
+        headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
 
         applicantService.registApplicant(applicant);
 

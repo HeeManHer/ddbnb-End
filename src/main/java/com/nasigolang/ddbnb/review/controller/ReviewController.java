@@ -20,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.nio.charset.Charset;
 import java.util.Date;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1")
@@ -63,16 +64,12 @@ public class ReviewController {
     @ApiOperation("리뷰 작성")
     @PostMapping("/reviews")
     public ResponseEntity<ResponseDto> registNewReview(@RequestPart("newReview") ReviewDTO newReview,
-                                                       @RequestPart(value = "img", required = false) MultipartFile image) {
-
-
+                                                       @RequestPart(value = "img", required = false) List<MultipartFile> image) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
 
         newReview.setReviewWriteDate(new Date());
         reviewService.postReview(newReview, image);
-
-        System.out.println(newReview);
 
         return ResponseEntity.ok().headers(headers).body(new ResponseDto(HttpStatus.OK, "생성성공", newReview));
     }

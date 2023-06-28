@@ -25,7 +25,7 @@ spring:
     cache: false
   web:
     resources:
-      static-locations: classpath:/imgs/
+      static-locations: classpath:/images/
 
   jpa:
     generate-ddl: true
@@ -40,11 +40,11 @@ spring:
 # 이미지 저장할 위치와 응답할 때 이미지 주소 세팅
 image:
   # WebConfig에 세팅
-  add-resource-locations: classpath:/static/imgs/
-  add-resource-handler: /imgs/**
+  add-resource-locations: classpath:/static/images/
+  add-resource-handler: /images/**
   # ProductService에 세팅
-  image-dir: src/main/resources/static/imgs
-  image-url: http://localhost:8080/imgs/
+  image-dir: src/main/resources/static/images
+  image-url: http://localhost:8080/images/
 
 
 jwt:
