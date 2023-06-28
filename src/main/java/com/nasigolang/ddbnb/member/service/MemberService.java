@@ -1,6 +1,5 @@
 package com.nasigolang.ddbnb.member.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nasigolang.ddbnb.member.dto.MemberDTO;
 import com.nasigolang.ddbnb.member.dto.MemberSimpleDTO;
 import com.nasigolang.ddbnb.member.entity.Member;
@@ -23,13 +22,10 @@ public class MemberService {
     private final MemberMapper memberMapper;
     private final MemberRepository memberRepository;
     private final ModelMapper modelMapper;
-    private final ObjectMapper objectMapper;
 
     @Transactional
     public long registNewUser(MemberDTO newMember) {
-        System.out.println(9);
         newMember.setNickname("새로운회원" + (Math.random() * 100 + 1));
-        System.out.println(10);
         return memberRepository.save(modelMapper.map(newMember, Member.class)).getMemberId();
     }
 
@@ -82,7 +78,7 @@ public class MemberService {
 
         return members;
     }
-  
+
     public Member findBySocialId(String socialLogin, String socialId) {
         Member foundMember = memberRepository.findBySocialId(socialLogin, socialId);
         if(foundMember == null) {

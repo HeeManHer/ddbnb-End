@@ -34,11 +34,10 @@
             <result property="starPoint" column="STAR_POINT"/>
             <result property="detailedHistory" column="DETAILED_HISTORY"/>
         </association>
-        <collection property="OtherType" ofType="com.nasigolang.ddbnb.pet.petmom.dto.OtherTypeDTO">
-            <id property="typeId" column="TYPE_ID"/>
-            <result property="typeContent" column="TYPE_CONTENT"/>
-
-        </collection>
+        <!--        <collection property="OtherType" ofType="com.nasigolang.ddbnb.pet.petmom.dto.OtherTypeDTO">-->
+        <!--            <id property="typeId" column="TYPE_ID"/>-->
+        <!--            <result property="typeContent" column="TYPE_CONTENT"/>-->
+        <!--        </collection>-->
     </resultMap>
 
     <select id="searchPetMom" parameterType="hashmap" resultMap="petMomResultMap">
@@ -58,10 +57,10 @@
         , M.REQUEST
         , M.MOM_STATUS
         , ME.MEMBER_ID
-        , O.BOARD_ID
+        <!--        , O.BOARD_ID-->
         FROM PET_MOM M
         JOIN MEMBER ME ON (M.MEMBER_ID = ME.MEMBER_ID)
-        JOIN OTHER O 
+        <!--        JOIN OTHER O -->
 
         <trim prefix="WHERE" prefixOverrides="AND">
             <if test="petYN != null">
