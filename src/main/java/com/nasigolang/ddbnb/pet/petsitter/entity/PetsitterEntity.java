@@ -34,9 +34,9 @@ public class PetsitterEntity implements Serializable {
     @Column(name="BOARD_TILE")
     private String boardTitle;
 
-    @JoinColumn(name="MEMBER_ID")
+    @JoinColumn(name = "MEMBER_ID", referencedColumnName = "MEMBER_ID")
     @ManyToOne
-    private Member memberId;
+    private Member member;
 
     @Column(name = "BOARD_DATE")
     private LocalDate boardDate;
