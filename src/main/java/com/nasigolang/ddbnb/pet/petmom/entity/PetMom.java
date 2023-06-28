@@ -65,7 +65,7 @@ public class PetMom {
     @Column(name = "REQUEST")
     private String request; // 요청사항
 
-    @Column(name = "MOM_STATUS", columnDefinition = "VARCHAR(255) DEFAULT '모집중'")
+    @Column(name = "MOM_STATUS", columnDefinition = "VARCHAR2(255) DEFAULT '모집 중'")
     private String momStatus;
 
     @ManyToOne
@@ -80,6 +80,13 @@ public class PetMom {
     )
     private List<OtherType> otherCondition = new ArrayList<>();
 
+    public void setMomStatus(String momStatus) {
+        if (momStatus != null) {
+            this.momStatus = momStatus;
+        } else {
+            this.momStatus = "모집 중";
+        }
+    }
 
 }
 

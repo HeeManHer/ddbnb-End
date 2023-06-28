@@ -2,13 +2,11 @@ package com.nasigolang.ddbnb.login.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.nasigolang.ddbnb.jwt.TokenProvider;
 import com.nasigolang.ddbnb.login.dto.*;
-import com.nasigolang.ddbnb.login.repository.LoginRepository;
 import com.nasigolang.ddbnb.member.dto.MemberDTO;
 import com.nasigolang.ddbnb.member.entity.Member;
 import com.nasigolang.ddbnb.member.service.MemberService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -19,27 +17,14 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
-import springfox.documentation.swagger2.mappers.ModelMapper;
 
 import java.time.LocalDate;
 import java.util.Date;
 
 @Service
+@AllArgsConstructor
 public class LoginService {
-
-    private final LoginRepository loginRepository;
-    private final ModelMapper modelMapper;
     private final MemberService memberService;
-    private final TokenProvider tokenProvider;
-
-    @Autowired
-    public LoginService(LoginRepository loginRepository, ModelMapper modelMapper, MemberService memberService,
-                        TokenProvider tokenProvider) {
-        this.loginRepository = loginRepository;
-        this.modelMapper = modelMapper;
-        this.memberService = memberService;
-        this.tokenProvider = tokenProvider;
-    }
 
     public KakaoAcessTokenDTO getAccessToken(String code) {
 
@@ -72,7 +57,6 @@ public class LoginService {
     }
 
     public KakaoProfileDTO findKakaoProfile(String accessToken) {
-        System.out.println(3);
         RestTemplate rt = new RestTemplate();
 
         HttpHeaders headers = new HttpHeaders();
@@ -91,20 +75,16 @@ public class LoginService {
         } catch(JsonProcessingException e) {
             throw new RuntimeException(e);
         }
-        System.out.println(4);
         return kakaoProfileDTO;
     }
 
     @Transactional
     public void getJwtToken(KakaoAcessTokenDTO kakaoToken) {
 
-        System.out.println(1);
         KakaoProfileDTO kakaoProfileDTO = findKakaoProfile(kakaoToken.getAccess_token());
-        System.out.println(2);
 
         /* 해당 유저의 가입 이력이 없을 경우 */
-        if(memberService.findBySocialId("KAKAO", String.valueOf(kakaoProfileDTO.getId())) == null) {
-            System.out.println(7);
+        if (memberService.findBySocialId("KAKAO", String.valueOf(kakaoProfileDTO.getId())) == null) {
             MemberDTO newMember = new MemberDTO();
 
             newMember.setSocialLogin("KAKAO");
@@ -118,12 +98,10 @@ public class LoginService {
             newMember.setProfileImage("https://api.dicebear.com/6.x/thumbs/svg?seed=" + newMember.getSocialId()
                                                                                                  .split("@")[0]);
             newMember.setLastVisitDate(LocalDate.now());
-            if(kakaoProfileDTO.getKakao_account().getGender() != null) {
+            if (kakaoProfileDTO.getKakao_account().getGender() != null) {
                 newMember.setGender(kakaoProfileDTO.getKakao_account().getGender());
             }
             memberService.registNewUser(newMember);
-
-            System.out.println(8);
         }
 
         /* 소셜 아이디로 멤버가 있는지 조회해 가져옴 */
@@ -139,11 +117,11 @@ public class LoginService {
 
         Date accessExpireDate = new Date(foundmember.getAccessTokenExpireDate());
 
-        if(accessExpireDate.before(new Date(System.currentTimeMillis()))) {
+        if (accessExpireDate.before(new Date(System.currentTimeMillis()))) {
 
             RenewTokenDTO renewedToken = renewKakaoToken(foundmember);
 
-            if(renewedToken.getRefresh_token() != null) {
+            if (renewedToken.getRefresh_token() != null) {
 
                 foundmember.setRefreshToken(renewedToken.getRefresh_token());
                 foundmember.setRefreshTokenExpireDate(renewedToken.getRefresh_token_expires_in() + System.currentTimeMillis());
@@ -153,7 +131,6 @@ public class LoginService {
             foundmember.setAccessTokenExpireDate(renewedToken.getExpires_in() + System.currentTimeMillis());
 
         }
-        System.out.println(kakaoToken);
     }
 
 
@@ -179,7 +156,7 @@ public class LoginService {
         RenewTokenDTO renewToken = null;
         try {
             renewToken = objectMapper.readValue(renewTokenResponse.getBody(), RenewTokenDTO.class);
-        } catch(JsonProcessingException e) {
+        } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
 
@@ -229,7 +206,7 @@ public class LoginService {
         NaverAccessTokenDTO naverAccessToken = null;
         try {
             naverAccessToken = objectMapper.readValue(accessTokenResponse.getBody(), NaverAccessTokenDTO.class);
-        } catch(JsonProcessingException e) {
+        } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
 
@@ -242,7 +219,7 @@ public class LoginService {
         NaverProfileDTO naverProfileDTO = findNaverProfile(naverAccessToken.getAccess_token());
 
         /* 해당 유저의 가입 이력이 없을 경우 */
-        if(memberService.findBySocialId("NAVER", naverProfileDTO.getResponse().getId()) == null) {
+        if (memberService.findBySocialId("NAVER", naverProfileDTO.getResponse().getId()) == null) {
 
             MemberDTO newMember = new MemberDTO();
 
@@ -257,7 +234,7 @@ public class LoginService {
             newMember.setProfileImage("https://api.dicebear.com/6.x/thumbs/svg?seed=" + newMember.getSocialId()
                                                                                                  .split("@")[0]);
 
-            if(naverProfileDTO.getResponse().getGender() != null) {
+            if (naverProfileDTO.getResponse().getGender() != null) {
                 newMember.setGender(naverProfileDTO.getResponse().getGender());
             }
 
@@ -276,11 +253,11 @@ public class LoginService {
 
         Date accessExpireDate = new Date(foundmember.getAccessTokenExpireDate());
 
-        if(accessExpireDate.before(new Date())) {
+        if (accessExpireDate.before(new Date())) {
 
             RenewTokenDTO renewedToken = renewNaverToken(foundmember);
 
-            if(renewedToken.getRefresh_token() != null) {
+            if (renewedToken.getRefresh_token() != null) {
 
                 foundmember.setRefreshToken(renewedToken.getRefresh_token());
                 foundmember.setRefreshTokenExpireDate(renewedToken.getRefresh_token_expires_in() + System.currentTimeMillis());
@@ -289,7 +266,6 @@ public class LoginService {
             foundmember.setAccessToken(renewedToken.getAccess_token());
             foundmember.setAccessTokenExpireDate(renewedToken.getExpires_in() + System.currentTimeMillis());
         }
-        System.out.println(naverAccessToken);
     }
 
     public NaverProfileDTO findNaverProfile(String accessToken) {
@@ -303,14 +279,12 @@ public class LoginService {
 
         ResponseEntity<String> naverProfileResponse = rt.exchange("https://openapi.naver.com/v1/nid/me", HttpMethod.POST, naverProfileRequest, String.class);
 
-        System.out.println(naverProfileResponse.getBody());
-
         NaverProfileDTO naverProfileDTO = new NaverProfileDTO();
         ObjectMapper objectMapper = new ObjectMapper();
 
         try {
             naverProfileDTO = objectMapper.readValue(naverProfileResponse.getBody(), NaverProfileDTO.class);
-        } catch(JsonProcessingException e) {
+        } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
 
@@ -326,8 +300,8 @@ public class LoginService {
 
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("grant_type", "refresh_token");
-        //		params.add("client_id", System.getenv("NaverClientIdKey"));
-        //		params.add("client_secret", System.getenv("NaverClientSecretKey"));
+//		params.add("client_id", System.getenv("NaverClientIdKey"));
+//		params.add("client_secret", `System`.getenv("NaverClientSecretKey"));
         params.add("client_id", "T0mWG2VjAfBH9cYz6Qrf");
         params.add("client_secret", "iHe8ItSSso");
         params.add("refresh_token", foundMember.getRefreshToken());
@@ -340,7 +314,7 @@ public class LoginService {
         RenewTokenDTO renewToken = null;
         try {
             renewToken = objectMapper.readValue(naverTokenResponses.getBody(), RenewTokenDTO.class);
-        } catch(JsonProcessingException e) {
+        } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
 

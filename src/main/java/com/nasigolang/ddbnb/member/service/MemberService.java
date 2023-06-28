@@ -84,9 +84,7 @@ public class MemberService {
     }
   
     public Member findBySocialId(String socialLogin, String socialId) {
-        System.out.println(5);
         Member foundMember = memberRepository.findBySocialId(socialLogin, socialId);
-        System.out.println(6);
         if(foundMember == null) {
             return null;
         } else {
