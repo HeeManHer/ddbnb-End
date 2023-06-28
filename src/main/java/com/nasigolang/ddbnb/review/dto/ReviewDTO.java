@@ -4,6 +4,7 @@ import com.nasigolang.ddbnb.member.dto.MemberSimpleDTO;
 import lombok.*;
 
 import java.util.Date;
+import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -22,5 +23,5 @@ public class ReviewDTO {
     private Date reviewWriteDate;
     private int reviewStarPoint;
 
-    private String reviewImageUrl;
+    private List<ReviewImageDTO> reviewImage;
 }
