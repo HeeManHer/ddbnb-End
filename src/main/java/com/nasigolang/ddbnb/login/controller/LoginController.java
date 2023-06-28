@@ -41,11 +41,8 @@ public class LoginController {
     @ApiOperation(value = "카카오 인가 코드 받아와서 액세스 토큰 발급")
     @PostMapping("/kakaocode")
     public ResponseEntity<?> getKakaoCode(@RequestBody Map<String, String> code) {
-        System.out.println(code);
         /* 인가 코드로 액세스 토큰 발급 */
         KakaoAcessTokenDTO kakaoToken = loginService.getAccessToken(code.get("code"));
-
-        System.out.println(kakaoToken.getAccess_token());
 
         /* 액세스 토큰으로 DB 저장or 확인 후 JWT 생성 */
         loginService.getJwtToken(kakaoToken);
@@ -60,7 +57,6 @@ public class LoginController {
     @PostMapping("/kakaologout")
     public ResponseEntity<?> kakaoLogout(@RequestHeader("Authorization") String accessToken) {
         /* 카카오 로그아웃 API 호출 */
-        System.out.println(accessToken);
         boolean logoutSuccess = loginService.kakaoLogout(accessToken);
 
         if (logoutSuccess) {
@@ -81,7 +77,6 @@ public class LoginController {
     @PostMapping("/renew")
     public ResponseEntity<?> renewAccessToken(@RequestHeader(value = "Auth") String auth) {
 
-        System.out.println("auth = " + auth);
         return null;
     }
 
@@ -91,7 +86,6 @@ public class LoginController {
     public ResponseEntity<?> getNaverCode(@RequestBody Map<String, String> codeAndState) {
         /* 인가 코드로 액세스 토큰 발급 */
         NaverAccessTokenDTO naverAccessToken = loginService.getNaverAccessToken(codeAndState.get("code"), codeAndState.get("state"));
-        System.out.println(naverAccessToken.getAccess_token());
 
         /* 액세스 토큰으로 DB 저장or 확인 후 JWT 생성 */
         loginService.getJwtToken(naverAccessToken);
@@ -106,7 +100,6 @@ public class LoginController {
     @PostMapping("/naverlogout")
     public ResponseEntity<?> naverLogout(@RequestHeader("Authorization") String accessToken) {
         /* 카카오 로그아웃 API 호출 */
-        System.out.println(accessToken);
         boolean logoutSuccess = loginService.naverLogout(accessToken);
 
         if (logoutSuccess) {

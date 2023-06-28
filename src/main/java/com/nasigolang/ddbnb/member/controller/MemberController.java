@@ -110,8 +110,6 @@ public class MemberController {
 
         MemberSimpleDTO foundMember = memberService.findMemberById(memberId);
 
-        System.out.println(foundMember);
-
         Map<String, Object> responseMap = new HashMap<>();
         responseMap.put("members", foundMember);
 

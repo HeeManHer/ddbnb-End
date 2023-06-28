@@ -50,7 +50,6 @@ public class PetsitterService {
 
     @Transactional
     public void registPetSitter(PetsitterboardDTO petSitter) {
-
         petSitterRepository.save(modelMapper.map(petSitter, PetsitterEntity.class));
     }
 

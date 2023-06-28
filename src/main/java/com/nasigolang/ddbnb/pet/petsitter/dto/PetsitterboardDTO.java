@@ -12,7 +12,6 @@ import java.time.LocalDate;
 @Setter
 @ToString
 public class PetsitterboardDTO {
-
     private long boardId;
     private String boardTitle;
     private MemberDTO memberId;

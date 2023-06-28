@@ -85,7 +85,14 @@ public class PetsitterEntity implements Serializable {
     @Column(name = "PET_SIZE")
     private String petSize;
 
-    @Column(name = "SITTER_STATUS", columnDefinition = "VARCHAR(255) DEFAULT '모집중'")
+    @Column(name = "SITTER_STATUS", columnDefinition = "VARCHAR2(255) DEFAULT '모집 중'")
     private String sitterStatus;
 
+    public void setSitterStatus(String sitterStatus) {
+        if (sitterStatus != null) {
+            this.sitterStatus = sitterStatus;
+        } else {
+            this.sitterStatus = "모집 중";
+        }
+    }
 }
