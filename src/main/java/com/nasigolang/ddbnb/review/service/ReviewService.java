@@ -2,6 +2,7 @@ package com.nasigolang.ddbnb.review.service;
 
 import com.nasigolang.ddbnb.member.repository.MemberRepository;
 import com.nasigolang.ddbnb.review.dto.ReviewDTO;
+import com.nasigolang.ddbnb.review.dto.ReviewImageDTO;
 import com.nasigolang.ddbnb.review.entity.Review;
 import com.nasigolang.ddbnb.review.repository.ReviewRepository;
 import com.nasigolang.ddbnb.util.FileUploadUtils;
@@ -16,6 +17,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -30,8 +33,6 @@ public class ReviewService {
     @Value("${image.image-url}")
     private String IMAGE_URL;
 
-    private long reviewId;
-
     public ReviewService(ReviewRepository reviewRepository, MemberRepository memberRepository,
                          ModelMapper modelMapper) {
         this.reviewRepository = reviewRepository;
@@ -41,12 +42,18 @@ public class ReviewService {
 
     //전체리뷰 조회
     public Page<ReviewDTO> findAllReview(Pageable page, long memberId) {
-        page = PageRequest.of(page.getPageNumber() <= 0 ? 0 : page.getPageNumber() - 1, 8, Sort.by("reviewId"));
+        page = PageRequest.of(page.getPageNumber() <= 0 ? 0 : page.getPageNumber() - 1, page.getPageSize(), Sort.by("reviewId"));
 
         Page<Review> reviews = reviewRepository.findByMember(page, memberRepository.findById(memberId));
 
         for(int i = 0; i < reviews.getContent().size(); i++) {
-            reviews.getContent().get(i).setReviewImageUrl(IMAGE_URL + reviews.getContent().get(i).getReviewImageUrl());
+            for(int k = 0; k < reviews.getContent().get(i).getReviewImage().size(); k++) {
+                reviews.getContent()
+                       .get(i)
+                       .getReviewImage()
+                       .get(k)
+                       .setImageUrl(IMAGE_URL + reviews.getContent().get(i).getReviewImage().get(k).getImageUrl());
+            }
         }
 
         return reviews.map(review -> modelMapper.map(review, ReviewDTO.class));
@@ -57,27 +64,33 @@ public class ReviewService {
     public ReviewDTO findReviewById(long reviewId) {
         Review foundReview = reviewRepository.findById(reviewId).get();
 
-        foundReview.setReviewImageUrl(IMAGE_URL + foundReview.getReviewImageUrl());
-        
+        foundReview.getReviewImage().get(0).setImageUrl(IMAGE_URL + foundReview.getReviewImage().get(0).getImageUrl());
+
+
         return modelMapper.map(foundReview, ReviewDTO.class);
 
     }
 
     @Transactional
-    public void postReview(ReviewDTO newReview, MultipartFile image) {
-        if(image != null) {
-            String imageName = UUID.randomUUID().toString().replace("-", "");
-            String replaceFileName = null;
+    public void postReview(ReviewDTO newReview, List<MultipartFile> images) {
+        if(images != null) {
+            List<ReviewImageDTO> imageUrlList = new ArrayList<>();
+            for(int i = 0; i < images.size(); i++) {
+                String imageName = UUID.randomUUID().toString().replace("-", "");
 
-            try {
-                replaceFileName = FileUploadUtils.saveFile(IMAGE_DIR, imageName, image);
-                newReview.setReviewImageUrl(replaceFileName);
-            } catch(IOException e) {
-                throw new RuntimeException(e);
+                try {
+                    String replaceFileName = FileUploadUtils.saveFile(IMAGE_DIR, imageName, images.get(i));
+
+                    ReviewImageDTO image = new ReviewImageDTO();
+                    image.setImageUrl(replaceFileName);
+                    imageUrlList.add(image);
+                } catch(IOException e) {
+                    throw new RuntimeException(e);
+                }
             }
-
+            newReview.setReviewImage(imageUrlList);
         }
-        reviewRepository.save(modelMapper.map(newReview, Review.class));
 
+        reviewRepository.save(modelMapper.map(newReview, Review.class));
     }
 }

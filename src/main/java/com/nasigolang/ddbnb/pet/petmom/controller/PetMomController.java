@@ -7,7 +7,7 @@ import com.nasigolang.ddbnb.common.paging.SelectCriteria;
 import com.nasigolang.ddbnb.pet.petmom.dto.PetMomDTO;
 import com.nasigolang.ddbnb.pet.petmom.service.PetMomService;
 import io.swagger.annotations.ApiOperation;
-import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -16,7 +16,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.nio.charset.Charset;
 import java.util.Date;
@@ -64,7 +63,7 @@ public class PetMomController {
     }
 
 
-    @GetMapping("/list/{boardid}")
+    @GetMapping("/list/{boardId}")
     @ApiOperation(value = "펫시터 상세 조회")
     public ResponseEntity<ResponseDto> findList(@PathVariable("boardId") long boardId) {
         HttpHeaders headers = new HttpHeaders();
@@ -130,7 +129,8 @@ public class PetMomController {
 
     @ApiOperation(value = "펫맘 모집상태변경")
     @PutMapping("/list/{boardId}/status")
-    public ResponseEntity<ResponseDto> updateMomCancle(@RequestBody PetMomDTO cancleMom, @PathVariable("boardId") long boardId) {
+    public ResponseEntity<ResponseDto> updateMomCancle(@RequestBody PetMomDTO cancleMom,
+                                                       @PathVariable("boardId") long boardId) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
 

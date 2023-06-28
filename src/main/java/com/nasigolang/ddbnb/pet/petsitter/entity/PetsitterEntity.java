@@ -15,36 +15,29 @@ import java.time.LocalDate;
 @Setter
 @ToString
 @Table(name = "PETSITTER")
-@Entity(name="Petsitter")
-@SequenceGenerator(
-        name="petsitter_sequence_generator",
-        sequenceName = "sequence_board_id",
-        initialValue = 1,
-        allocationSize = 50
-)
+@Entity(name = "Petsitter")
+@SequenceGenerator(name = "petsitter_sequence_generator", sequenceName = "sequence_board_id", initialValue = 1, allocationSize = 50)
 public class PetsitterEntity implements Serializable {
 
     @Id
-    @Column(name="BOARD_ID")
-    @GeneratedValue(
-            strategy = GenerationType.SEQUENCE,
-            generator = "petsitter_sequence_generator")
+    @Column(name = "BOARD_ID")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "petsitter_sequence_generator")
     private Long boardId;
 
-    @Column(name="BOARD_TILE")
+    @Column(name = "BOARD_TILE")
     private String boardTitle;
 
-    @JoinColumn(name="MEMBER_ID")
     @ManyToOne
-    private Member memberId;
+    @JoinColumn(name = "MEMBER_ID", referencedColumnName = "MEMBER_ID")
+    private Member member;
 
     @Column(name = "BOARD_DATE")
     private LocalDate boardDate;
 
-    @Column(name="LOCATION")
+    @Column(name = "LOCATION")
     private String location;
 
-    @Column(name="CARE")
+    @Column(name = "CARE")
     private String care;
 
     @Column(name = "START_DATE")
@@ -55,16 +48,16 @@ public class PetsitterEntity implements Serializable {
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate endDate;
 
-    @Column(name="SIGNFICANT")
+    @Column(name = "SIGNFICANT")
     private String signficant;
 
-    @Column(name="IMG")
+    @Column(name = "IMG")
     private byte[] IMG;
 
-    @Column(name="REQUEST")
+    @Column(name = "REQUEST")
     private String request;
 
-    @Column(name="BOARD_CATEGORY")
+    @Column(name = "BOARD_CATEGORY")
     private String boardCategory;
 
     @Column(name = "RATE")
