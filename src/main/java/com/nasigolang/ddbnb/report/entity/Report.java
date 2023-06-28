@@ -43,5 +43,7 @@ public class Report {
     @JoinColumn(name = "OTHER_USER_ID")
     private Member otherUser;
 
+    @Column(name ="BOARD_ID")
+    private long boardId;
 
 }
