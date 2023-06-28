@@ -14,7 +14,6 @@ import java.util.List;
 @Entity(name = "OtherType")
 @Table(name = "OTHER_TYPE")
 public class OtherType {
-
     @Id
     @Column(name = "TYPE_ID")
     private int typeId;
@@ -23,6 +22,5 @@ public class OtherType {
     private String typeContent;
 
     @ManyToMany(mappedBy = "otherCondition")
-    private List<PetMom> users = new ArrayList<>();
+    private List<PetMom> petMoms = new ArrayList<>();
 }
-

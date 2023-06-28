@@ -15,7 +15,7 @@ import java.util.List;
 @Getter
 @ToString
 @Entity(name = "PetMom")
-@Table(name = "petMom")
+@Table(name = "PET_MOM")
 @SequenceGenerator(name = "petMom_sequence_generator", sequenceName = "sequence_petMom_id", initialValue = 1, allocationSize = 50)
 public class PetMom {
 
@@ -73,8 +73,13 @@ public class PetMom {
     private Member member;
 
     @ManyToMany
-    @JoinTable(name = "OTHER", joinColumns = @JoinColumn(name = "BOARD_ID"), inverseJoinColumns = @JoinColumn(name = "TYPE_ID"))
+    @JoinTable(
+            name = "OTHER",
+            joinColumns = @JoinColumn(name = "BOARD_ID"),
+            inverseJoinColumns = @JoinColumn(name = "TYPE_ID")
+    )
     private List<OtherType> otherCondition = new ArrayList<>();
 
 
 }
+

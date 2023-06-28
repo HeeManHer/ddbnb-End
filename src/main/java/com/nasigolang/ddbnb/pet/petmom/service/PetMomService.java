@@ -6,45 +6,56 @@ import com.nasigolang.ddbnb.member.repository.MemberRepository;
 import com.nasigolang.ddbnb.pet.petmom.dto.PetMomDTO;
 import com.nasigolang.ddbnb.pet.petmom.entity.OtherType;
 import com.nasigolang.ddbnb.pet.petmom.entity.PetMom;
+import com.nasigolang.ddbnb.pet.petmom.repositroy.PetMomMapper;
 import com.nasigolang.ddbnb.pet.petmom.repositroy.PetMomRepository;
+import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
+@AllArgsConstructor
 public class PetMomService {
 
     private final PetMomRepository petMomRepository;
     private final ModelMapper modelMapper;
     private final MemberRepository memberRepository;
+    private final PetMomMapper petMomMapper;
 
-    private long boardId;
-
-    public PetMomService(PetMomRepository petMomRepository, MemberRepository memberRepository,
-                         ModelMapper modelMapper) {
-        this.petMomRepository = petMomRepository;
-        this.memberRepository = memberRepository;
-        this.modelMapper = modelMapper;
-    }
 
     @Transactional
     public void registNewPetMom(PetMomDTO newPetmom) {
         petMomRepository.save(modelMapper.map(newPetmom, PetMom.class));
     }
 
-    public Page<PetMomDTO> findAllPetMoms(Pageable page) {
+
+    public Page<PetMomDTO> findAllPetMoms(Pageable page, Map<String, Object> searchValue) {
+
         page = PageRequest.of(page.getPageNumber() <= 0 ? 0 : page.getPageNumber() - 1, page.getPageSize(), Sort.by("boardId"));
 
-        //        System.out.println(petMomRepository.findById(3));
-        return petMomRepository.findAll(page).map(petMoms -> modelMapper.map(petMoms, PetMomDTO.class));
+        Page<PetMomDTO> petMoms;
+
+        if (searchValue.isEmpty()) {
+            petMoms = petMomRepository.findAll(page).map(petMom -> modelMapper.map(petMom, PetMomDTO.class));
+        } else {
+           List<PetMomDTO> petMomList = petMomMapper.searchPetMom(searchValue);
+            System.out.println(petMomList);
+           int start = page.getPageNumber() * page.getPageSize();
+           int end = Math.min(start + page.getPageSize(), petMomList.size());
+
+
+         petMoms = new PageImpl<>(petMomList.subList(start, end), page, petMomList.size());
+
+        }
+
+        return petMoms;
 
     }
 
