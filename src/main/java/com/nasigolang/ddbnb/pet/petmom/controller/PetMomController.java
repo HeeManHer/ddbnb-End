@@ -112,7 +112,7 @@ public class PetMomController {
         return ResponseEntity.ok().headers(headers).body(new ResponseDto(HttpStatus.OK, "삭제 성공", null));
     }
 
-    @ApiOperation(value = "모든 리뷰 목록 조회")
+    @ApiOperation(value = "나의 펫맘 조회")
     @GetMapping("/mypetmoms")
     public ResponseEntity<ResponseDto> findMyPetMom(@PageableDefault Pageable pageable, @RequestParam long memberId) {
 

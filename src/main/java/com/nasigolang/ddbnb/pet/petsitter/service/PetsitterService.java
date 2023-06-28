@@ -1,5 +1,9 @@
 package com.nasigolang.ddbnb.pet.petsitter.service;
 
+import com.nasigolang.ddbnb.member.repository.MemberRepository;
+import com.nasigolang.ddbnb.pet.petmom.dto.PetMomDTO;
+import com.nasigolang.ddbnb.pet.petmom.entity.PetMom;
+import com.nasigolang.ddbnb.pet.petmom.repositroy.PetMomRepository;
 import com.nasigolang.ddbnb.pet.petsitter.dto.PetsitterboardDTO;
 import com.nasigolang.ddbnb.pet.petsitter.entity.PetsitterEntity;
 import com.nasigolang.ddbnb.pet.petsitter.repository.PetsitterRepository;
@@ -17,11 +21,11 @@ import java.util.NoSuchElementException;
 
 
 @Service
-@AllArgsConstructor
 public class PetsitterService {
 
     private final PetsitterRepository petSitterRepository;
     private final ModelMapper modelMapper;
+    private final MemberRepository memberRepository;
 
     //    public Page<PetsitterboardDTO> findMenuList(Pageable page, String location, String petSize, String care, LocalDate startDate, LocalDate endDate) {
     //
@@ -106,6 +110,11 @@ public Page<PetsitterboardDTO> findMenuList(Pageable page, String location, Stri
         petsitter.setSitterStatus(sitterCancle.getSitterStatus());
 
     }
+    //내 펫시터 조회
+    public Page<PetsitterboardDTO> findMyPetSitter(Pageable page, long memberId) {
+        page = PageRequest.of(page.getPageNumber() <= 0 ? 0 : page.getPageNumber() - 1, page.getPageSize(), Sort.by("boardId"));
 
-
+        return petSitterRepository.findByMember(page, memberRepository.findById(memberId))
+                .map(petSitter -> modelMapper.map(petSitter, PetsitterboardDTO.class));
+    }
 }

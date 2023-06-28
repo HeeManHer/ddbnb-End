@@ -118,6 +118,19 @@ public class PetsitterController {
     }
 
 
+    @ApiOperation(value = "나의 펫시터 조회")
+    @GetMapping("/mypetsitters")
+    public ResponseEntity<ResponseDto> findMyPetSitter(@PageableDefault Pageable pageable, @RequestParam long memberId) {
 
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
 
+        Page<PetsitterboardDTO> petSitter = petsitterService.findMyPetSitter(pageable, memberId);
+        SelectCriteria selectCriteria = Pagenation.getSelectCriteria(petSitter);
+
+        ResponseDtoWithPaging data = new ResponseDtoWithPaging(petSitter.getContent(), selectCriteria);
+        //        responseMap.put("reviews", reviews.getContent());
+
+        return new ResponseEntity<>(new ResponseDto(HttpStatus.OK, "조회성공", data), headers, HttpStatus.OK);
+    }
 }
