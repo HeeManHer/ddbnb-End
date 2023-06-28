@@ -21,7 +21,7 @@ public class ApplicantService {
 
     public Page<ApplicantDTO> findApplicantList(Pageable page, long boardId) {
 
-        page = PageRequest.of(page.getPageNumber() <= 0 ? 0 : page.getPageNumber() - 1, page.getPageSize(), Sort.by("memberId"));
+        page = PageRequest.of(page.getPageNumber() <= 0 ? 0 : page.getPageNumber() - 1, page.getPageSize(), Sort.by("boardId"));
 
         return applicantRepository.findByBoardId(page, boardId).map(list -> modelMapper.map(list, ApplicantDTO.class));
     }
