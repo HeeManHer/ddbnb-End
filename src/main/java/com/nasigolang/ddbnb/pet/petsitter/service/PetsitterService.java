@@ -36,31 +36,37 @@ public class PetsitterService {
     //        return petSitterRepository.findAll(page).map(list -> modelMapper.map(list,PetsitterboardDTO.class));
     //    }
 
-    public PetsitterService(PetsitterRepository petSitterRepository, MemberRepository memberRepository,
-                         ModelMapper modelMapper) {
-        this.petSitterRepository = petSitterRepository;
-        this.memberRepository = memberRepository;
-        this.modelMapper = modelMapper;
+//    public Page<PetsitterboardDTO> findMenuList(Pageable page, String location, String petSize, String care,
+//                                                LocalDate startDate, LocalDate endDate) {
+//        page = PageRequest.of(page.getPageNumber() <= 0 ? 0 : page.getPageNumber() - 1, page.getPageSize(), Sort.by("boardId")
+//                                                                                                                .descending());
+//
+//        if(location != null && !location.isEmpty() || petSize != null && !petSize.isEmpty() || care != null && !care.isEmpty() || startDate != null || endDate != null) {
+//            return petSitterRepository.findByPetsitterEntityContainingAndLocationContainingAndPetSizeContainingAndCareContainingAndStartDateContainingAndEndDate(page, location, petSize, care, startDate, endDate)
+//                                      .map(list -> modelMapper.map(list, PetsitterboardDTO.class));
+//        } else {
+//            return petSitterRepository.findAll(page).map(list -> modelMapper.map(list, PetsitterboardDTO.class));
+//        }
+//    }
+public Page<PetsitterboardDTO> findMenuList(Pageable page, String location, String petSize, String care,
+                                            LocalDate startDate, LocalDate endDate, String sitterStatus) {
+    Pageable pageable = PageRequest.of(page.getPageNumber() <= 0 ? 0 : page.getPageNumber() - 1,
+            page.getPageSize(), Sort.by("boardId").descending());
+
+    if (location != null && !location.isEmpty() || petSize != null && !petSize.isEmpty()
+            || care != null && !care.isEmpty() || startDate != null || endDate != null) {
+        return petSitterRepository.findByLocationContainingAndPetSizeContainingAndCareContainingAndStartDateContainingAndEndDateContainingAndSitterStatus(
+                        pageable, location, petSize, care, startDate, endDate, sitterStatus)
+                .map(list -> modelMapper.map(list, PetsitterboardDTO.class));
+    } else {
+        return petSitterRepository.findAll(pageable)
+                .map(list -> modelMapper.map(list, PetsitterboardDTO.class));
     }
-
-
-    public Page<PetsitterboardDTO> findMenuList(Pageable page, String location, String petSize, String care,
-                                                LocalDate startDate, LocalDate endDate) {
-        page = PageRequest.of(page.getPageNumber() <= 0 ? 0 : page.getPageNumber() - 1, page.getPageSize(), Sort.by("boardId")
-                                                                                                                .descending());
-
-        if(location != null && !location.isEmpty() || petSize != null && !petSize.isEmpty() || care != null && !care.isEmpty() || startDate != null || endDate != null) {
-            return petSitterRepository.findPetsitterEntityByLocationOrPetSizeOrCareOrStartDateOrEndDate(page, location, petSize, care, startDate, endDate)
-                                      .map(list -> modelMapper.map(list, PetsitterboardDTO.class));
-        } else {
-            return petSitterRepository.findAll(page).map(list -> modelMapper.map(list, PetsitterboardDTO.class));
-        }
-    }
-
+}
 
     @Transactional
     public void registPetSitter(PetsitterboardDTO petSitter) {
-
+        petSitter.setBoardDate(LocalDate.now());
         petSitterRepository.save(modelMapper.map(petSitter, PetsitterEntity.class));
     }
 
@@ -91,12 +97,11 @@ public class PetsitterService {
 
     public PetsitterboardDTO findPetsitterByBoardNo(Long boardId) {
 
-        //        return modelMapper.map(petSitterRepository.findById(boardId),PetsitterboardDTO.class);
         return petSitterRepository.findById(boardId)
                                   .map(petsitterboard -> modelMapper.map(petsitterboard, PetsitterboardDTO.class))
                                   .orElseThrow(() -> new NoSuchElementException("펫시터를 찾을 수 없습니다."));
-
     }
+
 
     @Transactional
     public void updateSitterCancle(PetsitterboardDTO sitterCancle, long boardId) {
@@ -105,7 +110,6 @@ public class PetsitterService {
         petsitter.setSitterStatus(sitterCancle.getSitterStatus());
 
     }
-
     //내 펫시터 조회
     public Page<PetsitterboardDTO> findMyPetSitter(Pageable page, long memberId) {
         page = PageRequest.of(page.getPageNumber() <= 0 ? 0 : page.getPageNumber() - 1, page.getPageSize(), Sort.by("boardId"));

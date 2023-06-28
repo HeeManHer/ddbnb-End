@@ -1,5 +1,6 @@
 package com.nasigolang.ddbnb.report.dto;
 
+import com.nasigolang.ddbnb.member.dto.MemberSimpleDTO;
 import com.nasigolang.ddbnb.member.entity.Member;
 import lombok.*;
 
@@ -18,7 +19,8 @@ public class ReportDTO {
     private String reportState;
     private String reportDetail;
     private String reportCategory;
-    private Member currentUser;
-    private Member otherUser;
+    private MemberSimpleDTO currentUser;
+    private MemberSimpleDTO otherUser;
+    private long boardId;
 
 }

@@ -29,12 +29,12 @@ public class ApplicantController {
     @GetMapping("/{boardId}")
     @ApiOperation(value="신청자 목록 조회")
     public ResponseEntity<ResponseDto> findApplicantList(@PageableDefault Pageable page,
-                                                         @PathVariable long borderId){
+                                                         @PathVariable long boardId){
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
 
-        Page<ApplicantDTO> applicantList = applicantService.findApplicantList(page,borderId);
+        Page<ApplicantDTO> applicantList = applicantService.findApplicantList(page,boardId);
         SelectCriteria selectCriteria = Pagenation.getSelectCriteria(applicantList);
 
         ResponseDtoWithPaging data = new ResponseDtoWithPaging(applicantList.getContent(), selectCriteria);
