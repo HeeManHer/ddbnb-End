@@ -28,18 +28,43 @@ public class MessageController {
     private final MessageService messageService;
 
 
-    @GetMapping("/message/{whom}")
-    public ResponseEntity<ResponseDto> findMessage(@PageableDefault Pageable page, @PathVariable long whom) {
+    @GetMapping("/messages/receive/{whom}")
+    public ResponseEntity<ResponseDto> findSendMessage(@PageableDefault Pageable page, @PathVariable long whom) {
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
 
-        Page<MessageDTO> messageList = messageService.findMessageList(page, whom);
+        Page<MessageDTO> messageList = messageService.findSendMessageList(page, whom);
         SelectCriteria selectCriteria = Pagenation.getSelectCriteria(messageList);
 
         ResponseDtoWithPaging data = new ResponseDtoWithPaging(messageList.getContent(), selectCriteria);
 
         return ResponseEntity.ok().headers(headers).body(new ResponseDto(HttpStatus.OK, "조회 성공", data));
+    }
+
+    @GetMapping("/messages/send/{whom}")
+    public ResponseEntity<ResponseDto> findReceiveMessage(@PageableDefault Pageable page, @PathVariable long whom) {
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
+
+        Page<MessageDTO> messageList = messageService.findReceiveMessageList(page, whom);
+        SelectCriteria selectCriteria = Pagenation.getSelectCriteria(messageList);
+
+        ResponseDtoWithPaging data = new ResponseDtoWithPaging(messageList.getContent(), selectCriteria);
+
+        return ResponseEntity.ok().headers(headers).body(new ResponseDto(HttpStatus.OK, "조회 성공", data));
+    }
+
+    @GetMapping("/message/{messageId}")
+    public ResponseEntity<ResponseDto> findMessage(@PathVariable long messageId) {
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
+
+        return ResponseEntity.ok()
+                             .headers(headers)
+                             .body(new ResponseDto(HttpStatus.OK, "조회 성공", messageService.findMessage(messageId)));
     }
 
     @PostMapping("/message")
@@ -66,14 +91,14 @@ public class MessageController {
         return ResponseEntity.ok().headers(headers).body(new ResponseDto(HttpStatus.OK, "수정 성공", null));
     }
 
-    @DeleteMapping("/message")
+    @DeleteMapping("/messages")
     public ResponseEntity<ResponseDto> deleteMessage(@RequestBody List<Long> messageId) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
 
         messageService.deleteSample(messageId);
 
-        return ResponseEntity.ok().headers(headers).body(new ResponseDto(HttpStatus.OK, "삭제 성공", null));
+        return ResponseEntity.ok().headers(headers).body(new ResponseDto(HttpStatus.NO_CONTENT, "삭제 성공", null));
     }
 
 

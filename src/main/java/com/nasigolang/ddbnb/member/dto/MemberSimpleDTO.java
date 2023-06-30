@@ -1,5 +1,6 @@
 package com.nasigolang.ddbnb.member.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 
 import java.time.LocalDate;
@@ -12,17 +13,21 @@ import java.time.LocalDate;
 public class MemberSimpleDTO {
 
     private long memberId;
-    private String experience;
-    private String socialLogin;
+    private String nickname;
     private String profileImage;
     private String gender;
-    private String nickname;
+
+    private String experience;
     private String preferredArea;
-    private int reportedCount;
-    private String status;
-    private LocalDate signDate;
     private String petSitterCareer;
-    private String starPoint;
     private String detailedHistory;
+
+    private String starPoint;
+    private String status;
+    private int reportedCount;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    private LocalDate signDate;
+
+    private String socialLogin;
 
 }

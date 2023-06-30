@@ -82,7 +82,7 @@ public class PetsitterEntity implements Serializable {
     private String sitterStatus;
 
     public void setSitterStatus(String sitterStatus) {
-        if (sitterStatus != null) {
+        if(sitterStatus != null) {
             this.sitterStatus = sitterStatus;
         } else {
             this.sitterStatus = "모집 중";

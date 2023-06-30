@@ -1,5 +1,6 @@
 package com.nasigolang.ddbnb.review.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.nasigolang.ddbnb.member.dto.MemberSimpleDTO;
 import lombok.*;
 
@@ -20,6 +21,7 @@ public class ReviewDTO {
     private MemberSimpleDTO reviewer;
 
     private String reviewDetail;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private Date reviewWriteDate;
     private int reviewStarPoint;
 

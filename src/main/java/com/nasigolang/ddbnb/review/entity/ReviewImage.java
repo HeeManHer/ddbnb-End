@@ -22,7 +22,6 @@ public class ReviewImage {
     @Column(name = "IMAGE_URL")
     private String imageUrl;
 
-    @ManyToOne(cascade = CascadeType.PERSIST)
-    @JoinColumn(name = "REVIEW_ID")
-    private Review review;
+    @Column(name = "REVIEW_ID")
+    private long reviewId;
 }

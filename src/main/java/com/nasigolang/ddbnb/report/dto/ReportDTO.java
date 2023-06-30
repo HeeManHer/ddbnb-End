@@ -1,7 +1,7 @@
 package com.nasigolang.ddbnb.report.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.nasigolang.ddbnb.member.dto.MemberSimpleDTO;
-import com.nasigolang.ddbnb.member.entity.Member;
 import lombok.*;
 
 import java.time.LocalDate;
@@ -14,6 +14,7 @@ import java.time.LocalDate;
 public class ReportDTO {
 
     private int reportId;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate reportDate;
     private String reportReason;
     private String reportState;

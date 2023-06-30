@@ -1,6 +1,10 @@
 package com.nasigolang.ddbnb.common.paging;
 
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+
+import java.util.List;
 
 public class Pagenation {
 
@@ -27,6 +31,14 @@ public class Pagenation {
         SelectCriteria selectCriteria = new SelectCriteria(maxPage, startPage, endPage);
 
         return selectCriteria;
+    }
+
+    public static Page<?> createPage(List<?> list, Pageable page) {
+
+        int start = page.getPageNumber() * page.getPageSize();
+        int end = Math.min(start + page.getPageSize(), list.size());
+
+        return new PageImpl<>(list.subList(start, end), page, list.size());
     }
 
 }
