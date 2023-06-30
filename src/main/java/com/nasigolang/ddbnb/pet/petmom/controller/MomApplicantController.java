@@ -30,7 +30,7 @@ public class MomApplicantController {
     @GetMapping("/{boardId}")
     @ApiOperation(value = "신청자 목록 조회")
     public ResponseEntity<ResponseDto> findMomApplicantList(@PageableDefault Pageable page,
-            @PathVariable("boardId") int boardId) {
+            @PathVariable("boardId") long boardId) {
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));

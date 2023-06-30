@@ -21,7 +21,7 @@ public class MomApplicant {
     private int applicantId;
 
     @Column(name = "BOARD_ID")
-    private int boardId;
+    private long boardId;
 
 
     @JoinColumn(name = "MEMBER_ID")
