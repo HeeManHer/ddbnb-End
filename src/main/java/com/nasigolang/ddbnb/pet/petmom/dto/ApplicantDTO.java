@@ -15,5 +15,3 @@ public class ApplicantDTO {
     private long boardId;
     private MemberSimpleDTO member;
 }
-
-
