@@ -36,7 +36,8 @@ public class LoginService {
 
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("grant_type", "authorization_code");
-        params.add("client_id", System.getenv("KakaoRestAPIKey"));
+//        params.add("client_id", System.getenv("KakaoRestAPIKey"));
+        params.add("client_id", "202bf1013addf514255b52a8c9c69ebf");
         params.add("redirect_uri", "http://localhost:3000/kakao/callback");
         params.add("code", code);
 
@@ -142,7 +143,8 @@ public class LoginService {
 
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("grant_type", "refresh_token");
-        params.add("client_id", System.getenv("KakaoRestAPIKey"));
+//        params.add("client_id", System.getenv("KakaoRestAPIKey"));
+        params.add("client_id", "202bf1013addf514255b52a8c9c69ebf");
         params.add("refresh_token", foundMember.getRefreshToken());
 
 
@@ -189,8 +191,10 @@ public class LoginService {
 
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("grant_type", "authorization_code");
-        params.add("client_id", System.getenv("NaverClientIDKey"));
-        params.add("client_secret", System.getenv("NaverClientSecretKey"));
+//        params.add("client_id", System.getenv("NaverClientIDKey"));
+//        params.add("client_secret", System.getenv("NaverClientSecretKey"));
+        params.add("client_id", "T0mWG2VjAfBH9cYz6Qrf");
+        params.add("client_secret", "iHe8ItSSso");
         params.add("code", code);
         params.add("state", state);
 
@@ -296,8 +300,10 @@ public class LoginService {
 
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("grant_type", "refresh_token");
-        params.add("client_id", System.getenv("NaverClientIdKey"));
-        params.add("client_secret", System.getenv("NaverClientSecretKey"));
+//        params.add("client_id", System.getenv("NaverClientIdKey"));
+//        params.add("client_secret", System.getenv("NaverClientSecretKey"));
+        params.add("client_id", "T0mWG2VjAfBH9cYz6Qrf");
+        params.add("client_secret", "iHe8ItSSso");
         params.add("refresh_token", foundMember.getRefreshToken());
 
         HttpEntity<MultiValueMap<String, String>> naverTokenRequest = new HttpEntity<>(params, headers);

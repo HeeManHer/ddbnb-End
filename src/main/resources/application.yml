@@ -48,7 +48,7 @@ image:
   image-url: http://localhost:8080/images/
 
 oauth:
-  kakao:
+  Kakao:
     client-id: 202bf1013addf514255b52a8c9c69ebf
     url:
       auth: https://kauth.kakao.com
