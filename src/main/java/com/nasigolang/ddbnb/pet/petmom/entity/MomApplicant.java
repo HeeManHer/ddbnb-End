@@ -21,11 +21,11 @@ public class MomApplicant {
     private int applicantId;
 
     @Column(name = "BOARD_ID")
-    private int boardId;
+    private long boardId;
 
-
-    @JoinColumn(name = "MEMBER_ID")
     @ManyToOne
-    private Member memberId;
+    @JoinColumn(name = "MEMBER_ID", referencedColumnName = "MEMBER_ID")
+    private Member member;
+
 
 }

@@ -6,6 +6,7 @@ import com.nasigolang.ddbnb.common.paging.ResponseDtoWithPaging;
 import com.nasigolang.ddbnb.common.paging.SelectCriteria;
 import com.nasigolang.ddbnb.pet.Applicant.dto.ApplicantDTO;
 import com.nasigolang.ddbnb.pet.Applicant.service.ApplicantService;
+import com.nasigolang.ddbnb.pet.petsitter.dto.PetsitterboardDTO;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -54,4 +55,27 @@ public class ApplicantController {
         return ResponseEntity.ok().headers(headers).body(new ResponseDto(HttpStatus.OK, "생성 성공", null));
 
     }
+
+    @ApiOperation(value = "나의 펫시터 신청 조회")
+    @GetMapping("/mypetsitters")
+    public ResponseEntity<ResponseDto> findMyPetSitterApp(@PageableDefault Pageable pageable, @RequestParam long memberId) {
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
+
+        Page<ApplicantDTO> petSitter = applicantService.findMyPetSitterApp(pageable, memberId);
+        SelectCriteria selectCriteria = Pagenation.getSelectCriteria(petSitter);
+
+        ResponseDtoWithPaging data = new ResponseDtoWithPaging(petSitter.getContent(), selectCriteria);
+        //        responseMap.put("reviews", reviews.getContent());
+
+        return new ResponseEntity<>(new ResponseDto(HttpStatus.OK, "조회성공", data), headers, HttpStatus.OK);
+    }
+
+
+
+
+
+
+
 }
