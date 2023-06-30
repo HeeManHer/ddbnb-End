@@ -23,9 +23,9 @@ public class MomApplicant {
     @Column(name = "BOARD_ID")
     private long boardId;
 
-
-    @JoinColumn(name = "MEMBER_ID")
     @ManyToOne
-    private Member memberId;
+    @JoinColumn(name = "MEMBER_ID", referencedColumnName = "MEMBER_ID")
+    private Member member;
+
 
 }

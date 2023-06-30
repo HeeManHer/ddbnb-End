@@ -1,6 +1,7 @@
 package com.nasigolang.ddbnb.pet.petmom.service;
 
 
+import com.nasigolang.ddbnb.member.repository.MemberRepository;
 import com.nasigolang.ddbnb.pet.petmom.dto.ApplicantDTO;
 import com.nasigolang.ddbnb.pet.petmom.entity.MomApplicant;
 import com.nasigolang.ddbnb.pet.petmom.repositroy.MomApplicantRepository;
@@ -18,6 +19,7 @@ public class MomApplicantService {
 
     private final MomApplicantRepository momApplicantRepository;
     private final ModelMapper modelMapper;
+    private final MemberRepository memberRepository;
 
     public Page<ApplicantDTO> findMomApplicantList(Pageable page, long boardId) {
 
@@ -29,5 +31,13 @@ public class MomApplicantService {
     public void registNewApplicant(ApplicantDTO newApplicant) {
         momApplicantRepository.save(modelMapper.map(newApplicant, MomApplicant.class));
     }
+
+    public  Page<ApplicantDTO> findMyPetMomApp(Pageable page, long memberId){
+        page = PageRequest.of(page.getPageNumber() <= 0 ? 0 : page.getPageNumber() - 1, page.getPageSize(), Sort.by("boardId"));
+
+        return momApplicantRepository.findByMember(page, memberRepository.findById(memberId))
+                .map(petMom -> modelMapper.map(petMom, ApplicantDTO.class));
+    }
+
 }
 
