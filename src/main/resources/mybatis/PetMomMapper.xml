@@ -34,52 +34,60 @@
             <result property="starPoint" column="STAR_POINT"/>
             <result property="detailedHistory" column="DETAILED_HISTORY"/>
         </association>
-        <!--        <collection property="OtherType" ofType="com.nasigolang.ddbnb.pet.petmom.dto.OtherTypeDTO">-->
-        <!--            <id property="typeId" column="TYPE_ID"/>-->
-        <!--            <result property="typeContent" column="TYPE_CONTENT"/>-->
-        <!--        </collection>-->
+        <collection property="otherCondition" ofType="com.nasigolang.ddbnb.pet.petmom.dto.OtherTypeDTO">
+            <id property="typeId" column="TYPE_ID"/>
+            <result property="typeContent" column="TYPE_CONTENT"/>
+        </collection>
     </resultMap>
 
     <select id="searchPetMom" parameterType="hashmap" resultMap="petMomResultMap">
+
+
+
+
+
+
+
         SELECT M.BOARD_ID
         , M.HOURLY_RATE
         , M.DATE_RATE
         , M.HOUSE_TYPE
         , M.PET_YN
         , M.BOARD_TITLE
-        , M.BOARD_CATEGORY
         , M.BOARD_DATE
         , M.LOCATION
         , M.CARE
         , M.START_DATE
         , M.END_DATE
         , M.SIGNFICANT
-        , M.REQUEST
         , M.MOM_STATUS
         , ME.MEMBER_ID
-        <!--        , O.BOARD_ID-->
+        , OT.TYPE_CONTENT
         FROM PET_MOM M
         JOIN MEMBER ME ON (M.MEMBER_ID = ME.MEMBER_ID)
-        <!--        JOIN OTHER O -->
+        LEFT JOIN OTHER O ON (M.BOARD_ID = O.BOARD_ID)
+        LEFT JOIN OTHER_TYPE OT ON (O.TYPE_ID = OT.TYPE_ID)
+
 
         <trim prefix="WHERE" prefixOverrides="AND">
             <if test="petYN != null">
-                M.PET_YN LIKE #{petYN}
+        <![CDATA[ M.PET_YN LIKE #{petYN}]]>
             </if>
             <if test="location != null">
-                AND M.LOCATION = #{location}
+                 <![CDATA[AND M.LOCATION = #{location}]]>
             </if>
             <if test="startDate != null">
-                AND M.START_DATE = #{startDate}
+                 <![CDATA[AND M.START_DATE >= #{startDate}]]>
             </if>
             <if test="endDate != null">
-                AND M.END_DATE = #{endDate}
+                <![CDATA[   AND M.END_DATE <= #{endDate}]]>
             </if>
             <if test="otherCondition != null">
-                AND O.OTHER = #{otherCondition}
+                <![CDATA[  AND OT.TYPE_CONTENT = #{otherCondition}]]>
             </if>
         </trim>
         ORDER BY M.BOARD_ID
+
     </select>
 
 </mapper>
