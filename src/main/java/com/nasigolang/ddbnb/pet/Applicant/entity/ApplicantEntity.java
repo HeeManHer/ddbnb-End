@@ -2,6 +2,7 @@ package com.nasigolang.ddbnb.pet.Applicant.entity;
 
 import com.nasigolang.ddbnb.member.entity.Member;
 import lombok.*;
+import com.nasigolang.ddbnb.pet.petsitter.entity.PetsitterEntity;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -28,10 +29,12 @@ public class ApplicantEntity implements Serializable {
             generator = "applicant_sequence_generator")
     private long applicantId;
 
-    @JoinColumn(name="MEMBER_ID")
     @ManyToOne
-    private Member memberId;
+    @JoinColumn(name = "MEMBER_ID", referencedColumnName = "MEMBER_ID")
+    private Member member;
 
-    @Column(name="BOARD_ID")
-    private long boardId;
+
+    @ManyToOne
+    @JoinColumn(name="BOARD_ID", referencedColumnName = "BOARD_ID")
+    private PetsitterEntity boardId;
 }
