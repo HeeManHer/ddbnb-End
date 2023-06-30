@@ -1,5 +1,6 @@
 package com.nasigolang.ddbnb.member.service;
 
+import com.nasigolang.ddbnb.common.paging.Pagenation;
 import com.nasigolang.ddbnb.member.dto.MemberDTO;
 import com.nasigolang.ddbnb.member.dto.MemberSimpleDTO;
 import com.nasigolang.ddbnb.member.entity.Member;
@@ -7,7 +8,10 @@ import com.nasigolang.ddbnb.member.repository.MemberMapper;
 import com.nasigolang.ddbnb.member.repository.MemberRepository;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.data.domain.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -61,19 +65,17 @@ public class MemberService {
 
     public Page<MemberSimpleDTO> findAllMembers(Pageable page, Map<String, Object> searchValue) {
 
-        page = PageRequest.of(page.getPageNumber() <= 0 ? 0 : page.getPageNumber() - 1, page.getPageSize(), Sort.by("memberId"));
+        page = PageRequest.of(page.getPageNumber() <= 0 ? 0 : page.getPageNumber() - 1, page.getPageSize(),
+                              Sort.by("memberId"));
 
         Page<MemberSimpleDTO> members;
 
-        if(searchValue.isEmpty()) {
+        if (searchValue.isEmpty()) {
             members = memberRepository.findAll(page).map(member -> modelMapper.map(member, MemberSimpleDTO.class));
         } else {
             List<MemberSimpleDTO> memberList = memberMapper.searchMember(searchValue);
 
-            int start = page.getPageNumber() * page.getPageSize();
-            int end = Math.min(start + page.getPageSize(), memberList.size());
-
-            members = new PageImpl<>(memberList.subList(start, end), page, memberList.size());
+            members = (Page<MemberSimpleDTO>) Pagenation.createPage(memberList, page);
         }
 
         return members;
@@ -81,7 +83,7 @@ public class MemberService {
 
     public Member findBySocialId(String socialLogin, String socialId) {
         Member foundMember = memberRepository.findBySocialId(socialLogin, socialId);
-        if(foundMember == null) {
+        if (foundMember == null) {
             return null;
         } else {
             return foundMember;

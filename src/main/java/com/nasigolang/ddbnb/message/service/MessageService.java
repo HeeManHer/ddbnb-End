@@ -23,12 +23,23 @@ public class MessageService {
     private final MemberRepository memberRepository;
     private final ModelMapper modelMapper;
 
-    public Page<MessageDTO> findMessageList(Pageable page, long whom) {
+    public Page<MessageDTO> findSendMessageList(Pageable page, long whom) {
 
-        page = PageRequest.of(page.getPageNumber() <= 0 ? 0 : page.getPageNumber() - 1, page.getPageSize(), Sort.by("msgId")
-                                                                                                                .descending());
+        page = PageRequest.of(page.getPageNumber() <= 0 ? 0 : page.getPageNumber() - 1, page.getPageSize(),
+                              Sort.by("msgId")
+                                  .descending());
 
         return messageRepository.findByWhom(page, memberRepository.findById(whom))
+                                .map(list -> modelMapper.map(list, MessageDTO.class));
+    }
+
+
+    public Page<MessageDTO> findReceiveMessageList(Pageable page, long whom) {
+        page = PageRequest.of(page.getPageNumber() <= 0 ? 0 : page.getPageNumber() - 1, page.getPageSize(),
+                              Sort.by("msgId")
+                                  .descending());
+
+        return messageRepository.findByWho(page, memberRepository.findById(whom))
                                 .map(list -> modelMapper.map(list, MessageDTO.class));
     }
 
@@ -51,4 +62,10 @@ public class MessageService {
 
         messageRepository.deleteByMsgIdIn(messageId);
     }
+
+    public MessageDTO findMessage(long messageId) {
+
+        return modelMapper.map(messageRepository.findById(messageId).get(), MessageDTO.class);
+    }
+
 }

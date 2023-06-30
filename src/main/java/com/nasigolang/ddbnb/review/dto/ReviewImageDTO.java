@@ -11,4 +11,5 @@ public class ReviewImageDTO {
 
     private long imgId;
     private String imageUrl;
+    private long reviewId;
 }

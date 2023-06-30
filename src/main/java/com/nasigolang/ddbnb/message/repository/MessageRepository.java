@@ -13,4 +13,6 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
     void deleteByMsgIdIn(List<Long> messageId);
 
     Page<Message> findByWhom(Pageable page, Optional<Member> whom);
+
+    Page<Message> findByWho(Pageable page, Optional<Member> byId);
 }

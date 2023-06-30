@@ -44,7 +44,7 @@ public class Review {
     @Column(name = "REVIEW_STAR_POINT")
     private int reviewStarPoint;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "review")
+    @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "reviewId")
     private List<ReviewImage> reviewImage;
 
 }

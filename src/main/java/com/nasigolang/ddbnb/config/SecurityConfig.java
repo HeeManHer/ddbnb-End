@@ -41,15 +41,19 @@ public class SecurityConfig {
     @Order(1)
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
-        http.csrf().disable().authorizeRequests().antMatchers(HttpMethod.OPTIONS, "/**").permitAll().antMatchers("/api/v1/login/**").permitAll().antMatchers("/api/v1/logout").permitAll().antMatchers("/swagger-ui/index.html", "/swagger/**", "/v1/api-docs", "/swagger-resources/**", "/webjars/**").permitAll()
-                // 추후 예외처리 해야 하는 부분 추가
-                // CSRF 설정 Disable
-                .and()
-                // exception handling
-                .exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint).accessDeniedHandler(jwtAccessDeniedHandler)
+        http.csrf().disable().authorizeRequests().antMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+            .antMatchers("/api/v1/login/**").permitAll().antMatchers("/api/v1/logout").permitAll()
+            .antMatchers("/swagger-ui/index.html", "/swagger/**", "/v1/api-docs", "/swagger-resources/**",
+                         "/webjars/**").permitAll()
+            // 추후 예외처리 해야 하는 부분 추가
+            // CSRF 설정 Disable
+            .and()
+            // exception handling
+            .exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint)
+            .accessDeniedHandler(jwtAccessDeniedHandler)
 
-                // 시큐리티는 기본적으로 세션을 사용하지만 API 서버에선 세션을 사용하지 않기 때문에 세션 설정을 Stateless 로 설정
-                .and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+            // 시큐리티는 기본적으로 세션을 사용하지만 API 서버에선 세션을 사용하지 않기 때문에 세션 설정을 Stateless 로 설정
+            .and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
         // 로그인, 회원가입 API 는 토큰이 없는 상태에서 요청이 들어오기 때문에 permitAll 설정
         // .and()
