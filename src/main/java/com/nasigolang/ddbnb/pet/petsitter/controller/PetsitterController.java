@@ -1,9 +1,6 @@
 package com.nasigolang.ddbnb.pet.petsitter.controller;
 
 
-import com.nasigolang.ddbnb.pet.petmom.dto.PetMomDTO;
-import com.nasigolang.ddbnb.pet.petsitter.dto.PetsitterboardDTO;
-import com.nasigolang.ddbnb.pet.petsitter.service.PetsitterService;
 import com.nasigolang.ddbnb.common.ResponseDto;
 import com.nasigolang.ddbnb.common.paging.Pagenation;
 import com.nasigolang.ddbnb.common.paging.ResponseDtoWithPaging;
@@ -14,16 +11,13 @@ import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
 
 import java.nio.charset.Charset;
 import java.time.LocalDate;
@@ -38,27 +32,77 @@ public class PetsitterController {
 
     private final PetsitterService petsitterService;
 
+//    @GetMapping("/list")
+//    @ApiOperation(value = "펫시터 목록 조회")
+//    public ResponseEntity<ResponseDto> findAllList(@PageableDefault(size = 10) Pageable page,
+//                                                   @RequestParam(name = "location", defaultValue = "") String location,
+//                                                   @RequestParam(name = "petSize", defaultValue = "") String petSize,
+//                                                   @RequestParam(name = "care", defaultValue = "") String care,
+//                                                   @RequestParam(name = "startDate", defaultValue = "") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate,
+//                                                   @RequestParam(name = "endDate", defaultValue = "") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate endDate,
+//                                                   @RequestParam(name = "sitterStatus", defaultValue = "") String sitterStatus){
+//
+//        HttpHeaders headers = new HttpHeaders();
+//        headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
+//        System.out.println(sitterStatus);
+//        System.out.println(petSize);
+//        System.out.println(care);
+//        System.out.println(location);
+//
+//        Page<PetsitterboardDTO> petsitterList = petsitterService.findMenuList(page, location, petSize, care, startDate, endDate, sitterStatus);
+//        SelectCriteria selectCriteria = Pagenation.getSelectCriteria(petsitterList);
+//        ResponseDtoWithPaging data = new ResponseDtoWithPaging(petsitterList.getContent(), selectCriteria);
+//
+//        return ResponseEntity.ok().headers(headers).body(new ResponseDto(HttpStatus.OK, "조회 성공", data));
+//    }
+
     @GetMapping("/list")
     @ApiOperation(value = "펫시터 목록 조회")
-    public ResponseEntity<ResponseDto> findAllList(@PageableDefault(size = 10) Pageable page,
+    public ResponseEntity<ResponseDto> findAllList(@PageableDefault Pageable page,
                                                    @RequestParam(name = "location", defaultValue = "") String location,
                                                    @RequestParam(name = "petSize", defaultValue = "") String petSize,
                                                    @RequestParam(name = "care", defaultValue = "") String care,
-                                                   @RequestParam(name = "sitterStatus", defaultValue = "") String sitterStatus,
                                                    @RequestParam(name = "startDate", defaultValue = "") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate,
-                                                   @RequestParam(name = "endDate", defaultValue = "") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate endDate) {
+                                                   @RequestParam(name = "endDate", defaultValue = "") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate endDate,
+                                                   @RequestParam(name = "sitterStatus", defaultValue = "") String sitterStatus) {
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
-        System.out.println(sitterStatus);
-        System.out.println(location);
-        Page<PetsitterboardDTO> petsitterList = petsitterService.findMenuList(page, location, petSize, care, startDate, endDate, sitterStatus);
-        SelectCriteria selectCriteria = Pagenation.getSelectCriteria(petsitterList);
 
-        ResponseDtoWithPaging data = new ResponseDtoWithPaging(petsitterList.getContent(), selectCriteria);
 
-        return ResponseEntity.ok().headers(headers).body(new ResponseDto(HttpStatus.OK, "조회 성공", data));
+        Map<String, Object> searchValue = new HashMap<>();
+
+        if (!location.equals("")) {
+            searchValue.put("location", location);
+        }
+        if (!petSize.equals("")) {
+            searchValue.put("petSize", petSize);
+        }
+        if (!care.equals("")) {
+            searchValue.put("care", care);
+        }
+        if (startDate != null) {
+            searchValue.put("startDate", startDate);
+        }
+        if (endDate != null) {
+            searchValue.put("endDate", endDate);
+        }
+        if (!sitterStatus.equals("")) {
+            searchValue.put("sitterStatus", sitterStatus);
+        }
+
+        Page<PetsitterboardDTO> petSitters = petsitterService.findAllPetSitter(page, searchValue);
+        SelectCriteria selectCriteria = Pagenation.getSelectCriteria(petSitters);
+
+        ResponseDtoWithPaging data = new ResponseDtoWithPaging(petSitters.getContent(), selectCriteria);
+
+        return new ResponseEntity<>(new ResponseDto(HttpStatus.OK, "조회 성공", data), headers, HttpStatus.OK);
     }
+//        Page<PetsitterboardDTO> petsitterList = petsitterService.findMenuList(page, location, petSize, care, startDate, endDate, sitterStatus);
+//        SelectCriteria selectCriteria = Pagenation.getSelectCriteria(petsitterList);
+//        ResponseDtoWithPaging data = new ResponseDtoWithPaging(petsitterList.getContent(), selectCriteria);
+
+//        return ResponseEntity.ok().headers(headers).body(new ResponseDto(HttpStatus.OK, "조회 성공", data));
 
     @GetMapping("/list/{boardid}")
     @ApiOperation(value = "펫시터 상세 조회")
@@ -70,7 +114,6 @@ public class PetsitterController {
 
         return ResponseEntity.ok().headers(headers).body(new ResponseDto(HttpStatus.OK, "조회 성공", petsitter));
     }
-
 
 
     @PostMapping("/regist")

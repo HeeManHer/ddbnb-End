@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nasigolang.ddbnb.pet.petsitter.repository.PetSitterMapper">
+
+    <resultMap id="petSitterResultMap" type="com.nasigolang.ddbnb.pet.petsitter.dto.PetsitterboardDTO">
+        <id property="boardId" column="BOARD_ID"/>
+        <result property="boardTitle" column="BOARD_TITLE"/>
+        <result property="boardDate" column="BOARD_DATE"/>
+        <result property="location" column="LOCATION"/>
+        <result property="care" column="CARE"/>
+        <result property="startDate" column="START_DATE"/>
+        <result property="endDate" column="END_DATE"/>
+        <result property="signficant" column="SIGNFICANT"/>
+        <result property="request" column="REQUEST"/>
+        <result property="boardCategory" column="BOARD_CATEGORY"/>
+        <result property="rate" column="RATE"/>
+        <result property="petName" column="PET_NAME"/>
+        <result property="petAge" column="PET_AGE"/>
+        <result property="petShape" column="PET_SHAPE"/>
+        <result property="petGender" column="PET_GENDER"/>
+        <result property="petSize" column="PET_SIZE"/>
+        <result property="sitterStatus" column="PET_STATUS"/>
+
+        <association property="member" javaType="com.nasigolang.ddbnb.member.dto.MemberSimpleDTO">
+            <id property="memberId" column="MEMBER_ID"/>
+            <result property="experience" column="EXPERIENCE"/>
+            <result property="socialLogin" column="SOCIAL_LOGIN"/>
+            <result property="profileImage" column="PROFILE_IMAGE"/>
+            <result property="gender" column="GENDER"/>
+            <result property="nickname" column="NICKNAME"/>
+            <result property="preferredArea" column="PREFERRED_AREA"/>
+            <result property="reportedCount" column="REPORTED_COUNT"/>
+            <result property="status" column="STATUS"/>
+            <result property="signDate" column="SIGN_DATE"/>
+            <result property="petSitterCareer" column="PER_SITTER_CAREER"/>
+            <result property="starPoint" column="STAR_POINT"/>
+            <result property="detailedHistory" column="DETAILED_HISTORY"/>
+        </association>
+
+    </resultMap>
+
+    <select id="searchPetSitter" parameterType="hashmap" resultMap="petSitterResultMap">
+
+        SELECT
+        <!--        P.BOARD_ID-->
+        <!--        , P.BOARD_TITLE-->
+        <!--        , P.BOARD_DATE-->
+        P.LOCATION
+        , P.CARE
+        , P.START_DATE
+        , P.END_DATE
+        <!--        , P.SIGNFICANT-->
+        <!--        , P.REQUEST-->
+        <!--        , P.BOARD_CATEGORY-->
+        <!--        , P.RATE-->
+        <!--        , P.PET_NAME-->
+        <!--        , P.PET_AGE-->
+        <!--        , P.PET_SHAPE-->
+        <!--        , P.PET_GENDER-->
+        , P.PET_SIZE
+        <!--        , P.SITTER_STATUS-->
+        <!--        , M.MEMBER_ID-->
+
+        FROM PETSITTER P
+        JOIN MEMBER M ON (P.MEMBER_ID = M.MEMBER_ID)
+
+        <trim prefix="WHERE" prefixOverrides="AND">
+            <if test="location != null">
+                LOCATION = #{location}
+            </if>
+            <if test="startDate != null">
+                AND START_DATE = #{startDate}
+            </if>
+            <if test="endDate != null">
+                AND END_DATE = #{endDate}
+            </if>
+            <if test="petSize != null">
+                AND PET_SIZE = #{petSize}
+            </if>
+            <if test="care != null">
+                AND CARE = #{care}
+            </if>
+        </trim>
+        ORDER BY P.BOARD_ID
+    </select>
+
+</mapper>
