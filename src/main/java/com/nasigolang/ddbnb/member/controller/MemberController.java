@@ -21,6 +21,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.nio.charset.Charset;
 import java.time.LocalDate;
@@ -67,11 +68,11 @@ public class MemberController {
                                                      @RequestParam(name = "signDate", defaultValue = "") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate signDate) {
         Map<String, Object> searchValue = new HashMap<>();
 
-        if(!nickname.equals("")) {
+        if (!nickname.equals("")) {
             searchValue.put("nickname", "%" + nickname + "%");
         }
 
-        if(signDate != null) {
+        if (signDate != null) {
             searchValue.put("signDate", signDate);
         }
 
@@ -112,17 +113,19 @@ public class MemberController {
 
         Map<String, Object> responseMap = new HashMap<>();
         responseMap.put("members", foundMember);
-
+        
         return ResponseEntity.ok().headers(headers).body(new ResponseDto(HttpStatus.OK, "조회성공", responseMap));
     }
 
     @ApiOperation("프로필 등록")
     @PutMapping("/member/{memberId}/postprofile")
     public ResponseEntity<ResponseDto> updateprofile(@PathVariable long memberId,
-                                                     @RequestBody MemberSimpleDTO memberSimpleDTO) {
+                                                     @RequestPart("newProfile") MemberSimpleDTO memberSimpleDTO,
+                                                     @RequestPart(value = "image", required = false) MultipartFile image) {
+
 
         return ResponseEntity.ok()
-                             .body(new ResponseDto(HttpStatus.CREATED, "프로필 수정 성공", memberService.updateprofile(memberId, memberSimpleDTO)));
+                .body(new ResponseDto(HttpStatus.CREATED, "프로필 수정 성공", memberService.updateprofile(memberId, memberSimpleDTO, image)));
 
     }
 

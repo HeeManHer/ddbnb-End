@@ -36,8 +36,7 @@ public class LoginService {
 
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("grant_type", "authorization_code");
-        params.add("client_id", "202bf1013addf514255b52a8c9c69ebf");
-        //		params.add("client_id", System.getenv("KakaoRestAPIKey"));
+        params.add("client_id", System.getenv("KakaoRestAPIKey"));
         params.add("redirect_uri", "http://localhost:3000/kakao/callback");
         params.add("code", code);
 
@@ -49,7 +48,7 @@ public class LoginService {
         KakaoAcessTokenDTO kakaoToken = null;
         try {
             kakaoToken = objectMapper.readValue(accessTokenResponse.getBody(), KakaoAcessTokenDTO.class);
-        } catch(JsonProcessingException e) {
+        } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
 
@@ -72,7 +71,7 @@ public class LoginService {
 
         try {
             kakaoProfileDTO = objectMapper.readValue(kakaoProfileResponse.getBody(), KakaoProfileDTO.class);
-        } catch(JsonProcessingException e) {
+        } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
         return kakaoProfileDTO;
@@ -95,8 +94,8 @@ public class LoginService {
             newMember.setRefreshTokenExpireDate(kakaoToken.getRefresh_token_expires_in() + System.currentTimeMillis());
             newMember.setAccessTokenExpireDate(kakaoToken.getExpires_in() + System.currentTimeMillis());
             newMember.setSignDate(LocalDate.now());
-            newMember.setProfileImage("https://api.dicebear.com/6.x/thumbs/svg?seed=" + newMember.getSocialId()
-                                                                                                 .split("@")[0]);
+            newMember.setProfileImage("https://api.dicebear.com/6.x/thumbs/png?seed=" + newMember.getSocialId()
+                    .split("@")[0]);
             newMember.setLastVisitDate(LocalDate.now());
             if (kakaoProfileDTO.getKakao_account().getGender() != null) {
                 newMember.setGender(kakaoProfileDTO.getKakao_account().getGender());
@@ -143,8 +142,7 @@ public class LoginService {
 
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("grant_type", "refresh_token");
-        //      params.add("client_id", System.getenv("KakaoRestAPIKey"));
-        params.add("client_id", "202bf1013addf514255b52a8c9c69ebf");
+        params.add("client_id", System.getenv("KakaoRestAPIKey"));
         params.add("refresh_token", foundMember.getRefreshToken());
 
 
@@ -191,10 +189,8 @@ public class LoginService {
 
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("grant_type", "authorization_code");
-        //       params.add("client_id", System.getenv("NaverClientIDKey"));
-        //       params.add("client_secret", System.getenv("NaverClientSecretKey"));
-        params.add("client_id", "T0mWG2VjAfBH9cYz6Qrf");
-        params.add("client_secret", "iHe8ItSSso");
+        params.add("client_id", System.getenv("NaverClientIDKey"));
+        params.add("client_secret", System.getenv("NaverClientSecretKey"));
         params.add("code", code);
         params.add("state", state);
 
@@ -231,8 +227,8 @@ public class LoginService {
             newMember.setAccessTokenExpireDate(naverAccessToken.getExpires_in() + System.currentTimeMillis());
             newMember.setSignDate(LocalDate.now());
             newMember.setLastVisitDate(LocalDate.now());
-            newMember.setProfileImage("https://api.dicebear.com/6.x/thumbs/svg?seed=" + newMember.getSocialId()
-                                                                                                 .split("@")[0]);
+            newMember.setProfileImage("https://api.dicebear.com/6.x/thumbs/png?seed=" + newMember.getSocialId()
+                    .split("@")[0]);
 
             if (naverProfileDTO.getResponse().getGender() != null) {
                 newMember.setGender(naverProfileDTO.getResponse().getGender());
@@ -300,10 +296,8 @@ public class LoginService {
 
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("grant_type", "refresh_token");
-//		params.add("client_id", System.getenv("NaverClientIdKey"));
-//		params.add("client_secret", `System`.getenv("NaverClientSecretKey"));
-        params.add("client_id", "T0mWG2VjAfBH9cYz6Qrf");
-        params.add("client_secret", "iHe8ItSSso");
+        params.add("client_id", System.getenv("NaverClientIdKey"));
+        params.add("client_secret", System.getenv("NaverClientSecretKey"));
         params.add("refresh_token", foundMember.getRefreshToken());
 
         HttpEntity<MultiValueMap<String, String>> naverTokenRequest = new HttpEntity<>(params, headers);
