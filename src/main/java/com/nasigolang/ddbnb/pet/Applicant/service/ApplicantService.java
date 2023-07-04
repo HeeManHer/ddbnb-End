@@ -19,9 +19,9 @@ import org.springframework.transaction.annotation.Transactional;
 public class ApplicantService {
 
     private final ApplicantRepository applicantRepository;
-    private final PetsitterRepository petsitterRepository;
     private final ModelMapper modelMapper;
     private final MemberRepository memberRepository;
+    private final PetsitterRepository petSitterRepository;
 
 
     public Page<ApplicantDTO> findApplicantList(Pageable page, long boardId) {
@@ -29,8 +29,7 @@ public class ApplicantService {
         page = PageRequest.of(page.getPageNumber() <= 0 ? 0 : page.getPageNumber() - 1, page.getPageSize(),
                               Sort.by("boardId"));
 
-        return applicantRepository.findByBoardId(page, petsitterRepository.findById(boardId))
-                                  .map(list -> modelMapper.map(list, ApplicantDTO.class));
+        return applicantRepository.findByBoardId(page, petSitterRepository.findById(boardId)).map(list -> modelMapper.map(list, ApplicantDTO.class));
     }
 
     @Transactional

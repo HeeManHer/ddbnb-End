@@ -23,7 +23,7 @@ public class PetsitterEntity implements Serializable {
     @Id
     @Column(name = "BOARD_ID")
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "petsitter_sequence_generator")
-    private Long boardId;
+    private long boardId;
 
     @Column(name = "BOARD_TITLE")
     private String boardTitle;

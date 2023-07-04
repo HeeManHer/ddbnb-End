@@ -6,7 +6,6 @@ import com.nasigolang.ddbnb.common.paging.ResponseDtoWithPaging;
 import com.nasigolang.ddbnb.common.paging.SelectCriteria;
 import com.nasigolang.ddbnb.pet.Applicant.dto.ApplicantDTO;
 import com.nasigolang.ddbnb.pet.Applicant.service.ApplicantService;
-import com.nasigolang.ddbnb.pet.petsitter.dto.PetsitterboardDTO;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -28,14 +27,14 @@ public class ApplicantController {
     private final ApplicantService applicantService;
 
     @GetMapping("/{boardId}")
-    @ApiOperation(value="신청자 목록 조회")
+    @ApiOperation(value = "신청자 목록 조회")
     public ResponseEntity<ResponseDto> findApplicantList(@PageableDefault Pageable page,
-                                                         @PathVariable long boardId){
+                                                         @PathVariable long boardId) {
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
 
-        Page<ApplicantDTO> applicantList = applicantService.findApplicantList(page,boardId);
+        Page<ApplicantDTO> applicantList = applicantService.findApplicantList(page, boardId);
         SelectCriteria selectCriteria = Pagenation.getSelectCriteria(applicantList);
 
         ResponseDtoWithPaging data = new ResponseDtoWithPaging(applicantList.getContent(), selectCriteria);
@@ -71,11 +70,6 @@ public class ApplicantController {
 
         return new ResponseEntity<>(new ResponseDto(HttpStatus.OK, "조회성공", data), headers, HttpStatus.OK);
     }
-
-
-
-
-
 
 
 }
