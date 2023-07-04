@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.*;
 import java.nio.charset.Charset;
 
 @RestController
-@RequestMapping("/api/v1/momapplicant")
+@RequestMapping("/api/v1/momApplicant")
 @AllArgsConstructor
 public class MomApplicantController {
 
