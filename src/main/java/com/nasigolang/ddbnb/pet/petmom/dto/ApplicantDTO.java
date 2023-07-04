@@ -12,6 +12,6 @@ import lombok.*;
 public class ApplicantDTO {
 
     private int applicantId;
-    private long boardId;
+    private PetMomDTO boardId;
     private MemberSimpleDTO member;
 }

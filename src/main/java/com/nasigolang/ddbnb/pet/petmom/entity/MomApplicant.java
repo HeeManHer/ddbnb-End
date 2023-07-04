@@ -1,6 +1,7 @@
 package com.nasigolang.ddbnb.pet.petmom.entity;
 
 import com.nasigolang.ddbnb.member.entity.Member;
+
 import lombok.*;
 
 import javax.persistence.*;
@@ -20,8 +21,9 @@ public class MomApplicant {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "applicant_sequence_generator")
     private int applicantId;
 
-    @Column(name = "BOARD_ID")
-    private long boardId;
+   @ManyToOne
+   @JoinColumn(name="BOARD_ID", referencedColumnName = "BOARD_ID")
+   private PetMom boardId;
 
     @ManyToOne
     @JoinColumn(name = "MEMBER_ID", referencedColumnName = "MEMBER_ID")
