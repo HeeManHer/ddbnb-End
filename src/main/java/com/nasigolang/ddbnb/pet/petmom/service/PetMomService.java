@@ -1,62 +1,107 @@
 package com.nasigolang.ddbnb.pet.petmom.service;
 
-import com.nasigolang.ddbnb.member.dto.MemberSimpleDTO;
-import com.nasigolang.ddbnb.member.entity.Member;
+import com.nasigolang.ddbnb.common.paging.Pagenation;
 import com.nasigolang.ddbnb.member.repository.MemberRepository;
+import com.nasigolang.ddbnb.pet.petmom.dto.BoardImageDTO;
 import com.nasigolang.ddbnb.pet.petmom.dto.PetMomDTO;
+import com.nasigolang.ddbnb.pet.petmom.entity.BoardImage;
 import com.nasigolang.ddbnb.pet.petmom.entity.OtherType;
 import com.nasigolang.ddbnb.pet.petmom.entity.PetMom;
+import com.nasigolang.ddbnb.pet.petmom.repositroy.PetMomImageRepository;
 import com.nasigolang.ddbnb.pet.petmom.repositroy.PetMomMapper;
 import com.nasigolang.ddbnb.pet.petmom.repositroy.PetMomRepository;
-import lombok.AllArgsConstructor;
+import com.nasigolang.ddbnb.util.FileUploadUtils;
 import org.modelmapper.ModelMapper;
-import org.springframework.data.domain.*;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
-import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
-@AllArgsConstructor
 public class PetMomService {
 
     private final PetMomRepository petMomRepository;
-    private final ModelMapper modelMapper;
     private final MemberRepository memberRepository;
     private final PetMomMapper petMomMapper;
+    private final PetMomImageRepository petMomImageRepository;
+    private final ModelMapper modelMapper;
 
+
+    @Value("${image.image-dir}")
+    private String IMAGE_DIR;
+    @Value("${image.image-url}")
+    private String IMAGE_URL;
+
+    public PetMomService(PetMomRepository petMomRepository, MemberRepository memberRepository,
+                         PetMomMapper petMomMapper,
+                         PetMomImageRepository petMomImageRepository, ModelMapper modelMapper) {
+        this.petMomRepository = petMomRepository;
+        this.memberRepository = memberRepository;
+        this.petMomMapper = petMomMapper;
+        this.petMomImageRepository = petMomImageRepository;
+        this.modelMapper = modelMapper;
+    }
 
     @Transactional
-    public void registNewPetMom(PetMomDTO newPetmom) {
-        petMomRepository.save(modelMapper.map(newPetmom, PetMom.class));
+    public void registNewPetMom(PetMomDTO newPetmom, List<MultipartFile> images) {
+        long no = petMomRepository.save(modelMapper.map(newPetmom, PetMom.class)).getBoardId();
+
+        if (images != null) {
+            for (int i = 0; i < images.size(); i++) {
+                String imageName = UUID.randomUUID().toString().replace("-", "");
+
+                try {
+                    String replaceFileName = FileUploadUtils.saveFile(IMAGE_DIR, imageName, images.get(i));
+
+                    BoardImageDTO image = new BoardImageDTO();
+                    image.setImageUrl(replaceFileName);
+                    image.setBoardId(no);
+                    petMomImageRepository.save(modelMapper.map(image, BoardImage.class));
+
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
+
     }
 
 
     public Page<PetMomDTO> findAllPetMoms(Pageable page, Map<String, Object> searchValue) {
 
-        page = PageRequest.of(page.getPageNumber() <= 0 ? 0 : page.getPageNumber() - 1, page.getPageSize(), Sort.by("boardId"));
+        page = PageRequest.of(page.getPageNumber() <= 0 ? 0 : page.getPageNumber() - 1, page.getPageSize(),
+                              Sort.by("boardId").descending());
 
         Page<PetMomDTO> petMoms;
 
         if (searchValue.isEmpty()) {
             petMoms = petMomRepository.findAll(page).map(petMom -> modelMapper.map(petMom, PetMomDTO.class));
         } else {
-           List<PetMomDTO> petMomList = petMomMapper.searchPetMom(searchValue);
-            System.out.println(petMomList);
-           int start = page.getPageNumber() * page.getPageSize();
-           int end = Math.min(start + page.getPageSize(), petMomList.size());
+            List<PetMomDTO> petMomList = petMomMapper.searchPetMom(searchValue);
 
+            petMoms = (Page<PetMomDTO>) Pagenation.createPage(petMomList, page);
+        }
 
-         petMoms = new PageImpl<>(petMomList.subList(start, end), page, petMomList.size());
+        for (PetMomDTO petMom : petMoms.getContent()) {
+            petMom.getMember().setProfileImage(IMAGE_URL + petMom.getMember().getProfileImage());
 
+            for (BoardImageDTO image : petMom.getBoardImage()) {
+                image.setImageUrl(IMAGE_URL + image.getImageUrl());
+            }
         }
 
         return petMoms;
-
     }
 
     @Transactional
@@ -98,7 +143,8 @@ public class PetMomService {
 
     //내 펫맘 조회
     public Page<PetMomDTO> findMyPetMom(Pageable page, long memberId) {
-        page = PageRequest.of(page.getPageNumber() <= 0 ? 0 : page.getPageNumber() - 1, page.getPageSize(), Sort.by("boardId"));
+        page = PageRequest.of(page.getPageNumber() <= 0 ? 0 : page.getPageNumber() - 1, page.getPageSize(),
+                              Sort.by("boardId"));
 
         //        Page<Review> reviews = reviewRepository.findAll(pageable);
         return petMomRepository.findByMember(page, memberRepository.findById(memberId))

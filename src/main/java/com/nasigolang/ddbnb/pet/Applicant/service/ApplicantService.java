@@ -4,6 +4,7 @@ import com.nasigolang.ddbnb.member.repository.MemberRepository;
 import com.nasigolang.ddbnb.pet.Applicant.dto.ApplicantDTO;
 import com.nasigolang.ddbnb.pet.Applicant.entity.ApplicantEntity;
 import com.nasigolang.ddbnb.pet.Applicant.repository.ApplicantRepository;
+import com.nasigolang.ddbnb.pet.petsitter.repository.PetsitterRepository;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
@@ -18,17 +19,18 @@ import org.springframework.transaction.annotation.Transactional;
 public class ApplicantService {
 
     private final ApplicantRepository applicantRepository;
+    private final PetsitterRepository petsitterRepository;
     private final ModelMapper modelMapper;
     private final MemberRepository memberRepository;
 
 
-
-
     public Page<ApplicantDTO> findApplicantList(Pageable page, long boardId) {
 
-        page = PageRequest.of(page.getPageNumber() <= 0 ? 0 : page.getPageNumber() - 1, page.getPageSize(), Sort.by("boardId"));
+        page = PageRequest.of(page.getPageNumber() <= 0 ? 0 : page.getPageNumber() - 1, page.getPageSize(),
+                              Sort.by("boardId"));
 
-        return applicantRepository.findByBoardId(page, boardId).map(list -> modelMapper.map(list, ApplicantDTO.class));
+        return applicantRepository.findByBoardId(page, petsitterRepository.findById(boardId))
+                                  .map(list -> modelMapper.map(list, ApplicantDTO.class));
     }
 
     @Transactional
@@ -37,10 +39,11 @@ public class ApplicantService {
     }
 
     public Page<ApplicantDTO> findMyPetSitterApp(Pageable page, long memberId) {
-        page = PageRequest.of(page.getPageNumber() <= 0 ? 0 : page.getPageNumber() - 1, page.getPageSize(), Sort.by("boardId"));
+        page = PageRequest.of(page.getPageNumber() <= 0 ? 0 : page.getPageNumber() - 1, page.getPageSize(),
+                              Sort.by("boardId"));
 
         return applicantRepository.findByMember(page, memberRepository.findById(memberId))
-                .map(petSitter -> modelMapper.map(petSitter, ApplicantDTO.class));
+                                  .map(petSitter -> modelMapper.map(petSitter, ApplicantDTO.class));
     }
 
 

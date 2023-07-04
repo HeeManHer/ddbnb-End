@@ -26,8 +26,8 @@ public class PetMomDTO {
     private LocalDate startDate;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate endDate;
-    private String signficant; // 특이사항
-    private String request; // 요청사항
+    private String signficant;
+    private String request;
     private MemberSimpleDTO member;
     private List<ApplicantDTO> apllicantList;
     private int hourlyRate;
@@ -36,5 +36,7 @@ public class PetMomDTO {
     private String petYN;
     private List<OtherTypeDTO> otherCondition;
     private String momStatus;
+
+    private List<BoardImageDTO> boardImage;
 
 }
