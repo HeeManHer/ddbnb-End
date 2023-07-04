@@ -90,13 +90,13 @@ public class PetsitterService {
     public Page<PetsitterboardDTO> findAllPetSitter(Pageable page, Map<String, Object> searchValue) {
 
         page = PageRequest.of(page.getPageNumber() <= 0 ? 0 : page.getPageNumber() - 1, page.getPageSize(),
-                              Sort.by("boardId").descending());
+                Sort.by("boardId").descending());
 
         Page<PetsitterboardDTO> petSitters;
 
         if (searchValue.isEmpty()) {
             petSitters = petSitterRepository.findAll(page)
-                                            .map(petSitter -> modelMapper.map(petSitter, PetsitterboardDTO.class));
+                    .map(petSitter -> modelMapper.map(petSitter, PetsitterboardDTO.class));
         } else {
             List<PetsitterboardDTO> petSitterList = petSitterMapper.searchPetSitter(searchValue);
 
@@ -104,10 +104,15 @@ public class PetsitterService {
         }
 
         for (PetsitterboardDTO petSitter : petSitters.getContent()) {
-            petSitter.getMember().setProfileImage(IMAGE_URL + petSitter.getMember().getProfileImage());
+            if (petSitter.getMember() != null) {
+                petSitter.getMember().setProfileImage(IMAGE_URL + petSitter.getMember().getProfileImage());
+            }
+            
+            if (petSitter.getBoardImage() != null) {
+                for (PetSitterImageDTO image : petSitter.getBoardImage()) {
 
-            for (PetSitterImageDTO image : petSitter.getBoardImage()) {
-                image.setImageUrl(IMAGE_URL + image.getImageUrl());
+                    image.setImageUrl(IMAGE_URL + image.getImageUrl());
+                }
             }
         }
 
@@ -188,10 +193,10 @@ public class PetsitterService {
     //내 펫시터 조회
     public Page<PetsitterboardDTO> findMyPetSitter(Pageable page, long memberId) {
         page = PageRequest.of(page.getPageNumber() <= 0 ? 0 : page.getPageNumber() - 1, page.getPageSize(),
-                              Sort.by("boardId"));
+                Sort.by("boardId"));
 
         return petSitterRepository.findByMember(page, memberRepository.findById(memberId))
-                                  .map(petSitter -> modelMapper.map(petSitter, PetsitterboardDTO.class));
+                .map(petSitter -> modelMapper.map(petSitter, PetsitterboardDTO.class));
     }
 
 

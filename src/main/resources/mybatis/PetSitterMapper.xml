@@ -44,24 +44,24 @@
     <select id="searchPetSitter" parameterType="hashmap" resultMap="petSitterResultMap">
 
         SELECT
-        <!--        P.BOARD_ID-->
-        <!--        , P.BOARD_TITLE-->
-        <!--        , P.BOARD_DATE-->
-        P.LOCATION
+        P.BOARD_ID
+        , P.BOARD_TITLE
+        , P.BOARD_DATE
+        , P.LOCATION
         , P.CARE
         , P.START_DATE
         , P.END_DATE
-        <!--        , P.SIGNFICANT-->
-        <!--        , P.REQUEST-->
-        <!--        , P.BOARD_CATEGORY-->
-        <!--        , P.RATE-->
-        <!--        , P.PET_NAME-->
-        <!--        , P.PET_AGE-->
-        <!--        , P.PET_SHAPE-->
-        <!--        , P.PET_GENDER-->
+        , P.SIGNFICANT
+        , P.REQUEST
+        , P.BOARD_CATEGORY
+        , P.RATE
+        , P.PET_NAME
+        , P.PET_AGE
+        , P.PET_SHAPE
+        , P.PET_GENDER
         , P.PET_SIZE
-        <!--        , P.SITTER_STATUS-->
-        <!--        , M.MEMBER_ID-->
+        , P.SITTER_STATUS
+        , M.MEMBER_ID
 
         FROM PETSITTER P
         JOIN MEMBER M ON (P.MEMBER_ID = M.MEMBER_ID)

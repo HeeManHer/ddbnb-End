@@ -81,7 +81,7 @@ public class PetMomService {
     public Page<PetMomDTO> findAllPetMoms(Pageable page, Map<String, Object> searchValue) {
 
         page = PageRequest.of(page.getPageNumber() <= 0 ? 0 : page.getPageNumber() - 1, page.getPageSize(),
-                              Sort.by("boardId").descending());
+                Sort.by("boardId").descending());
 
         Page<PetMomDTO> petMoms;
 
@@ -94,10 +94,14 @@ public class PetMomService {
         }
 
         for (PetMomDTO petMom : petMoms.getContent()) {
-            petMom.getMember().setProfileImage(IMAGE_URL + petMom.getMember().getProfileImage());
-
-            for (BoardImageDTO image : petMom.getBoardImage()) {
-                image.setImageUrl(IMAGE_URL + image.getImageUrl());
+            if (petMom.getMember() != null) {
+                petMom.getMember().setProfileImage(IMAGE_URL + petMom.getMember().getProfileImage());
+            }
+            
+            if (petMom.getBoardImage() != null) {
+                for (BoardImageDTO image : petMom.getBoardImage()) {
+                    image.setImageUrl(IMAGE_URL + image.getImageUrl());
+                }
             }
         }
 
@@ -122,9 +126,9 @@ public class PetMomService {
         foundPetMom.setBoardCategory(modifyPetMom.getBoardCategory());
         foundPetMom.setBoardTitle(modifyPetMom.getBoardTitle());
         foundPetMom.setOtherCondition(modifyPetMom.getOtherCondition()
-                                                  .stream()
-                                                  .map(list -> modelMapper.map(list, OtherType.class))
-                                                  .collect(Collectors.toList()));
+                .stream()
+                .map(list -> modelMapper.map(list, OtherType.class))
+                .collect(Collectors.toList()));
     }
 
     @Transactional
@@ -135,8 +139,8 @@ public class PetMomService {
 
     public PetMomDTO findPetMomByBoardNo(long boardId) {
         return petMomRepository.findById(boardId)
-                               .map(petMomboard -> modelMapper.map(petMomboard, PetMomDTO.class))
-                               .orElseThrow(() -> new NoSuchElementException("펫시터를 찾을 수 없습니다."));
+                .map(petMomboard -> modelMapper.map(petMomboard, PetMomDTO.class))
+                .orElseThrow(() -> new NoSuchElementException("펫시터를 찾을 수 없습니다."));
 
     }
 
@@ -144,11 +148,11 @@ public class PetMomService {
     //내 펫맘 조회
     public Page<PetMomDTO> findMyPetMom(Pageable page, long memberId) {
         page = PageRequest.of(page.getPageNumber() <= 0 ? 0 : page.getPageNumber() - 1, page.getPageSize(),
-                              Sort.by("boardId"));
+                Sort.by("boardId"));
 
         //        Page<Review> reviews = reviewRepository.findAll(pageable);
         return petMomRepository.findByMember(page, memberRepository.findById(memberId))
-                               .map(petMom -> modelMapper.map(petMom, PetMomDTO.class));
+                .map(petMom -> modelMapper.map(petMom, PetMomDTO.class));
     }
 
 
