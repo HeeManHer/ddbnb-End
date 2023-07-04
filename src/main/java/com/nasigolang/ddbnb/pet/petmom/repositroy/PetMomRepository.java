@@ -9,7 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 
 import java.util.Optional;
 
-public interface PetMomRepository extends JpaRepository<PetMom, Long> {
+public interface    PetMomRepository extends JpaRepository<PetMom, Long> {
 
     Page<PetMom> findByMember(Pageable page, Optional<Member> memberId);
 

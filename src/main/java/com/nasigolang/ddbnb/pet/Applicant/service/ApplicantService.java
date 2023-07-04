@@ -26,7 +26,8 @@ public class ApplicantService {
 
     public Page<ApplicantDTO> findApplicantList(Pageable page, long boardId) {
 
-        page = PageRequest.of(page.getPageNumber() <= 0 ? 0 : page.getPageNumber() - 1, page.getPageSize(), Sort.by("boardId"));
+        page = PageRequest.of(page.getPageNumber() <= 0 ? 0 : page.getPageNumber() - 1, page.getPageSize(),
+                              Sort.by("boardId"));
 
         return applicantRepository.findByBoardId(page, petSitterRepository.findById(boardId)).map(list -> modelMapper.map(list, ApplicantDTO.class));
     }
@@ -37,10 +38,11 @@ public class ApplicantService {
     }
 
     public Page<ApplicantDTO> findMyPetSitterApp(Pageable page, long memberId) {
-        page = PageRequest.of(page.getPageNumber() <= 0 ? 0 : page.getPageNumber() - 1, page.getPageSize(), Sort.by("boardId"));
+        page = PageRequest.of(page.getPageNumber() <= 0 ? 0 : page.getPageNumber() - 1, page.getPageSize(),
+                              Sort.by("boardId"));
 
         return applicantRepository.findByMember(page, memberRepository.findById(memberId))
-                .map(petSitter -> modelMapper.map(petSitter, ApplicantDTO.class));
+                                  .map(petSitter -> modelMapper.map(petSitter, ApplicantDTO.class));
     }
 
 

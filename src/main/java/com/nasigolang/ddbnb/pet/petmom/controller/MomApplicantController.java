@@ -6,7 +6,6 @@ import com.nasigolang.ddbnb.common.paging.Pagenation;
 import com.nasigolang.ddbnb.common.paging.ResponseDtoWithPaging;
 import com.nasigolang.ddbnb.common.paging.SelectCriteria;
 import com.nasigolang.ddbnb.pet.petmom.dto.ApplicantDTO;
-import com.nasigolang.ddbnb.pet.petmom.entity.MomApplicant;
 import com.nasigolang.ddbnb.pet.petmom.service.MomApplicantService;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
@@ -22,7 +21,7 @@ import org.springframework.web.bind.annotation.*;
 import java.nio.charset.Charset;
 
 @RestController
-@RequestMapping("/api/v1/momapplicant")
+@RequestMapping("/api/v1/momApplicant")
 @AllArgsConstructor
 public class MomApplicantController {
 
@@ -31,7 +30,7 @@ public class MomApplicantController {
     @GetMapping("/{boardId}")
     @ApiOperation(value = "신청자 목록 조회")
     public ResponseEntity<ResponseDto> findMomApplicantList(@PageableDefault Pageable page,
-            @PathVariable("boardId") long boardId) {
+                                                            @PathVariable("boardId") long boardId) {
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
@@ -56,7 +55,8 @@ public class MomApplicantController {
 
     @ApiOperation(value = "나의 펫맘 신청 조회")
     @GetMapping("/mypetmoms")
-    public ResponseEntity<ResponseDto> findMyPetMomApp(@PageableDefault Pageable pageable, @RequestParam long memberId) {
+    public ResponseEntity<ResponseDto> findMyPetMomApp(@PageableDefault Pageable pageable,
+                                                       @RequestParam long memberId) {
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));

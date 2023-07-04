@@ -18,6 +18,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.nio.charset.Charset;
 import java.time.LocalDate;
@@ -92,12 +93,14 @@ public class PetsitterController {
 
     @PostMapping("/regist")
     @ApiOperation(value = "펫시터 추가")
-    public ResponseEntity<ResponseDto> registPetSitter(@RequestBody PetsitterboardDTO petSitter) {
+    public ResponseEntity<ResponseDto> registPetSitter(@RequestPart("newPetSitter") PetsitterboardDTO petSitter,
+                                                       @RequestPart(value = "image", required = false) List<MultipartFile> images) {
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
 
-        petsitterService.registPetSitter(petSitter);
+        petSitter.setBoardDate(LocalDate.now());
+        petsitterService.registPetSitter(petSitter, images);
 
         return ResponseEntity.ok().headers(headers).body(new ResponseDto(HttpStatus.OK, "생성 성공", null));
     }
@@ -125,7 +128,8 @@ public class PetsitterController {
 
     @ApiOperation(value = "펫맘 모집취소")
     @PutMapping("/list/{boardId}/status")
-    public ResponseEntity<ResponseDto> updateSitterCancle(@RequestBody PetsitterboardDTO cancleSitter, @PathVariable("boardId") long boardId) {
+    public ResponseEntity<ResponseDto> updateSitterCancle(@RequestBody PetsitterboardDTO cancleSitter,
+                                                          @PathVariable("boardId") long boardId) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
 
@@ -137,7 +141,8 @@ public class PetsitterController {
 
     @ApiOperation(value = "나의 펫시터 조회")
     @GetMapping("/mypetsitters")
-    public ResponseEntity<ResponseDto> findMyPetSitter(@PageableDefault Pageable pageable, @RequestParam long memberId) {
+    public ResponseEntity<ResponseDto> findMyPetSitter(@PageableDefault Pageable pageable,
+                                                       @RequestParam long memberId) {
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));

@@ -7,6 +7,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.List;
 
 
 @AllArgsConstructor
@@ -80,6 +81,9 @@ public class PetsitterEntity implements Serializable {
 
     @Column(name = "SITTER_STATUS", columnDefinition = "VARCHAR2(255) DEFAULT '모집 중'")
     private String sitterStatus;
+
+    @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "boardId")
+    private List<PetSitterImage> boardImage;
 
     public void setSitterStatus(String sitterStatus) {
         if (sitterStatus != null) {
