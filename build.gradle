@@ -32,18 +32,16 @@ dependencies {
 
     implementation 'org.springframework.boot:spring-boot-starter-security'
 
-
     implementation 'org.apache.httpcomponents:httpclient:4.5.13'
     implementation 'junit:junit:4.13.1'
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
     implementation 'io.springfox:springfox-boot-starter:3.0.0'
     // Uncomment the next line if you want to use RSASSA-PSS (PS256, PS384, PS512) algorithms:
     //'org.bouncycastle:bcprov-jdk15on:1.60',
-//    implementation group: 'org.modelmapper', name: 'modelmapper', version: '3.0.0'
+    //    implementation group: 'org.modelmapper', name: 'modelmapper', version: '3.0.0'
     implementation group: 'commons-io', name: 'commons-io', version: '2.11.0'
     implementation group: 'commons-fileupload', name: 'commons-fileupload', version: '1.4'
-
-
+    
 }
 
 tasks.named('test') {
