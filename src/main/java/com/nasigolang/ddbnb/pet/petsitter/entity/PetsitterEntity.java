@@ -22,7 +22,7 @@ public class PetsitterEntity implements Serializable {
     @Id
     @Column(name = "BOARD_ID")
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "petsitter_sequence_generator")
-    private Long boardId;
+    private long boardId;
 
     @Column(name = "BOARD_TITLE")
     private String boardTitle;
@@ -82,7 +82,7 @@ public class PetsitterEntity implements Serializable {
     private String sitterStatus;
 
     public void setSitterStatus(String sitterStatus) {
-        if(sitterStatus != null) {
+        if (sitterStatus != null) {
             this.sitterStatus = sitterStatus;
         } else {
             this.sitterStatus = "모집 중";

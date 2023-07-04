@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 import java.nio.charset.Charset;
 import java.time.LocalDate;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
@@ -32,35 +33,11 @@ public class PetsitterController {
 
     private final PetsitterService petsitterService;
 
-//    @GetMapping("/list")
-//    @ApiOperation(value = "펫시터 목록 조회")
-//    public ResponseEntity<ResponseDto> findAllList(@PageableDefault(size = 10) Pageable page,
-//                                                   @RequestParam(name = "location", defaultValue = "") String location,
-//                                                   @RequestParam(name = "petSize", defaultValue = "") String petSize,
-//                                                   @RequestParam(name = "care", defaultValue = "") String care,
-//                                                   @RequestParam(name = "startDate", defaultValue = "") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate,
-//                                                   @RequestParam(name = "endDate", defaultValue = "") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate endDate,
-//                                                   @RequestParam(name = "sitterStatus", defaultValue = "") String sitterStatus){
-//
-//        HttpHeaders headers = new HttpHeaders();
-//        headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
-//        System.out.println(sitterStatus);
-//        System.out.println(petSize);
-//        System.out.println(care);
-//        System.out.println(location);
-//
-//        Page<PetsitterboardDTO> petsitterList = petsitterService.findMenuList(page, location, petSize, care, startDate, endDate, sitterStatus);
-//        SelectCriteria selectCriteria = Pagenation.getSelectCriteria(petsitterList);
-//        ResponseDtoWithPaging data = new ResponseDtoWithPaging(petsitterList.getContent(), selectCriteria);
-//
-//        return ResponseEntity.ok().headers(headers).body(new ResponseDto(HttpStatus.OK, "조회 성공", data));
-//    }
-
     @GetMapping("/list")
     @ApiOperation(value = "펫시터 목록 조회")
     public ResponseEntity<ResponseDto> findAllList(@PageableDefault Pageable page,
                                                    @RequestParam(name = "location", defaultValue = "") String location,
-                                                   @RequestParam(name = "petSize", defaultValue = "") String petSize,
+                                                   @RequestParam(name = "petSize", defaultValue = "") List<String> petSize,
                                                    @RequestParam(name = "care", defaultValue = "") String care,
                                                    @RequestParam(name = "startDate", defaultValue = "") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate,
                                                    @RequestParam(name = "endDate", defaultValue = "") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate endDate,
@@ -75,7 +52,7 @@ public class PetsitterController {
         if (!location.equals("")) {
             searchValue.put("location", location);
         }
-        if (!petSize.equals("")) {
+        if (petSize.size() > 0) {
             searchValue.put("petSize", petSize);
         }
         if (!care.equals("")) {
@@ -91,6 +68,7 @@ public class PetsitterController {
             searchValue.put("sitterStatus", sitterStatus);
         }
 
+        System.out.println(searchValue);
         Page<PetsitterboardDTO> petSitters = petsitterService.findAllPetSitter(page, searchValue);
         SelectCriteria selectCriteria = Pagenation.getSelectCriteria(petSitters);
 
@@ -98,11 +76,7 @@ public class PetsitterController {
 
         return new ResponseEntity<>(new ResponseDto(HttpStatus.OK, "조회 성공", data), headers, HttpStatus.OK);
     }
-//        Page<PetsitterboardDTO> petsitterList = petsitterService.findMenuList(page, location, petSize, care, startDate, endDate, sitterStatus);
-//        SelectCriteria selectCriteria = Pagenation.getSelectCriteria(petsitterList);
-//        ResponseDtoWithPaging data = new ResponseDtoWithPaging(petsitterList.getContent(), selectCriteria);
 
-//        return ResponseEntity.ok().headers(headers).body(new ResponseDto(HttpStatus.OK, "조회 성공", data));
 
     @GetMapping("/list/{boardid}")
     @ApiOperation(value = "펫시터 상세 조회")

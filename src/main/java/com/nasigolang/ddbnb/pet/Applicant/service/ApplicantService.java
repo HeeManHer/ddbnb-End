@@ -4,6 +4,7 @@ import com.nasigolang.ddbnb.member.repository.MemberRepository;
 import com.nasigolang.ddbnb.pet.Applicant.dto.ApplicantDTO;
 import com.nasigolang.ddbnb.pet.Applicant.entity.ApplicantEntity;
 import com.nasigolang.ddbnb.pet.Applicant.repository.ApplicantRepository;
+import com.nasigolang.ddbnb.pet.petsitter.repository.PetsitterRepository;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
@@ -20,15 +21,14 @@ public class ApplicantService {
     private final ApplicantRepository applicantRepository;
     private final ModelMapper modelMapper;
     private final MemberRepository memberRepository;
-
-
+    private final PetsitterRepository petSitterRepository;
 
 
     public Page<ApplicantDTO> findApplicantList(Pageable page, long boardId) {
 
         page = PageRequest.of(page.getPageNumber() <= 0 ? 0 : page.getPageNumber() - 1, page.getPageSize(), Sort.by("boardId"));
 
-        return applicantRepository.findByBoardId(page, boardId).map(list -> modelMapper.map(list, ApplicantDTO.class));
+        return applicantRepository.findByBoardId(page, petSitterRepository.findById(boardId)).map(list -> modelMapper.map(list, ApplicantDTO.class));
     }
 
     @Transactional

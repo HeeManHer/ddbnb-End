@@ -77,7 +77,11 @@
                 AND END_DATE = #{endDate}
             </if>
             <if test="petSize != null">
-                AND PET_SIZE = #{petSize}
+                AND PET_SIZE IN
+                <foreach item="item" index="index" collection="petSize"
+                         open="(" separator="," close=")">
+                    #{item}
+                </foreach>
             </if>
             <if test="care != null">
                 AND CARE = #{care}
