@@ -23,7 +23,7 @@ spring:
     livereload:
       enabled: false #개발 : true 운영 : false
   freemarker:
-    cache: true #개발 : false 운영 : true
+    cache: false #개발 : false 운영 : true
   web:
     resources:
       static-locations: classpath:/images/
@@ -34,7 +34,7 @@ spring:
     database: oracle
     properties:
       hibernate:
-        '[format_sql]': true #개발 : true 운영: false sql 분석 쉽게
+        '[format_sql]': false #개발 : true 운영: false sql 분석 쉽게
         hbm2ddl:
           auto: none #개발 : update 운영: none
 

@@ -6,7 +6,8 @@ import com.nasigolang.ddbnb.login.dto.*;
 import com.nasigolang.ddbnb.member.dto.MemberDTO;
 import com.nasigolang.ddbnb.member.entity.Member;
 import com.nasigolang.ddbnb.member.service.MemberService;
-import lombok.AllArgsConstructor;
+import com.nasigolang.ddbnb.util.FileUploadUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -18,13 +19,23 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.Date;
+import java.util.UUID;
 
 @Service
-@AllArgsConstructor
 public class LoginService {
     private final MemberService memberService;
+
+    @Value("${image.image-dir}")
+    private String IMAGE_DIR;
+    @Value("${image.image-url}")
+    private String IMAGE_URL;
+
+    public LoginService(MemberService memberService) {
+        this.memberService = memberService;
+    }
 
     public KakaoAcessTokenDTO getAccessToken(String code) {
 
@@ -78,6 +89,30 @@ public class LoginService {
         return kakaoProfileDTO;
     }
 
+    public String findProfileImage(String imageUrl) {
+        RestTemplate rt = new RestTemplate();
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-type", "application/json");
+
+        HttpEntity<MultiValueMap<String, String>> profileImageRequest = new HttpEntity<>(headers);
+
+        ResponseEntity<byte[]> profileImageResponse = rt.exchange("https://api.dicebear.com/6.x/thumbs/png?seed=" + imageUrl, HttpMethod.GET, profileImageRequest, byte[].class);
+
+        byte[] profileImage = profileImageResponse.getBody();
+
+        String imageName = UUID.randomUUID().toString().replace("-", "");
+        String replaceFileName;
+
+        try {
+            replaceFileName = FileUploadUtils.saveFile(IMAGE_DIR, imageName, profileImage);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        return replaceFileName;
+    }
+
     @Transactional
     public void getJwtToken(KakaoAcessTokenDTO kakaoToken) {
 
@@ -89,15 +124,19 @@ public class LoginService {
 
             newMember.setSocialLogin("KAKAO");
             newMember.setSocialId(String.valueOf(kakaoProfileDTO.getId()));
+
             newMember.setRefreshToken(kakaoToken.getRefresh_token());
-            newMember.setAccessToken(kakaoToken.getAccess_token());
-            newMember.setStatus("정상");
             newMember.setRefreshTokenExpireDate(kakaoToken.getRefresh_token_expires_in() + System.currentTimeMillis());
+
+            newMember.setAccessToken(kakaoToken.getAccess_token());
             newMember.setAccessTokenExpireDate(kakaoToken.getExpires_in() + System.currentTimeMillis());
+
+            newMember.setStatus("정상");
+            newMember.setProfileImage(findProfileImage(newMember.getSocialId()));
+
             newMember.setSignDate(LocalDate.now());
-            newMember.setProfileImage("https://api.dicebear.com/6.x/thumbs/png?seed=" + newMember.getSocialId()
-                    .split("@")[0]);
             newMember.setLastVisitDate(LocalDate.now());
+
             if (kakaoProfileDTO.getKakao_account().getGender() != null) {
                 newMember.setGender(kakaoProfileDTO.getKakao_account().getGender());
             }

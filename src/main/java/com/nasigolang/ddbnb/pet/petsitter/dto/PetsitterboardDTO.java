@@ -4,10 +4,8 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.nasigolang.ddbnb.member.dto.MemberSimpleDTO;
 import lombok.*;
 
-import javax.persistence.Entity;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
 import java.time.LocalDate;
+import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -38,4 +36,5 @@ public class PetsitterboardDTO {
     private String petGender;
     private String petSize;
     private String sitterStatus;
+    private List<PetSitterImageDTO> boardImage;
 }

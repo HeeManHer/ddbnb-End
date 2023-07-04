@@ -1,30 +1,54 @@
 package com.nasigolang.ddbnb.pet.petsitter.service;
 
+import com.nasigolang.ddbnb.common.paging.Pagenation;
 import com.nasigolang.ddbnb.member.repository.MemberRepository;
+import com.nasigolang.ddbnb.pet.petsitter.dto.PetSitterImageDTO;
 import com.nasigolang.ddbnb.pet.petsitter.dto.PetsitterboardDTO;
+import com.nasigolang.ddbnb.pet.petsitter.entity.PetSitterImage;
 import com.nasigolang.ddbnb.pet.petsitter.entity.PetsitterEntity;
+import com.nasigolang.ddbnb.pet.petsitter.repository.PetSitterImageRepository;
 import com.nasigolang.ddbnb.pet.petsitter.repository.PetSitterMapper;
 import com.nasigolang.ddbnb.pet.petsitter.repository.PetsitterRepository;
-import lombok.AllArgsConstructor;
+import com.nasigolang.ddbnb.util.FileUploadUtils;
 import org.modelmapper.ModelMapper;
-import org.springframework.data.domain.*;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.time.LocalDate;
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
-import java.util.NoSuchElementException;
+import java.util.UUID;
 
 
 @Service
-@AllArgsConstructor
 public class PetsitterService {
 
     private final PetsitterRepository petSitterRepository;
+    private final PetSitterImageRepository petSitterImageRepository;
     private final ModelMapper modelMapper;
     private final MemberRepository memberRepository;
     private final PetSitterMapper petSitterMapper;
+
+    @Value("${image.image-dir}")
+    private String IMAGE_DIR;
+    @Value("${image.image-url}")
+    private String IMAGE_URL;
+
+    public PetsitterService(PetsitterRepository petSitterRepository, PetSitterImageRepository petSitterImageRepository,
+                            ModelMapper modelMapper, MemberRepository memberRepository,
+                            PetSitterMapper petSitterMapper) {
+        this.petSitterRepository = petSitterRepository;
+        this.petSitterImageRepository = petSitterImageRepository;
+        this.modelMapper = modelMapper;
+        this.memberRepository = memberRepository;
+        this.petSitterMapper = petSitterMapper;
+    }
 
     //    public Page<PetsitterboardDTO> findMenuList(Pageable page, String location, String petSize, String care, LocalDate startDate, LocalDate endDate) {
     //
@@ -65,27 +89,53 @@ public class PetsitterService {
 //    }
     public Page<PetsitterboardDTO> findAllPetSitter(Pageable page, Map<String, Object> searchValue) {
 
-        page = PageRequest.of(page.getPageNumber() <= 0 ? 0 : page.getPageNumber() - 1, page.getPageSize(), Sort.by("boardId"));
+        page = PageRequest.of(page.getPageNumber() <= 0 ? 0 : page.getPageNumber() - 1, page.getPageSize(),
+                              Sort.by("boardId").descending());
 
         Page<PetsitterboardDTO> petSitters;
 
         if (searchValue.isEmpty()) {
-            petSitters = petSitterRepository.findAll(page).map(petSitter -> modelMapper.map(petSitter, PetsitterboardDTO.class));
+            petSitters = petSitterRepository.findAll(page)
+                                            .map(petSitter -> modelMapper.map(petSitter, PetsitterboardDTO.class));
         } else {
             List<PetsitterboardDTO> petSitterList = petSitterMapper.searchPetSitter(searchValue);
-            int start = page.getPageNumber() * page.getPageSize();
-            int end = Math.min(start + page.getPageSize(), petSitterList.size());
 
-            petSitters = new PageImpl<>(petSitterList.subList(start, end), page, petSitterList.size());
+            petSitters = (Page<PetsitterboardDTO>) Pagenation.createPage(petSitterList, page);
+        }
+
+        for (PetsitterboardDTO petSitter : petSitters.getContent()) {
+            petSitter.getMember().setProfileImage(IMAGE_URL + petSitter.getMember().getProfileImage());
+
+            for (PetSitterImageDTO image : petSitter.getBoardImage()) {
+                image.setImageUrl(IMAGE_URL + image.getImageUrl());
+            }
         }
 
         return petSitters;
     }
 
     @Transactional
-    public void registPetSitter(PetsitterboardDTO petSitter) {
-        petSitter.setBoardDate(LocalDate.now());
-        petSitterRepository.save(modelMapper.map(petSitter, PetsitterEntity.class));
+    public void registPetSitter(PetsitterboardDTO petSitter, List<MultipartFile> images) {
+
+        long no = petSitterRepository.save(modelMapper.map(petSitter, PetsitterEntity.class)).getBoardId();
+
+        if (images != null) {
+            for (int i = 0; i < images.size(); i++) {
+                String imageName = UUID.randomUUID().toString().replace("-", "");
+
+                try {
+                    String replaceFileName = FileUploadUtils.saveFile(IMAGE_DIR, imageName, images.get(i));
+
+                    PetSitterImageDTO image = new PetSitterImageDTO();
+                    image.setImageUrl(replaceFileName);
+                    image.setBoardId(no);
+                    petSitterImageRepository.save(modelMapper.map(image, PetSitterImage.class));
+
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
     }
 
     @Transactional
@@ -113,11 +163,17 @@ public class PetsitterService {
         petSitterRepository.deleteById(borderId);
     }
 
-    public PetsitterboardDTO findPetsitterByBoardNo(Long boardId) {
+    public PetsitterboardDTO findPetsitterByBoardNo(long boardId) {
 
-        return petSitterRepository.findById(boardId)
-                .map(petsitterboard -> modelMapper.map(petsitterboard, PetsitterboardDTO.class))
-                .orElseThrow(() -> new NoSuchElementException("펫시터를 찾을 수 없습니다."));
+        PetsitterEntity petSitter = petSitterRepository.findById(boardId).get();
+
+        petSitter.getMember().setProfileImage(IMAGE_URL + petSitter.getMember().getProfileImage());
+
+        for (PetSitterImage image : petSitter.getBoardImage()) {
+            image.setImageUrl(IMAGE_URL + image.getImageUrl());
+        }
+
+        return modelMapper.map(petSitter, PetsitterboardDTO.class);
     }
 
 
@@ -131,10 +187,11 @@ public class PetsitterService {
 
     //내 펫시터 조회
     public Page<PetsitterboardDTO> findMyPetSitter(Pageable page, long memberId) {
-        page = PageRequest.of(page.getPageNumber() <= 0 ? 0 : page.getPageNumber() - 1, page.getPageSize(), Sort.by("boardId"));
+        page = PageRequest.of(page.getPageNumber() <= 0 ? 0 : page.getPageNumber() - 1, page.getPageSize(),
+                              Sort.by("boardId"));
 
         return petSitterRepository.findByMember(page, memberRepository.findById(memberId))
-                .map(petSitter -> modelMapper.map(petSitter, PetsitterboardDTO.class));
+                                  .map(petSitter -> modelMapper.map(petSitter, PetsitterboardDTO.class));
     }
 
 

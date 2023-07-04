@@ -5,6 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -20,16 +21,35 @@ public class FileUploadUtils {
 
         Path uploadPath = Paths.get(uploadDir);
 
-        if(!Files.exists(uploadPath)) {
+        if (!Files.exists(uploadPath)) {
             Files.createDirectories(uploadPath);
         }
 
         String replaceFileName = fileName + "." + FilenameUtils.getExtension(multipartFile.getResource().getFilename());
 
-        try(InputStream inputStream = multipartFile.getInputStream()) {
+        try (InputStream inputStream = multipartFile.getInputStream()) {
             Path filePath = uploadPath.resolve(replaceFileName);
             Files.copy(inputStream, filePath, StandardCopyOption.REPLACE_EXISTING);
-        } catch(IOException ex) {
+        } catch (IOException ex) {
+            throw new IOException("Could not save file: " + fileName, ex);
+        }
+
+        return replaceFileName;
+    }
+
+    public static String saveFile(String uploadDir, String fileName, byte[] fileBytes) throws IOException {
+        Path uploadPath = Paths.get(uploadDir);
+
+        if (!Files.exists(uploadPath)) {
+            Files.createDirectories(uploadPath);
+        }
+
+        String replaceFileName = fileName + ".png";  // 파일 확장자는 예시로 png로 설정하였습니다.
+
+        try (InputStream inputStream = new ByteArrayInputStream(fileBytes)) {
+            Path filePath = uploadPath.resolve(replaceFileName);
+            Files.copy(inputStream, filePath, StandardCopyOption.REPLACE_EXISTING);
+        } catch (IOException ex) {
             throw new IOException("Could not save file: " + fileName, ex);
         }
 
@@ -41,14 +61,14 @@ public class FileUploadUtils {
         boolean result = false;
         Path uploadPath = Paths.get(uploadDir);
 
-        if(!Files.exists(uploadPath)) {
+        if (!Files.exists(uploadPath)) {
             result = true;
         }
         try {
             Path filePath = uploadPath.resolve(fileName);
             Files.delete(filePath);
             result = true;
-        } catch(IOException ex) {
+        } catch (IOException ex) {
 
             log.info("Could not delete file: " + fileName, ex);
         }

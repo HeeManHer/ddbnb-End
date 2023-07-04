@@ -17,11 +17,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.nio.charset.Charset;
 import java.time.LocalDate;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -35,12 +37,13 @@ public class PetMomController {
     }
 
     @PostMapping("/regist")
-    public ResponseEntity<ResponseDto> registNewReport(@RequestBody PetMomDTO newPetmom) {
+    public ResponseEntity<ResponseDto> registNewReport(@RequestPart("newPetMom") PetMomDTO newPetmom,
+                                                       @RequestPart(value = "image", required = false) List<MultipartFile> images) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
-        newPetmom.setBoardDate(new Date());
-        petmomService.registNewPetMom(newPetmom);
 
+        newPetmom.setBoardDate(new Date());
+        petmomService.registNewPetMom(newPetmom, images);
 
         return ResponseEntity.ok().headers(headers).body(new ResponseDto(HttpStatus.OK, "생성 성공", null));
 
@@ -48,36 +51,36 @@ public class PetMomController {
 
     @GetMapping("/list")
     public ResponseEntity<ResponseDto> findAllPetMom(@PageableDefault Pageable page,
-                                                     @RequestParam(name= "location",defaultValue ="")String location,
-                                                     @RequestParam(name ="startDate",defaultValue = "")@DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate,
-                                                     @RequestParam(name = "endDate",defaultValue = "")@DateTimeFormat(pattern = "yyyy-MM-dd")LocalDate endDate,
-                                                     @RequestParam(name="petYN", defaultValue = "")String petYN,
-                                                     @RequestParam(name="otherCondition", defaultValue = "")String otherCondition) {
+                                                     @RequestParam(name = "location", defaultValue = "") String location,
+                                                     @RequestParam(name = "startDate", defaultValue = "") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate,
+                                                     @RequestParam(name = "endDate", defaultValue = "") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate endDate,
+                                                     @RequestParam(name = "petYN", defaultValue = "") String petYN,
+                                                     @RequestParam(name = "otherCondition", defaultValue = "") String otherCondition) {
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
 
         Map<String, Object> searchValue = new HashMap<>();
 
-        if(!location.equals("")) {
+        if (!location.equals("")) {
             searchValue.put("location", location);
         }
 
-        if(startDate != null) {
+        if (startDate != null) {
             searchValue.put("startDate", startDate);
         }
-        if(endDate != null) {
+        if (endDate != null) {
             searchValue.put("endDate", endDate);
         }
-        if(!petYN.equals("")) {
-            searchValue.put("petYN",  petYN );
+        if (!petYN.equals("")) {
+            searchValue.put("petYN", petYN);
         }
-        if(!otherCondition.equals("")) {
-            searchValue.put("otherCondition", otherCondition );
+        if (!otherCondition.equals("")) {
+            searchValue.put("otherCondition", otherCondition);
         }
 
 
-        Page<PetMomDTO> petMoms = petmomService.findAllPetMoms(page,searchValue);
+        Page<PetMomDTO> petMoms = petmomService.findAllPetMoms(page, searchValue);
         SelectCriteria selectCriteria = Pagenation.getSelectCriteria(petMoms);
 
         System.out.println(searchValue);
