@@ -27,7 +27,7 @@ jobs:
       - name: web docker build and push
         run: |
           docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
-          docker build -t ${{ secrets.DOCKER_REPO }} /
+          docker build -t ${{ secrets.DOCKER_REPO }} ./
           docker push ${{ secrets.DOCKER_REPO }}:latest
       - name: Get timestamp
         uses: gerred/actions/current-time@master
