@@ -19,16 +19,20 @@ jobs:
         with:
           java-version: '11'
           distribution: 'temurin'
+          
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
+        
       - name: Build with Gradle
         run: ./gradlew bootjar
+        
       ## 웹 이미지 빌드 및 도커허브에 push
       - name: web docker build and push
         run: |
           docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
           docker build -t ${{ secrets.DOCKER_REPO }}/ddbnb ./
           docker push ${{ secrets.DOCKER_REPO }}/ddbnb:latest
+          
       - name: Get timestamp
         uses: gerred/actions/current-time@master
         id: current-time
@@ -52,19 +56,4 @@ jobs:
           version_label: "ddbnb--${{ steps.format-time.outputs.replaced }}"
           region: ap-northeast-2
           deployment_package: Dockerrun.aws.json
-          existing_bucket_name: ddbnb-front # AWS에서 S3를 설정할때 필요
-
-#     ## deploy to production
-#       - name: Deploy to prod
-#         uses: appleboy/ssh-action@master
-#         id: deploy-prod
-#         with:
-#           host: ${{ secrets.HOST_PROD }}
-#           username: ${{ secrets.USERNAME }}
-#           key: ${{ secrets.PRIVATE_KEY }}
-#           envs: GITHUB_SHA
-#           script: |
-#             sudo docker rm -f $(docker ps -qa)
-#             sudo docker pull ${{ secrets.DOCKER_REPO }}/daeng
-#             docker run -f 8080:8080 -d ${{ secrets.DOCKER_REPO }}/daeng
-
+          existing_bucket_name: ddbnb-front
