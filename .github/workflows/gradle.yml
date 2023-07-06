@@ -27,8 +27,8 @@ jobs:
       - name: web docker build and push
         run: |
           docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
-          docker build -t ${{ secrets.DOCKER_REPO }} ./
-          docker push ${{ secrets.DOCKER_REPO }}:latest
+          docker build -t ${{ secrets.DOCKER_REPO }}/ddbnb ./
+          docker push ${{ secrets.DOCKER_REPO }}/ddbnb:latest
       - name: Get timestamp
         uses: gerred/actions/current-time@master
         id: current-time
