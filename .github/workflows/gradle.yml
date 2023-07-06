@@ -20,6 +20,14 @@ jobs:
           java-version: '11'
           distribution: 'temurin'
           
+      ## create application-prod.properties
+      - name: make application.yml
+        run: |
+          cd ./src/main/resources
+          touch ./application.yml
+          echo "${{ secrets.PROPERTIES_FILE }}" > ./application.yml
+        shell: bash
+          
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
         
