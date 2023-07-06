@@ -1,7 +1,7 @@
 {
   "AWSEBDockerrunVersion": "2",
   "Image": {
-    "Name": "yongmining/ddbnb",
+    "Name": "heemanher/ddbnb",
     "Update": "true"
   },
   "Ports": [
