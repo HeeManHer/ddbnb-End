@@ -42,15 +42,29 @@ jobs:
           replace-with: '-'
           flags: 'g'
 
-      - name: Beanstalk Deploy
-        uses: einaregilsson/beanstalk-deploy@v20
+#       - name: Beanstalk Deploy
+#         uses: einaregilsson/beanstalk-deploy@v20
+#         with:
+#           aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
+#           aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+#           application_name: deang
+#           environment_name: Deang-env-1
+#           version_label: "deang--${{ steps.format-time.outputs.replaced }}"
+#           region: ap-northeast-2
+#           deployment_package: Dockerrun.aws.json
+#           existing_bucket_name: ddbnb-front # AWS에서 S3를 설정할때 필요
+
+    ## deploy to production
+      - name: Deploy to prod
+        uses: appleboy/ssh-action@master
+        id: deploy-prod
         with:
-          aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          application_name: deang
-          environment_name: Deang-env-1
-          version_label: "deang--${{ steps.format-time.outputs.replaced }}"
-          region: ap-northeast-2
-          deployment_package: Dockerrun.aws.json
-          existing_bucket_name: ddbnb-front # AWS에서 S3를 설정할때 필요
+          host: ${{ secrets.HOST_PROD }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.PRIVATE_KEY }}
+          envs: GITHUB_SHA
+          script: |
+            sudo docker rm -f $(docker ps -qa)
+            sudo docker pull ${{ secrets.DOCKER_REPO }}/daeng
+            docker run -f 8080:8080 -d ${{ secrets.DOCKER_REPO }}/daeng
 
