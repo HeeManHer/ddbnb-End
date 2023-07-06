@@ -46,14 +46,25 @@ jobs:
           replace-with: '-'
           flags: 'g'
 
-      - name: Beanstalk Deploy
-        uses: einaregilsson/beanstalk-deploy@v20
+#       - name: Beanstalk Deploy
+#         uses: einaregilsson/beanstalk-deploy@v20
+#         with:
+#           aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
+#           aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+#           application_name: ddbnb
+#           environment_name: Ddbnb-env-1
+#           version_label: "ddbnb--${{ steps.format-time.outputs.replaced }}"
+#           region: ap-northeast-2
+#           deployment_package: Dockerrun.aws.json
+#           existing_bucket_name: ddbnb-front
+
+      - name: Deploy
+        uses: appleboy/ssh-action@master
         with:
-          aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          application_name: ddbnb
-          environment_name: Ddbnb-env-1
-          version_label: "ddbnb--${{ steps.format-time.outputs.replaced }}"
-          region: ap-northeast-2
-          deployment_package: Dockerrun.aws.json
-          existing_bucket_name: ddbnb-front
+          host: ${{ secrets.HOST }}
+          username: user
+          key: ${{ secrets.PRIVATE_KEY }}
+          script: |
+            docker pull ${{ secrets.DOCKER_REPO }}/ddbnb:latest
+            docker rm -f $(docker ps -a -q)
+            docker run -d --name ddbnb -p 8080:8080 ${{ secrets.DOCKER_REPO }}/ddbnb:latest
