@@ -1,7 +1,7 @@
 {
   "AWSEBDockerrunVersion": "1",
   "Image": {
-    "Name": "yongmining/daeng",
+    "Name": "yongmining/deang",
     "Update": "true"
   },
   "Ports": [
