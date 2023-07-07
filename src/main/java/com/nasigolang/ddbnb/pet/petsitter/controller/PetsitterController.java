@@ -51,7 +51,7 @@ public class PetsitterController {
         Map<String, Object> searchValue = new HashMap<>();
 
         if (!location.equals("")) {
-            searchValue.put("location", location);
+            searchValue.put("location", "%" + location + "%");
         }
         if (petSize.size() > 0) {
             searchValue.put("petSize", petSize);

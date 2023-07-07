@@ -7,7 +7,7 @@ import com.nasigolang.ddbnb.member.dto.MemberDTO;
 import com.nasigolang.ddbnb.member.entity.Member;
 import com.nasigolang.ddbnb.member.service.MemberService;
 import com.nasigolang.ddbnb.util.FileUploadUtils;
-import org.springframework.beans.factory.annotation.Value;
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -22,20 +22,12 @@ import org.springframework.web.client.RestTemplate;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.Date;
-import java.util.UUID;
 
 @Service
+@AllArgsConstructor
 public class LoginService {
     private final MemberService memberService;
-
-    @Value("${image.image-dir}")
-    private String IMAGE_DIR;
-    @Value("${image.image-url}")
-    private String IMAGE_URL;
-
-    public LoginService(MemberService memberService) {
-        this.memberService = memberService;
-    }
+    private final FileUploadUtils fileUploadUtils;
 
     public KakaoAcessTokenDTO getAccessToken(String code) {
 
@@ -54,7 +46,8 @@ public class LoginService {
 
         HttpEntity<MultiValueMap<String, String>> kakaoTokenRequest = new HttpEntity<>(params, headers);
 
-        ResponseEntity<String> accessTokenResponse = rt.exchange("https://kauth.kakao.com/oauth/token", HttpMethod.POST, kakaoTokenRequest, String.class);
+        ResponseEntity<String> accessTokenResponse = rt.exchange("https://kauth.kakao.com/oauth/token", HttpMethod.POST,
+                                                                 kakaoTokenRequest, String.class);
 
         ObjectMapper objectMapper = new ObjectMapper();
         KakaoAcessTokenDTO kakaoToken = null;
@@ -76,7 +69,8 @@ public class LoginService {
 
         HttpEntity<MultiValueMap<String, String>> kakaoProfileRequest = new HttpEntity<>(headers);
 
-        ResponseEntity<String> kakaoProfileResponse = rt.exchange("https://kapi.kakao.com/v2/user/me", HttpMethod.POST, kakaoProfileRequest, String.class);
+        ResponseEntity<String> kakaoProfileResponse = rt.exchange("https://kapi.kakao.com/v2/user/me", HttpMethod.POST,
+                                                                  kakaoProfileRequest, String.class);
 
         KakaoProfileDTO kakaoProfileDTO = new KakaoProfileDTO();
         ObjectMapper objectMapper = new ObjectMapper();
@@ -97,15 +91,16 @@ public class LoginService {
 
         HttpEntity<MultiValueMap<String, String>> profileImageRequest = new HttpEntity<>(headers);
 
-        ResponseEntity<byte[]> profileImageResponse = rt.exchange("https://api.dicebear.com/6.x/thumbs/png?seed=" + imageUrl, HttpMethod.GET, profileImageRequest, byte[].class);
+        ResponseEntity<byte[]> profileImageResponse = rt.exchange(
+                "https://api.dicebear.com/6.x/thumbs/png?seed=" + imageUrl, HttpMethod.GET, profileImageRequest,
+                byte[].class);
 
         byte[] profileImage = profileImageResponse.getBody();
 
-        String imageName = UUID.randomUUID().toString().replace("-", "");
         String replaceFileName;
 
         try {
-            replaceFileName = FileUploadUtils.saveFile(IMAGE_DIR, imageName, profileImage);
+            replaceFileName = fileUploadUtils.saveFile(profileImage);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -163,7 +158,8 @@ public class LoginService {
             if (renewedToken.getRefresh_token() != null) {
 
                 foundmember.setRefreshToken(renewedToken.getRefresh_token());
-                foundmember.setRefreshTokenExpireDate(renewedToken.getRefresh_token_expires_in() + System.currentTimeMillis());
+                foundmember.setRefreshTokenExpireDate(
+                        renewedToken.getRefresh_token_expires_in() + System.currentTimeMillis());
             }
 
             foundmember.setAccessToken(renewedToken.getAccess_token());
@@ -189,7 +185,8 @@ public class LoginService {
 
         HttpEntity<MultiValueMap<String, String>> kakaoTokenRequest = new HttpEntity<>(params, headers);
 
-        ResponseEntity<String> renewTokenResponse = rt.exchange("https://kauth.kakao.com/oauth/token", HttpMethod.POST, kakaoTokenRequest, String.class);
+        ResponseEntity<String> renewTokenResponse = rt.exchange("https://kauth.kakao.com/oauth/token", HttpMethod.POST,
+                                                                kakaoTokenRequest, String.class);
 
         ObjectMapper objectMapper = new ObjectMapper();
         RenewTokenDTO renewToken = null;
@@ -213,8 +210,8 @@ public class LoginService {
         HttpEntity<MultiValueMap<String, String>> kakaoLogoutRequest = new HttpEntity<>(params, headers);
 
         ResponseEntity<String> kakaoLogoutResponse = rt.exchange("https://kapi.kakao.com/v1/user/logout",
-                //                "https://kapi.kakao.com/v1/user/unlink",
-                HttpMethod.POST, kakaoLogoutRequest, String.class);
+                                                                 //                "https://kapi.kakao.com/v1/user/unlink",
+                                                                 HttpMethod.POST, kakaoLogoutRequest, String.class);
 
         return kakaoLogoutResponse.getStatusCode().is2xxSuccessful();
     }
@@ -239,7 +236,8 @@ public class LoginService {
 
         HttpEntity<MultiValueMap<String, String>> naverTokenRequest = new HttpEntity<>(params, headers);
 
-        ResponseEntity<String> accessTokenResponse = rt.exchange("https://nid.naver.com/oauth2.0/token", HttpMethod.POST, naverTokenRequest, String.class);
+        ResponseEntity<String> accessTokenResponse = rt.exchange("https://nid.naver.com/oauth2.0/token",
+                                                                 HttpMethod.POST, naverTokenRequest, String.class);
 
         ObjectMapper objectMapper = new ObjectMapper();
         NaverAccessTokenDTO naverAccessToken = null;
@@ -271,7 +269,7 @@ public class LoginService {
             newMember.setSignDate(LocalDate.now());
             newMember.setLastVisitDate(LocalDate.now());
             newMember.setProfileImage("https://api.dicebear.com/6.x/thumbs/png?seed=" + newMember.getSocialId()
-                    .split("@")[0]);
+                                                                                                 .split("@")[0]);
 
             if (naverProfileDTO.getResponse().getGender() != null) {
                 newMember.setGender(naverProfileDTO.getResponse().getGender());
@@ -286,7 +284,8 @@ public class LoginService {
         naverAccessToken.setMemberId(foundmember.getMemberId());
         foundmember.setRefreshToken(naverAccessToken.getRefresh_token());
         foundmember.setAccessToken(naverAccessToken.getAccess_token());
-        foundmember.setRefreshTokenExpireDate(naverAccessToken.getRefresh_token_expires_in() + System.currentTimeMillis());
+        foundmember.setRefreshTokenExpireDate(
+                naverAccessToken.getRefresh_token_expires_in() + System.currentTimeMillis());
         foundmember.setAccessTokenExpireDate(naverAccessToken.getExpires_in() + System.currentTimeMillis());
 
 
@@ -299,7 +298,8 @@ public class LoginService {
             if (renewedToken.getRefresh_token() != null) {
 
                 foundmember.setRefreshToken(renewedToken.getRefresh_token());
-                foundmember.setRefreshTokenExpireDate(renewedToken.getRefresh_token_expires_in() + System.currentTimeMillis());
+                foundmember.setRefreshTokenExpireDate(
+                        renewedToken.getRefresh_token_expires_in() + System.currentTimeMillis());
             }
 
             foundmember.setAccessToken(renewedToken.getAccess_token());
@@ -316,7 +316,8 @@ public class LoginService {
 
         HttpEntity<MultiValueMap<String, String>> naverProfileRequest = new HttpEntity<>(headers);
 
-        ResponseEntity<String> naverProfileResponse = rt.exchange("https://openapi.naver.com/v1/nid/me", HttpMethod.POST, naverProfileRequest, String.class);
+        ResponseEntity<String> naverProfileResponse = rt.exchange("https://openapi.naver.com/v1/nid/me",
+                                                                  HttpMethod.POST, naverProfileRequest, String.class);
 
         NaverProfileDTO naverProfileDTO = new NaverProfileDTO();
         ObjectMapper objectMapper = new ObjectMapper();
@@ -347,7 +348,8 @@ public class LoginService {
 
         HttpEntity<MultiValueMap<String, String>> naverTokenRequest = new HttpEntity<>(params, headers);
 
-        ResponseEntity<String> naverTokenResponses = rt.exchange("https://nid.naver.com/oauth2.0/token", HttpMethod.GET, naverTokenRequest, String.class);
+        ResponseEntity<String> naverTokenResponses = rt.exchange("https://nid.naver.com/oauth2.0/token", HttpMethod.GET,
+                                                                 naverTokenRequest, String.class);
 
         ObjectMapper objectMapper = new ObjectMapper();
         RenewTokenDTO renewToken = null;
@@ -371,7 +373,8 @@ public class LoginService {
 
         HttpEntity<MultiValueMap<String, String>> naverLogoutRequest = new HttpEntity<>(params, headers);
 
-        ResponseEntity<String> naverLogoutResponse = rt.exchange("https://nid.naver.com/nidlogin.logout", HttpMethod.POST, naverLogoutRequest, String.class);
+        ResponseEntity<String> naverLogoutResponse = rt.exchange("https://nid.naver.com/nidlogin.logout",
+                                                                 HttpMethod.POST, naverLogoutRequest, String.class);
 
         return naverLogoutResponse.getStatusCode().is2xxSuccessful();
     }

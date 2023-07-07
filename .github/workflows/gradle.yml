@@ -19,16 +19,27 @@ jobs:
         with:
           java-version: '11'
           distribution: 'temurin'
+          
+      ## create application-prod.properties
+      - name: make application.yml
+        run: |
+          cd ./src/main/resources
+          touch ./application.yml
+          echo "${{ secrets.PROPERTIES_FILE }}" > ./application.yml
+        shell: bash
+          
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
+        
       - name: Build with Gradle
-        run: ./gradlew build
+        run: ./gradlew bootjar
+        
       ## 웹 이미지 빌드 및 도커허브에 push
       - name: web docker build and push
         run: |
-          docker login -u ${{ secrets.DOCKER_USER NAME }} -p ${{ secrets.DOCKER_PASSWORD }}
-          docker build -t ${{ secrets.DOCKER_REPO }} /
-          docker push ${{ secrets.DOCKER_REPO }}:latest
+          docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+          docker build -t ${{ secrets.DOCKER_REPO }}/ddbnb ./
+          docker push ${{ secrets.DOCKER_REPO }}/ddbnb:latest
       - name: Get timestamp
         uses: gerred/actions/current-time@master
         id: current-time
@@ -42,15 +53,13 @@ jobs:
           replace-with: '-'
           flags: 'g'
 
-      - name: Beanstalk Deploy
-        uses: einaregilsson/beanstalk-deploy@v20
+      - name: Deploy
+        uses: appleboy/ssh-action@master
         with:
-          aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          application_name: deang
-          environment_name: Deang-env-1
-          version_label: "deang--${{ steps.format-time.outputs.replaced }}"
-          region: ap-northeast-2
-          deployment_package: Dockerrun.aws.json
-#          existing_bucket_name: deang-? # AWS에서 S3를 설정할때 필요
-
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.PRIVATE_KEY }}
+          script: |
+            docker pull ${{ secrets.DOCKER_REPO }}/ddbnb:latest
+            docker rm -f $(docker ps -a -q)
+            docker run -d --name ddbnb -p 8080:8080 ${{ secrets.DOCKER_REPO }}/ddbnb:latest

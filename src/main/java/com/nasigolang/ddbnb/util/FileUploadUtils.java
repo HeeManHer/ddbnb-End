@@ -1,8 +1,14 @@
 package com.nasigolang.ddbnb.util;
 
+import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.model.CannedAccessControlList;
+import com.amazonaws.services.s3.model.ObjectMetadata;
+import com.amazonaws.services.s3.model.PutObjectRequest;
 import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.ByteArrayInputStream;
@@ -11,52 +17,68 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
+import java.util.UUID;
 
+@Component
 public class FileUploadUtils {
 
-    private static final Logger log = LoggerFactory.getLogger(FileUploadUtils.class);
+    private final Logger log = LoggerFactory.getLogger(FileUploadUtils.class);
 
-    public static String saveFile(String uploadDir, String fileName, MultipartFile multipartFile) throws IOException {
+    private String S3Bucket = "ddbnb-images"; // Bucket 이름
 
-        Path uploadPath = Paths.get(uploadDir);
+    @Autowired
+    AmazonS3Client amazonS3Client;
 
-        if (!Files.exists(uploadPath)) {
-            Files.createDirectories(uploadPath);
-        }
+    public String saveFile(MultipartFile multipartFile) throws IOException {
 
-        String replaceFileName = fileName + "." + FilenameUtils.getExtension(multipartFile.getResource().getFilename());
+        String imageName = UUID.randomUUID().toString().replace("-", "");
 
-        try (InputStream inputStream = multipartFile.getInputStream()) {
-            Path filePath = uploadPath.resolve(replaceFileName);
-            Files.copy(inputStream, filePath, StandardCopyOption.REPLACE_EXISTING);
-        } catch (IOException ex) {
-            throw new IOException("Could not save file: " + fileName, ex);
-        }
+        String fileName = imageName + "." + FilenameUtils.getExtension(multipartFile.getResource().getFilename());
 
-        return replaceFileName;
+        long size = multipartFile.getSize(); // 파일 크기
+
+        ObjectMetadata objectMetaData = new ObjectMetadata();
+        objectMetaData.setContentType(multipartFile.getContentType());
+        objectMetaData.setContentLength(size);
+
+        // S3에 업로드
+        amazonS3Client.putObject(
+                new PutObjectRequest(S3Bucket, fileName, multipartFile.getInputStream(), objectMetaData)
+                        .withCannedAcl(CannedAccessControlList.PublicRead)
+        );
+
+        String imagePath = amazonS3Client.getUrl(S3Bucket, fileName).toString(); // 접근가능한 URL 가져오기
+
+        return imagePath;
     }
 
-    public static String saveFile(String uploadDir, String fileName, byte[] fileBytes) throws IOException {
-        Path uploadPath = Paths.get(uploadDir);
+    public String saveFile(byte[] fileBytes) throws IOException {
 
-        if (!Files.exists(uploadPath)) {
-            Files.createDirectories(uploadPath);
-        }
+        String imageName = UUID.randomUUID().toString().replace("-", "");
 
-        String replaceFileName = fileName + ".png";  // 파일 확장자는 예시로 png로 설정하였습니다.
+        String fileName = imageName + ".png";  // 파일 확장자는 예시로 png로 설정하였습니다.
 
-        try (InputStream inputStream = new ByteArrayInputStream(fileBytes)) {
-            Path filePath = uploadPath.resolve(replaceFileName);
-            Files.copy(inputStream, filePath, StandardCopyOption.REPLACE_EXISTING);
-        } catch (IOException ex) {
-            throw new IOException("Could not save file: " + fileName, ex);
-        }
+        InputStream inputStream = new ByteArrayInputStream(fileBytes);
 
-        return replaceFileName;
+        long size = fileBytes.length; // 파일 크기
+
+        ObjectMetadata objectMetaData = new ObjectMetadata();
+        objectMetaData.setContentType("multipart/form-data");
+        objectMetaData.setContentLength(size);
+
+        // S3에 업로드
+        amazonS3Client.putObject(
+                new PutObjectRequest(S3Bucket, fileName, inputStream, objectMetaData)
+                        .withCannedAcl(CannedAccessControlList.PublicRead)
+        );
+
+        String imagePath = amazonS3Client.getUrl(S3Bucket, fileName).toString(); // 접근가능한 URL 가져오기
+
+
+        return imagePath;
     }
 
-    public static boolean deleteFile(String uploadDir, String fileName) {
+    public boolean deleteFile(String uploadDir, String fileName) {
 
         boolean result = false;
         Path uploadPath = Paths.get(uploadDir);

@@ -21,31 +21,23 @@ spring:
     restart:
       enabled: false
     livereload:
-      enabled: false #개발 : true 운영 : false
+      enabled: true #개발 : true 운영 : false
   freemarker:
-    cache: false #개발 : false 운영 : true
-  web:
-    resources:
-      static-locations: classpath:/images/
+    cache: true #개발 : false 운영 : true
 
   jpa:
-    generate-ddl: false #개발 : true 운영: false 스키마 자동생성 기능
+    generate-ddl: true #개발 : true 운영: false 스키마 자동생성 기능
     show-sql: true  #개발 : true 운영: false SQL쿼리 출력
     database: oracle
     properties:
       hibernate:
-        '[format_sql]': false #개발 : true 운영: false sql 분석 쉽게
+        '[format_sql]': true #개발 : true 운영: false sql 분석 쉽게
         hbm2ddl:
-          auto: none #개발 : update 운영: none
+          auto: update #개발 : update 운영: none
 
-# 이미지 저장할 위치와 응답할 때 이미지 주소 세팅
-image:
-  # WebConfig에 세팅
-  add-resource-locations: classpath:/static/images/
-  add-resource-handler: /images/**
-  # ProductService에 세팅
-  image-dir: src/main/resources/static/images
-  image-url: http://localhost:8080/images/
+aws:
+  accessKey: AKIA6PF2SY7JQO4IFD4G
+  secretAccessKey: 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
 
 oauth:
   Kakao:
@@ -64,4 +56,11 @@ oauth:
 mybatis:
   mapper-locations: mybatis/*.xml
 
-
+# aws 설정
+# 사용할 S3 bucket region 입력
+cloud:
+  aws:
+    region:
+      static: ap-northeast-2
+    stack:
+      auto: false
