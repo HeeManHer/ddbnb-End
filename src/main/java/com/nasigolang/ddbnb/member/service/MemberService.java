@@ -7,13 +7,12 @@ import com.nasigolang.ddbnb.member.entity.Member;
 import com.nasigolang.ddbnb.member.repository.MemberMapper;
 import com.nasigolang.ddbnb.member.repository.MemberRepository;
 import com.nasigolang.ddbnb.util.FileUploadUtils;
+import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -25,22 +24,13 @@ import java.util.Map;
 import java.util.UUID;
 
 @Service
+@AllArgsConstructor
 public class MemberService {
 
     private final MemberMapper memberMapper;
     private final MemberRepository memberRepository;
     private final ModelMapper modelMapper;
-
-    @Value("${image.image-dir}")
-    private String IMAGE_DIR;
-    @Value("${image.image-url}")
-    private String IMAGE_URL;
-
-    public MemberService(MemberMapper memberMapper, MemberRepository memberRepository, ModelMapper modelMapper) {
-        this.memberMapper = memberMapper;
-        this.memberRepository = memberRepository;
-        this.modelMapper = modelMapper;
-    }
+    private final FileUploadUtils fileUploadUtils;
 
     @Transactional
     public long registNewUser(MemberDTO newMember) {
@@ -52,7 +42,7 @@ public class MemberService {
     public MemberSimpleDTO findMemberById(long memberId) {
 
         Member foundMember = memberRepository.findById(memberId).get();
-        foundMember.setProfileImage(IMAGE_URL + foundMember.getProfileImage());
+//        foundMember.setProfileImage(fileUploadUtils.fileUrl(foundMember.getProfileImage()));
         return modelMapper.map(foundMember, MemberSimpleDTO.class);
     }
 
@@ -71,7 +61,7 @@ public class MemberService {
             String imageName = UUID.randomUUID().toString().replace("-", "");
 
             try {
-                String replaceFileName = FileUploadUtils.saveFile(IMAGE_DIR, imageName, image);
+                String replaceFileName = fileUploadUtils.saveFile(image);
                 member.setProfileImage(replaceFileName);
             } catch (IOException e) {
                 throw new RuntimeException(e);

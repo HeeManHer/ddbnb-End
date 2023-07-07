@@ -11,8 +11,8 @@ import com.nasigolang.ddbnb.pet.petmom.repositroy.PetMomImageRepository;
 import com.nasigolang.ddbnb.pet.petmom.repositroy.PetMomMapper;
 import com.nasigolang.ddbnb.pet.petmom.repositroy.PetMomRepository;
 import com.nasigolang.ddbnb.util.FileUploadUtils;
+import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -25,10 +25,10 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
+@AllArgsConstructor
 public class PetMomService {
 
     private final PetMomRepository petMomRepository;
@@ -36,22 +36,7 @@ public class PetMomService {
     private final PetMomMapper petMomMapper;
     private final PetMomImageRepository petMomImageRepository;
     private final ModelMapper modelMapper;
-
-
-    @Value("${image.image-dir}")
-    private String IMAGE_DIR;
-    @Value("${image.image-url}")
-    private String IMAGE_URL;
-
-    public PetMomService(PetMomRepository petMomRepository, MemberRepository memberRepository,
-                         PetMomMapper petMomMapper,
-                         PetMomImageRepository petMomImageRepository, ModelMapper modelMapper) {
-        this.petMomRepository = petMomRepository;
-        this.memberRepository = memberRepository;
-        this.petMomMapper = petMomMapper;
-        this.petMomImageRepository = petMomImageRepository;
-        this.modelMapper = modelMapper;
-    }
+    private final FileUploadUtils fileUploadUtils;
 
     @Transactional
     public void registNewPetMom(PetMomDTO newPetmom, List<MultipartFile> images) {
@@ -59,10 +44,8 @@ public class PetMomService {
 
         if (images != null) {
             for (int i = 0; i < images.size(); i++) {
-                String imageName = UUID.randomUUID().toString().replace("-", "");
-
                 try {
-                    String replaceFileName = FileUploadUtils.saveFile(IMAGE_DIR, imageName, images.get(i));
+                    String replaceFileName = fileUploadUtils.saveFile(images.get(i));
 
                     BoardImageDTO image = new BoardImageDTO();
                     image.setImageUrl(replaceFileName);
@@ -81,7 +64,7 @@ public class PetMomService {
     public Page<PetMomDTO> findAllPetMoms(Pageable page, Map<String, Object> searchValue) {
 
         page = PageRequest.of(page.getPageNumber() <= 0 ? 0 : page.getPageNumber() - 1, page.getPageSize(),
-                Sort.by("boardId").descending());
+                              Sort.by("boardId").descending());
 
         Page<PetMomDTO> petMoms;
 
@@ -93,17 +76,17 @@ public class PetMomService {
             petMoms = (Page<PetMomDTO>) Pagenation.createPage(petMomList, page);
         }
 
-        for (PetMomDTO petMom : petMoms.getContent()) {
-            if (petMom.getMember() != null) {
-                petMom.getMember().setProfileImage(IMAGE_URL + petMom.getMember().getProfileImage());
-            }
-            
-            if (petMom.getBoardImage() != null) {
-                for (BoardImageDTO image : petMom.getBoardImage()) {
-                    image.setImageUrl(IMAGE_URL + image.getImageUrl());
-                }
-            }
-        }
+//        for (PetMomDTO petMom : petMoms.getContent()) {
+//            if (petMom.getMember() != null) {
+//                petMom.getMember().setProfileImage(fileUploadUtils.fileUrl(petMom.getMember().getProfileImage()));
+//            }
+//
+//            if (petMom.getBoardImage() != null) {
+//                for (BoardImageDTO image : petMom.getBoardImage()) {
+//                    image.setImageUrl(fileUploadUtils.fileUrl(image.getImageUrl()));
+//                }
+//            }
+//        }
 
         return petMoms;
     }
@@ -126,9 +109,9 @@ public class PetMomService {
         foundPetMom.setBoardCategory(modifyPetMom.getBoardCategory());
         foundPetMom.setBoardTitle(modifyPetMom.getBoardTitle());
         foundPetMom.setOtherCondition(modifyPetMom.getOtherCondition()
-                .stream()
-                .map(list -> modelMapper.map(list, OtherType.class))
-                .collect(Collectors.toList()));
+                                                  .stream()
+                                                  .map(list -> modelMapper.map(list, OtherType.class))
+                                                  .collect(Collectors.toList()));
     }
 
     @Transactional
@@ -139,8 +122,8 @@ public class PetMomService {
 
     public PetMomDTO findPetMomByBoardNo(long boardId) {
         return petMomRepository.findById(boardId)
-                .map(petMomboard -> modelMapper.map(petMomboard, PetMomDTO.class))
-                .orElseThrow(() -> new NoSuchElementException("펫시터를 찾을 수 없습니다."));
+                               .map(petMomboard -> modelMapper.map(petMomboard, PetMomDTO.class))
+                               .orElseThrow(() -> new NoSuchElementException("펫시터를 찾을 수 없습니다."));
 
     }
 
@@ -148,11 +131,11 @@ public class PetMomService {
     //내 펫맘 조회
     public Page<PetMomDTO> findMyPetMom(Pageable page, long memberId) {
         page = PageRequest.of(page.getPageNumber() <= 0 ? 0 : page.getPageNumber() - 1, page.getPageSize(),
-                Sort.by("boardId"));
+                              Sort.by("boardId"));
 
         //        Page<Review> reviews = reviewRepository.findAll(pageable);
         return petMomRepository.findByMember(page, memberRepository.findById(memberId))
-                .map(petMom -> modelMapper.map(petMom, PetMomDTO.class));
+                               .map(petMom -> modelMapper.map(petMom, PetMomDTO.class));
     }
 
 

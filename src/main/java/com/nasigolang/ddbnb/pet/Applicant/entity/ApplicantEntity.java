@@ -1,11 +1,12 @@
 package com.nasigolang.ddbnb.pet.Applicant.entity;
 
 import com.nasigolang.ddbnb.member.entity.Member;
-import lombok.*;
 import com.nasigolang.ddbnb.pet.petsitter.entity.PetsitterEntity;
+import lombok.*;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.Date;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -13,9 +14,9 @@ import java.io.Serializable;
 @Setter
 @ToString
 @Table(name = "APPLICANT")
-@Entity(name="Applicant")
+@Entity(name = "Applicant")
 @SequenceGenerator(
-        name="applicant_sequence_generator",
+        name = "applicant_sequence_generator",
         sequenceName = "sequence_applicant_id",
         initialValue = 1,
         allocationSize = 50
@@ -23,7 +24,7 @@ import java.io.Serializable;
 public class ApplicantEntity implements Serializable {
 
     @Id
-    @Column(name="APPLICANT_ID")
+    @Column(name = "APPLICANT_ID")
     @GeneratedValue(
             strategy = GenerationType.SEQUENCE,
             generator = "applicant_sequence_generator")
@@ -35,6 +36,9 @@ public class ApplicantEntity implements Serializable {
 
 
     @ManyToOne
-    @JoinColumn(name="BOARD_ID", referencedColumnName = "BOARD_ID")
+    @JoinColumn(name = "BOARD_ID", referencedColumnName = "BOARD_ID")
     private PetsitterEntity boardId;
+
+    @Column(name = "APPLIED_DATE")
+    private Date appliedDate;
 }
