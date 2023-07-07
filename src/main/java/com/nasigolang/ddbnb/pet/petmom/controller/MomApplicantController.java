@@ -19,6 +19,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.nio.charset.Charset;
+import java.util.Date;
 
 @RestController
 @RequestMapping("/api/v1/momApplicant")
@@ -47,7 +48,7 @@ public class MomApplicantController {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
 
-
+        newApplicant.setAppliedDate(new Date());
         momApplicantService.registNewApplicant(newApplicant);
         return ResponseEntity.ok().headers(headers).body(new ResponseDto(HttpStatus.OK, "생성 성공", null));
 

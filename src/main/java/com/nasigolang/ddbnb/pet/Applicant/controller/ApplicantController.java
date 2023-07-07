@@ -18,6 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.nio.charset.Charset;
+import java.util.Date;
 
 @RestController
 @RequestMapping("/api/v1/applicant")
@@ -49,6 +50,7 @@ public class ApplicantController {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
 
+        applicant.setAppliedDate(new Date());
         applicantService.registApplicant(applicant);
 
         return ResponseEntity.ok().headers(headers).body(new ResponseDto(HttpStatus.OK, "생성 성공", null));
@@ -57,7 +59,8 @@ public class ApplicantController {
 
     @ApiOperation(value = "나의 펫시터 신청 조회")
     @GetMapping("/mypetsitters")
-    public ResponseEntity<ResponseDto> findMyPetSitterApp(@PageableDefault Pageable pageable, @RequestParam long memberId) {
+    public ResponseEntity<ResponseDto> findMyPetSitterApp(@PageableDefault Pageable pageable,
+                                                          @RequestParam long memberId) {
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));

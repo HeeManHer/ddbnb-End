@@ -46,11 +46,12 @@ public class ReportController {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
 
+        System.out.println(category);
+
         Page<ReportDTO> reportList = reportService.findAllReport(page, category);
         SelectCriteria selectCriteria = Pagenation.getSelectCriteria(reportList);
 
         ResponseDtoWithPaging data = new ResponseDtoWithPaging(reportList.getContent(), selectCriteria);
-
 
         return ResponseEntity.ok().headers(headers).body(new ResponseDto(HttpStatus.OK, "조회 성공", data));
     }
