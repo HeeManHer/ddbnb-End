@@ -26,9 +26,9 @@ jobs:
       ## 웹 이미지 빌드 및 도커허브에 push
       - name: web docker build and push
         run: |
-          docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
-          docker build -t ${{ secrets.DOCKER_REPO }}/deang ./
-          docker push ${{ secrets.DOCKER_REPO }}/deang:latest
+          docker login -u ${{ secrets.DOCKER_USER NAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+          docker build -t ${{ secrets.DOCKER_REPO }} /
+          docker push ${{ secrets.DOCKER_REPO }}:latest
       - name: Get timestamp
         uses: gerred/actions/current-time@master
         id: current-time
