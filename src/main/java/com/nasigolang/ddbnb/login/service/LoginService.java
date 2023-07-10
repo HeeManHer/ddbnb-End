@@ -7,7 +7,7 @@ import com.nasigolang.ddbnb.member.dto.MemberDTO;
 import com.nasigolang.ddbnb.member.entity.Member;
 import com.nasigolang.ddbnb.member.service.MemberService;
 import com.nasigolang.ddbnb.util.FileUploadUtils;
-import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -24,10 +24,22 @@ import java.time.LocalDate;
 import java.util.Date;
 
 @Service
-@AllArgsConstructor
 public class LoginService {
     private final MemberService memberService;
     private final FileUploadUtils fileUploadUtils;
+
+    @Value("${oauth.Kakao.client-id}")
+    private String KAKAO_CLIENT_ID;
+    @Value("${oauth.naver.client-id}")
+    private String NAVER_CLIENT_ID;
+    @Value("${oauth.naver.secret}")
+    private String NAVER_SECRET;
+
+
+    public LoginService(MemberService memberService, FileUploadUtils fileUploadUtils) {
+        this.memberService = memberService;
+        this.fileUploadUtils = fileUploadUtils;
+    }
 
     public KakaoAcessTokenDTO getAccessToken(String code) {
 
@@ -39,15 +51,14 @@ public class LoginService {
 
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("grant_type", "authorization_code");
-//        params.add("client_id", System.getenv("KakaoRestAPIKey"));
-        params.add("client_id", "202bf1013addf514255b52a8c9c69ebf");
+        params.add("client_id", KAKAO_CLIENT_ID);
         params.add("redirect_uri", "http://localhost:3000/kakao/callback");
         params.add("code", code);
 
         HttpEntity<MultiValueMap<String, String>> kakaoTokenRequest = new HttpEntity<>(params, headers);
 
         ResponseEntity<String> accessTokenResponse = rt.exchange("https://kauth.kakao.com/oauth/token", HttpMethod.POST,
-                                                                 kakaoTokenRequest, String.class);
+                kakaoTokenRequest, String.class);
 
         ObjectMapper objectMapper = new ObjectMapper();
         KakaoAcessTokenDTO kakaoToken = null;
@@ -70,7 +81,7 @@ public class LoginService {
         HttpEntity<MultiValueMap<String, String>> kakaoProfileRequest = new HttpEntity<>(headers);
 
         ResponseEntity<String> kakaoProfileResponse = rt.exchange("https://kapi.kakao.com/v2/user/me", HttpMethod.POST,
-                                                                  kakaoProfileRequest, String.class);
+                kakaoProfileRequest, String.class);
 
         KakaoProfileDTO kakaoProfileDTO = new KakaoProfileDTO();
         ObjectMapper objectMapper = new ObjectMapper();
@@ -178,15 +189,14 @@ public class LoginService {
 
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("grant_type", "refresh_token");
-//        params.add("client_id", System.getenv("KakaoRestAPIKey"));
-        params.add("client_id", "202bf1013addf514255b52a8c9c69ebf");
+        params.add("client_id", KAKAO_CLIENT_ID);
         params.add("refresh_token", foundMember.getRefreshToken());
 
 
         HttpEntity<MultiValueMap<String, String>> kakaoTokenRequest = new HttpEntity<>(params, headers);
 
         ResponseEntity<String> renewTokenResponse = rt.exchange("https://kauth.kakao.com/oauth/token", HttpMethod.POST,
-                                                                kakaoTokenRequest, String.class);
+                kakaoTokenRequest, String.class);
 
         ObjectMapper objectMapper = new ObjectMapper();
         RenewTokenDTO renewToken = null;
@@ -210,8 +220,8 @@ public class LoginService {
         HttpEntity<MultiValueMap<String, String>> kakaoLogoutRequest = new HttpEntity<>(params, headers);
 
         ResponseEntity<String> kakaoLogoutResponse = rt.exchange("https://kapi.kakao.com/v1/user/logout",
-                                                                 //                "https://kapi.kakao.com/v1/user/unlink",
-                                                                 HttpMethod.POST, kakaoLogoutRequest, String.class);
+                //                "https://kapi.kakao.com/v1/user/unlink",
+                HttpMethod.POST, kakaoLogoutRequest, String.class);
 
         return kakaoLogoutResponse.getStatusCode().is2xxSuccessful();
     }
@@ -227,17 +237,15 @@ public class LoginService {
 
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("grant_type", "authorization_code");
-//        params.add("client_id", System.getenv("NaverClientIDKey"));
-//        params.add("client_secret", System.getenv("NaverClientSecretKey"));
-        params.add("client_id", "T0mWG2VjAfBH9cYz6Qrf");
-        params.add("client_secret", "iHe8ItSSso");
+        params.add("client_id", NAVER_CLIENT_ID);
+        params.add("client_secret", NAVER_SECRET);
         params.add("code", code);
         params.add("state", state);
 
         HttpEntity<MultiValueMap<String, String>> naverTokenRequest = new HttpEntity<>(params, headers);
 
         ResponseEntity<String> accessTokenResponse = rt.exchange("https://nid.naver.com/oauth2.0/token",
-                                                                 HttpMethod.POST, naverTokenRequest, String.class);
+                HttpMethod.POST, naverTokenRequest, String.class);
 
         ObjectMapper objectMapper = new ObjectMapper();
         NaverAccessTokenDTO naverAccessToken = null;
@@ -269,7 +277,7 @@ public class LoginService {
             newMember.setSignDate(LocalDate.now());
             newMember.setLastVisitDate(LocalDate.now());
             newMember.setProfileImage("https://api.dicebear.com/6.x/thumbs/png?seed=" + newMember.getSocialId()
-                                                                                                 .split("@")[0]);
+                    .split("@")[0]);
 
             if (naverProfileDTO.getResponse().getGender() != null) {
                 newMember.setGender(naverProfileDTO.getResponse().getGender());
@@ -317,7 +325,7 @@ public class LoginService {
         HttpEntity<MultiValueMap<String, String>> naverProfileRequest = new HttpEntity<>(headers);
 
         ResponseEntity<String> naverProfileResponse = rt.exchange("https://openapi.naver.com/v1/nid/me",
-                                                                  HttpMethod.POST, naverProfileRequest, String.class);
+                HttpMethod.POST, naverProfileRequest, String.class);
 
         NaverProfileDTO naverProfileDTO = new NaverProfileDTO();
         ObjectMapper objectMapper = new ObjectMapper();
@@ -340,16 +348,14 @@ public class LoginService {
 
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("grant_type", "refresh_token");
-//        params.add("client_id", System.getenv("NaverClientIdKey"));
-//        params.add("client_secret", System.getenv("NaverClientSecretKey"));
-        params.add("client_id", "T0mWG2VjAfBH9cYz6Qrf");
-        params.add("client_secret", "iHe8ItSSso");
+        params.add("client_id", NAVER_CLIENT_ID);
+        params.add("client_secret", NAVER_SECRET);
         params.add("refresh_token", foundMember.getRefreshToken());
 
         HttpEntity<MultiValueMap<String, String>> naverTokenRequest = new HttpEntity<>(params, headers);
 
         ResponseEntity<String> naverTokenResponses = rt.exchange("https://nid.naver.com/oauth2.0/token", HttpMethod.GET,
-                                                                 naverTokenRequest, String.class);
+                naverTokenRequest, String.class);
 
         ObjectMapper objectMapper = new ObjectMapper();
         RenewTokenDTO renewToken = null;
@@ -374,7 +380,7 @@ public class LoginService {
         HttpEntity<MultiValueMap<String, String>> naverLogoutRequest = new HttpEntity<>(params, headers);
 
         ResponseEntity<String> naverLogoutResponse = rt.exchange("https://nid.naver.com/nidlogin.logout",
-                                                                 HttpMethod.POST, naverLogoutRequest, String.class);
+                HttpMethod.POST, naverLogoutRequest, String.class);
 
         return naverLogoutResponse.getStatusCode().is2xxSuccessful();
     }
