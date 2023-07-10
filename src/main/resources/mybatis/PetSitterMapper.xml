@@ -86,7 +86,7 @@
             <if test="care != null">
                 AND CARE = #{care}
             </if>
-            
+
         </trim>
         ORDER BY P.BOARD_ID
     </select>
