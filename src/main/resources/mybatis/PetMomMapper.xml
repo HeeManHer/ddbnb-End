@@ -74,7 +74,7 @@
         <![CDATA[ M.PET_YN LIKE #{petYN}]]>
             </if>
             <if test="location != null">
-                 <![CDATA[AND M.LOCATION = #{location}]]>
+                 <![CDATA[AND M.LOCATION LIKE #{location}]]>
             </if>
             <if test="startDate != null">
                  <![CDATA[AND M.START_DATE >= #{startDate}]]>

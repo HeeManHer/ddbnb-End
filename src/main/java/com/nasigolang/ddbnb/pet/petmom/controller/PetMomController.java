@@ -63,7 +63,7 @@ public class PetMomController {
         Map<String, Object> searchValue = new HashMap<>();
 
         if (!location.equals("")) {
-            searchValue.put("location", location);
+            searchValue.put("location", "%" + location + "%");
         }
 
         if (startDate != null) {
