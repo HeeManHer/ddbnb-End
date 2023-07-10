@@ -37,33 +37,15 @@ public class ReviewService {
                               Sort.by("reviewId"));
 
         Page<Review> reviews = reviewRepository.findByMember(page, memberRepository.findById(memberId));
-        System.out.println(reviews.getContent());
-//        for (int i = 0; i < reviews.getContent().size(); i++) {
-//            for (int k = 0; k < reviews.getContent().get(i).getReviewImage().size(); k++) {
-//                reviews.getContent()
-//                       .get(i)
-//                       .getReviewImage()
-//                       .get(k)
-//                       .setImageUrl(FileUploadUtils.fileUrl(
-//                               reviews.getContent().get(i).getReviewImage().get(k).getImageUrl()));
-//            }
-//        }
 
         return reviews.map(review -> modelMapper.map(review, ReviewDTO.class));
     }
 
     /*일부 조회*/
-    //    @Transactional
     public ReviewDTO findReviewById(long reviewId) {
         Review foundReview = reviewRepository.findById(reviewId).get();
 
-//        foundReview.getReviewImage()
-//                   .get(0)
-//                   .setImageUrl(FileUploadUtils.fileUrl(foundReview.getReviewImage().get(0).getImageUrl()));
-
-
         return modelMapper.map(foundReview, ReviewDTO.class);
-
     }
 
     @Transactional

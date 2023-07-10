@@ -99,6 +99,9 @@ public class PetsitterController {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
 
+        System.out.println(images);
+
+
         petSitter.setBoardDate(LocalDate.now());
         petsitterService.registPetSitter(petSitter, images);
 
@@ -106,12 +109,14 @@ public class PetsitterController {
     }
 
     @PutMapping("/modify")
-    public ResponseEntity<ResponseDto> modifyPetSitter(@RequestBody PetsitterboardDTO modifypetsitter) {
+    public ResponseEntity<ResponseDto> modifyPetSitter(
+            @RequestPart("modifyPetSitter") PetsitterboardDTO modifyPetSitter,
+            @RequestPart(value = "image", required = false) List<MultipartFile> images) {
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
 
-        petsitterService.modifyPetSitter(modifypetsitter);
+        petsitterService.modifyPetSitter(modifyPetSitter, images);
 
         return ResponseEntity.ok().headers(headers).body(new ResponseDto(HttpStatus.OK, "수정 성공", null));
     }

@@ -10,8 +10,7 @@ import com.nasigolang.ddbnb.member.service.MemberService;
 import com.nasigolang.ddbnb.report.service.ReportService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -31,28 +30,19 @@ import java.util.Map;
 @Api(tags = "멤버 관련 기능 API")
 @RestController
 @RequestMapping("/api/v1")
+@AllArgsConstructor
 public class MemberController {
 
     private final MemberService memberService;
     private final ReportService reportService;
-    private final ModelMapper modelMapper;
-    private final HttpHeaders headers;
-
-    @Autowired
-    public MemberController(MemberService memberService, ModelMapper modelMapper, ReportService reportService) {
-
-        this.memberService = memberService;
-        this.modelMapper = modelMapper;
-        this.reportService = reportService;
-
-        this.headers = new HttpHeaders();
-        this.headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
-    }
 
     @ApiOperation(value = "멤버 소셜 id로 조회")
     @GetMapping("/members/{socialLogin}/{socialId}")
     public ResponseEntity<ResponseDto> findBySocialId(@PathVariable String social_Login,
                                                       @PathVariable String social_Id) {
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
 
         Member foundMember = memberService.findBySocialId(social_Login, social_Id);
 
@@ -66,6 +56,10 @@ public class MemberController {
     public ResponseEntity<ResponseDto> findAllMember(@PageableDefault Pageable page,
                                                      @RequestParam(name = "nickname", defaultValue = "") String nickname,
                                                      @RequestParam(name = "signDate", defaultValue = "") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate signDate) {
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
+
         Map<String, Object> searchValue = new HashMap<>();
 
         if (!nickname.equals("")) {
@@ -87,6 +81,10 @@ public class MemberController {
 
     @GetMapping("/amount")
     public ResponseEntity<ResponseDto> findMemberAmount() {
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
+
 
         LocalDate today = LocalDate.now();
 
@@ -113,7 +111,7 @@ public class MemberController {
 
         Map<String, Object> responseMap = new HashMap<>();
         responseMap.put("members", foundMember);
-        
+
         return ResponseEntity.ok().headers(headers).body(new ResponseDto(HttpStatus.OK, "조회성공", responseMap));
     }
 
@@ -125,7 +123,8 @@ public class MemberController {
 
 
         return ResponseEntity.ok()
-                .body(new ResponseDto(HttpStatus.CREATED, "프로필 수정 성공", memberService.updateprofile(memberId, memberSimpleDTO, image)));
+                             .body(new ResponseDto(HttpStatus.CREATED, "프로필 수정 성공",
+                                                   memberService.updateprofile(memberId, memberSimpleDTO, image)));
 
     }
 
@@ -137,17 +136,4 @@ public class MemberController {
         return ResponseEntity.noContent().build();
     }
 
-    //    @PutMapping("/members/{memberId}")
-    //    public ResponseEntity<?> modifyMember(MemberSimpleDTO modifyInfo, @PathVariable long memberId, @RequestParam String type) {
-    //
-    //        System.out.println("modifyInfo = " + modifyInfo);
-    //
-    //        System.out.println("type = " + type);
-    //
-    //        memberService.modifyMember(modifyInfo, memberId, type);
-    //
-    //        return ResponseEntity
-    //                .noContent()
-    //                .build();
-    //    }
 }

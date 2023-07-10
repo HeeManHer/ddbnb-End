@@ -82,7 +82,7 @@ public class PetsitterEntity implements Serializable {
     @Column(name = "SITTER_STATUS", columnDefinition = "VARCHAR2(255) DEFAULT '모집 중'")
     private String sitterStatus;
 
-    @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "boardId")
+    @OneToMany(cascade = {CascadeType.REMOVE, CascadeType.REFRESH}, mappedBy = "boardId")
     private List<PetSitterImage> boardImage;
 
     public void setSitterStatus(String sitterStatus) {

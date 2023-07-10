@@ -118,12 +118,14 @@ public class PetMomController {
     }
 
     @PutMapping("/modify")
-    public ResponseEntity<ResponseDto> modifyPetMom(@RequestBody PetMomDTO modifyPetMom) {
+    public ResponseEntity<ResponseDto> modifyPetMom(
+            @RequestPart("modifyPetSitter") PetMomDTO modifyPetMom,
+            @RequestPart(value = "image", required = false) List<MultipartFile> images) {
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
 
-        petmomService.modifyPetMom(modifyPetMom);
+        petmomService.modifyPetMom(modifyPetMom, images);
 
         return ResponseEntity.ok().headers(headers).body(new ResponseDto(HttpStatus.OK, "수정 성공", null));
     }

@@ -128,23 +128,37 @@ public class PetsitterService {
     }
 
     @Transactional
-    public void modifyPetSitter(PetsitterboardDTO modifypetsitter) {
+    public void modifyPetSitter(PetsitterboardDTO modifyPetSitter, List<MultipartFile> images) {
 
-        PetsitterEntity foundPetsitter = petSitterRepository.findById(modifypetsitter.getBoardId()).get();
+        PetsitterEntity foundPetSitter = petSitterRepository.findById(modifyPetSitter.getBoardId()).get();
 
-        foundPetsitter.setBoardTitle(modifypetsitter.getBoardTitle());
-        foundPetsitter.setLocation(modifypetsitter.getLocation());
-        foundPetsitter.setCare(modifypetsitter.getCare());
-        foundPetsitter.setStartDate(modifypetsitter.getStartDate());
-        foundPetsitter.setEndDate(modifypetsitter.getEndDate());
-        foundPetsitter.setSignficant(modifypetsitter.getSignficant());
-        foundPetsitter.setRequest(modifypetsitter.getRequest());
-        foundPetsitter.setPetName(modifypetsitter.getPetName());
-        foundPetsitter.setPetAge(modifypetsitter.getPetAge());
-        foundPetsitter.setPetShape(modifypetsitter.getPetShape());
-        foundPetsitter.setPetGender(modifypetsitter.getPetGender());
-        foundPetsitter.setPetSize(modifypetsitter.getPetSize());
+        foundPetSitter.setBoardTitle(modifyPetSitter.getBoardTitle());
+        foundPetSitter.setLocation(modifyPetSitter.getLocation());
+        foundPetSitter.setCare(modifyPetSitter.getCare());
+        foundPetSitter.setStartDate(modifyPetSitter.getStartDate());
+        foundPetSitter.setEndDate(modifyPetSitter.getEndDate());
+        foundPetSitter.setSignficant(modifyPetSitter.getSignficant());
+        foundPetSitter.setRequest(modifyPetSitter.getRequest());
+        foundPetSitter.setPetName(modifyPetSitter.getPetName());
+        foundPetSitter.setPetAge(modifyPetSitter.getPetAge());
+        foundPetSitter.setPetShape(modifyPetSitter.getPetShape());
+        foundPetSitter.setPetGender(modifyPetSitter.getPetGender());
+        foundPetSitter.setPetSize(modifyPetSitter.getPetSize());
 
+        if (images != null) {
+            for (int i = 0; i < foundPetSitter.getBoardImage().size(); i++) {
+                if (i >= images.size()) {
+                    foundPetSitter.getBoardImage().remove(i);
+                }
+                try {
+                    String replaceFileName = fileUploadUtils.saveFile(images.get(i));
+                    foundPetSitter.getBoardImage().get(i).setImageUrl(replaceFileName);
+
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
     }
 
     @Transactional
@@ -155,12 +169,6 @@ public class PetsitterService {
     public PetsitterboardDTO findPetsitterByBoardNo(long boardId) {
 
         PetsitterEntity petSitter = petSitterRepository.findById(boardId).get();
-
-//        petSitter.getMember().setProfileImage(fileUploadUtils.fileUrl(petSitter.getMember().getProfileImage()));
-//
-//        for (PetSitterImage image : petSitter.getBoardImage()) {
-//            image.setImageUrl(fileUploadUtils.fileUrl(image.getImageUrl()));
-//        }
 
         return modelMapper.map(petSitter, PetsitterboardDTO.class);
     }
