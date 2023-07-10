@@ -21,7 +21,6 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 @Service
 @AllArgsConstructor
@@ -42,7 +41,6 @@ public class MemberService {
     public MemberSimpleDTO findMemberById(long memberId) {
 
         Member foundMember = memberRepository.findById(memberId).get();
-//        foundMember.setProfileImage(fileUploadUtils.fileUrl(foundMember.getProfileImage()));
         return modelMapper.map(foundMember, MemberSimpleDTO.class);
     }
 
@@ -58,8 +56,6 @@ public class MemberService {
         member.setPreferredArea(updateMember.getPreferredArea());
 
         if (image != null) {
-            String imageName = UUID.randomUUID().toString().replace("-", "");
-
             try {
                 String replaceFileName = fileUploadUtils.saveFile(image);
                 member.setProfileImage(replaceFileName);
@@ -98,12 +94,8 @@ public class MemberService {
     }
 
     public Member findBySocialId(String socialLogin, String socialId) {
-        Member foundMember = memberRepository.findBySocialId(socialLogin, socialId);
-        if (foundMember == null) {
-            return null;
-        } else {
-            return foundMember;
-        }
+
+        return memberRepository.findBySocialId(socialLogin, socialId);
     }
 
     public int findAllMemberAmount() {

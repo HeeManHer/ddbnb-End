@@ -2,6 +2,7 @@ package com.nasigolang.ddbnb.util;
 
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
+import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import org.apache.commons.io.FilenameUtils;
@@ -14,9 +15,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.UUID;
 
 @Component
@@ -78,23 +76,10 @@ public class FileUploadUtils {
         return imagePath;
     }
 
-    public boolean deleteFile(String uploadDir, String fileName) {
+    public void deleteFile(String fileUrl) {
 
-        boolean result = false;
-        Path uploadPath = Paths.get(uploadDir);
+        String fileName = fileUrl.replace("https://ddbnb-images.s3.ap-northeast-2.amazonaws.com/", "");
 
-        if (!Files.exists(uploadPath)) {
-            result = true;
-        }
-        try {
-            Path filePath = uploadPath.resolve(fileName);
-            Files.delete(filePath);
-            result = true;
-        } catch (IOException ex) {
-
-            log.info("Could not delete file: " + fileName, ex);
-        }
-
-        return result;
+        amazonS3Client.deleteObject(new DeleteObjectRequest(S3Bucket, fileName));
     }
 }

@@ -7,7 +7,7 @@ import com.nasigolang.ddbnb.common.paging.SelectCriteria;
 import com.nasigolang.ddbnb.review.dto.ReviewDTO;
 import com.nasigolang.ddbnb.review.service.ReviewService;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -24,14 +24,10 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1")
+@AllArgsConstructor
 public class ReviewController {
 
     private final ReviewService reviewService;
-
-    @Autowired
-    public ReviewController(ReviewService reviewService) {
-        this.reviewService = reviewService;
-    }
 
     @ApiOperation(value = "모든 리뷰 목록 조회")
     @GetMapping("/reviews")
@@ -44,7 +40,6 @@ public class ReviewController {
         SelectCriteria selectCriteria = Pagenation.getSelectCriteria(reviews);
 
         ResponseDtoWithPaging data = new ResponseDtoWithPaging(reviews.getContent(), selectCriteria);
-        //        responseMap.put("reviews", reviews.getContent());
 
         return new ResponseEntity<>(new ResponseDto(HttpStatus.OK, "조회성공", data), headers, HttpStatus.OK);
     }

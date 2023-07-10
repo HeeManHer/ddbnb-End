@@ -14,7 +14,8 @@ public class CorsConfiguration {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
-                        .allowedOrigins("http://localhost:3000", "http://localhost:3001", "http://localhost:3002") // 허용할 도메인 설정
+                        .allowedOrigins("http://localhost:3000", "http://localhost:3001", "http://localhost:3002",
+                                        "https://www.ddbnb.site") // 허용할 도메인 설정
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                         .allowedHeaders("*")
                         .allowCredentials(true)
