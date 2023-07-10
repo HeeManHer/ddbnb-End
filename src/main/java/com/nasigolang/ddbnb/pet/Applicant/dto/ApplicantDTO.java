@@ -15,7 +15,7 @@ import java.util.Date;
 @ToString
 public class ApplicantDTO {
 
-    private int applicantId;
+    private long applicantId;
     private MemberSimpleDTO member;
     private PetsitterboardDTO boardId;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
