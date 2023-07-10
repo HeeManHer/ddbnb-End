@@ -46,5 +46,10 @@ public class ApplicantService {
     }
 
 
+    @Transactional
+    public void deleteMyPetSitterApp(long applicantId) {
+
+        applicantRepository.deleteById(applicantId);
+    }
 }
 

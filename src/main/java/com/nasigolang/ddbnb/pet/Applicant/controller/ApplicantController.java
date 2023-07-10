@@ -7,6 +7,8 @@ import com.nasigolang.ddbnb.common.paging.SelectCriteria;
 import com.nasigolang.ddbnb.pet.Applicant.dto.ApplicantDTO;
 import com.nasigolang.ddbnb.pet.Applicant.service.ApplicantService;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -74,5 +76,18 @@ public class ApplicantController {
         return new ResponseEntity<>(new ResponseDto(HttpStatus.OK, "조회성공", data), headers, HttpStatus.OK);
     }
 
+    @ApiOperation(value = "신청취소")
+    @ApiResponses({
+            @ApiResponse(code = 204, message = "신청취소 성공"),
+            @ApiResponse(code = 400, message = "잘못된 파라미터")
+    })
+    @DeleteMapping("/mypetsitters/{applicantId}")
+    public ResponseEntity<?> deleteMyPetSitterApp(@PathVariable long applicantId){
 
+        applicantService.deleteMyPetSitterApp(applicantId);
+
+        return ResponseEntity
+                .noContent()
+                .build();
+    }
 }
