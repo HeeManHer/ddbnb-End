@@ -1,27 +1,18 @@
 package com.nasigolang.ddbnb.login.controller;
 
 
-import com.fasterxml.jackson.databind.util.JSONPObject;
 import com.nasigolang.ddbnb.common.ResponseDto;
-import com.nasigolang.ddbnb.login.dto.AccessTokenDTO;
 import com.nasigolang.ddbnb.login.dto.KakaoAcessTokenDTO;
-import com.nasigolang.ddbnb.login.dto.KakaoProfileDTO;
 import com.nasigolang.ddbnb.login.dto.NaverAccessTokenDTO;
 import com.nasigolang.ddbnb.login.service.LoginService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.web.reactive.function.client.WebClientAutoConfiguration;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import java.util.HashMap;
 import java.util.Map;
 
