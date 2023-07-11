@@ -60,10 +60,10 @@
                 LOCATION LIKE #{location}
             </if>
             <if test="startDate != null">
-                AND START_DATE = #{startDate}
+                <![CDATA[AND START_DATE >= #{startDate}]]>
             </if>
             <if test="endDate != null">
-                AND END_DATE = #{endDate}
+                <![CDATA[AND END_DATE >= #{endDate}]]>
             </if>
             <if test="petSize != null">
                 AND PET_SIZE IN
