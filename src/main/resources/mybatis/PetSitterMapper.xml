@@ -53,7 +53,7 @@
 
         FROM PETSITTER P
         JOIN MEMBER M ON (P.MEMBER_ID = M.MEMBER_ID)
-        JOIN SITTER_IMAGE SI ON (P.BOARD_ID = SI.BOARD_ID)
+        LEFT JOIN SITTER_IMAGE SI ON (P.BOARD_ID = SI.BOARD_ID)
 
         <trim prefix="WHERE" prefixOverrides="AND">
             <if test="location != null">
