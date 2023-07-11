@@ -6,17 +6,19 @@
 
     <resultMap id="petMomResultMap" type="com.nasigolang.ddbnb.pet.petmom.dto.PetMomDTO">
         <id property="boardId" column="BOARD_ID"/>
-        <result property="hourlyRate" column="HOURLY_RATE"/>
-        <result property="dateRate" column="DATE_RATE"/>
-        <result property="houseType" column="HOUSE_TYPE"/>
-        <result property="petYN" column="PET_YN"/>
         <result property="boardTitle" column="BOARD_TITLE"/>
+        <result property="boardCategory" column="BOARD_CATEGORY"/>
         <result property="boardDate" column="BOARD_DATE"/>
         <result property="location" column="LOCATION"/>
         <result property="care" column="CARE"/>
         <result property="startDate" column="START_DATE"/>
         <result property="endDate" column="END_DATE"/>
         <result property="signficant" column="SIGNFICANT"/>
+        <result property="request" column="REQUEST"/>
+        <result property="hourlyRate" column="HOURLY_RATE"/>
+        <result property="dateRate" column="DATE_RATE"/>
+        <result property="houseType" column="HOUSE_TYPE"/>
+        <result property="petYN" column="PET_YN"/>
         <result property="momStatus" column="MOM_STATUS"/>
 
         <association property="member" javaType="com.nasigolang.ddbnb.member.dto.MemberSimpleDTO">
@@ -38,46 +40,33 @@
             <id property="typeId" column="TYPE_ID"/>
             <result property="typeContent" column="TYPE_CONTENT"/>
         </collection>
+        <collection property="boardImage" ofType="com.nasigolang.ddbnb.pet.petmom.dto.BoardImageDTO">
+            <id property="imgId" column="IMAGE_ID"/>
+            <result property="imageUrl" column="IMAGE_URL"/>
+            <result property="boardId" column="BOARD_ID"/>
+        </collection>
     </resultMap>
 
     <select id="searchPetMom" parameterType="hashmap" resultMap="petMomResultMap">
 
 
-
-
-
-
-
-        SELECT M.BOARD_ID
-        , M.HOURLY_RATE
-        , M.DATE_RATE
-        , M.HOUSE_TYPE
-        , M.PET_YN
-        , M.BOARD_TITLE
-        , M.BOARD_DATE
-        , M.LOCATION
-        , M.CARE
-        , M.START_DATE
-        , M.END_DATE
-        , M.SIGNFICANT
-        , M.MOM_STATUS
-        , ME.MEMBER_ID
-        , OT.TYPE_CONTENT
+        SELECT M.*,ME.*,OT.*,IMG.*
         FROM PET_MOM M
         JOIN MEMBER ME ON (M.MEMBER_ID = ME.MEMBER_ID)
         LEFT JOIN OTHER O ON (M.BOARD_ID = O.BOARD_ID)
         LEFT JOIN OTHER_TYPE OT ON (O.TYPE_ID = OT.TYPE_ID)
+        LEFT JOIN BOARD_IMAGE IMG ON (M.BOARD_ID = IMG.BOARD_ID)
 
 
         <trim prefix="WHERE" prefixOverrides="AND">
             <if test="petYN != null">
-        <![CDATA[ M.PET_YN LIKE #{petYN}]]>
+                M.PET_YN LIKE #{petYN}
             </if>
             <if test="location != null">
-                 <![CDATA[AND M.LOCATION LIKE #{location}]]>
+                AND M.LOCATION LIKE #{location}
             </if>
             <if test="startDate != null">
-                 <![CDATA[AND M.START_DATE >= #{startDate}]]>
+                <![CDATA[AND M.START_DATE >= #{startDate}]]>
             </if>
             <if test="endDate != null">
                 <![CDATA[   AND M.END_DATE <= #{endDate}]]>
@@ -86,7 +75,7 @@
                 <![CDATA[  AND OT.TYPE_CONTENT = #{otherCondition}]]>
             </if>
         </trim>
-        ORDER BY M.BOARD_ID
+        ORDER BY M.BOARD_DATE DESC
 
     </select>
 
