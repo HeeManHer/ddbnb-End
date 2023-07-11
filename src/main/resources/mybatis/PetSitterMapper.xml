@@ -21,7 +21,7 @@
         <result property="petShape" column="PET_SHAPE"/>
         <result property="petGender" column="PET_GENDER"/>
         <result property="petSize" column="PET_SIZE"/>
-        <result property="sitterStatus" column="PET_STATUS"/>
+        <result property="sitterStatus" column="SITTER_STATUS"/>
 
         <association property="member" javaType="com.nasigolang.ddbnb.member.dto.MemberSimpleDTO">
             <id property="memberId" column="MEMBER_ID"/>
@@ -38,33 +38,22 @@
             <result property="starPoint" column="STAR_POINT"/>
             <result property="detailedHistory" column="DETAILED_HISTORY"/>
         </association>
+        <collection property="boardImage" ofType="com.nasigolang.ddbnb.pet.petsitter.dto.PetSitterImageDTO">
+            <id property="imgId" column="IMAGE_ID"/>
+            <result property="imageUrl" column="IMAGE_URL"/>
+            <result property="boardId" column="BOARD_ID"/>
+        </collection>
 
     </resultMap>
 
     <select id="searchPetSitter" parameterType="hashmap" resultMap="petSitterResultMap">
 
         SELECT
-        P.BOARD_ID
-        , P.BOARD_TITLE
-        , P.BOARD_DATE
-        , P.LOCATION
-        , P.CARE
-        , P.START_DATE
-        , P.END_DATE
-        , P.SIGNFICANT
-        , P.REQUEST
-        , P.BOARD_CATEGORY
-        , P.RATE
-        , P.PET_NAME
-        , P.PET_AGE
-        , P.PET_SHAPE
-        , P.PET_GENDER
-        , P.PET_SIZE
-        , P.SITTER_STATUS
-        , M.MEMBER_ID
+        P.*,M.*,SI.*
 
         FROM PETSITTER P
         JOIN MEMBER M ON (P.MEMBER_ID = M.MEMBER_ID)
+        JOIN SITTER_IMAGE SI ON (P.BOARD_ID = SI.BOARD_ID)
 
         <trim prefix="WHERE" prefixOverrides="AND">
             <if test="location != null">
@@ -84,11 +73,15 @@
                 </foreach>
             </if>
             <if test="care != null">
-                AND CARE = #{care}
+                AND CARE IN
+                <foreach item="item" index="index" collection="care"
+                         open="(" separator="," close=")">
+                    #{item}
+                </foreach>
             </if>
 
         </trim>
-        ORDER BY P.BOARD_ID
+        ORDER BY P.BOARD_ID DESC
     </select>
 
 </mapper>

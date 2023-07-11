@@ -39,7 +39,7 @@ public class PetsitterController {
     public ResponseEntity<ResponseDto> findAllList(@PageableDefault Pageable page,
                                                    @RequestParam(name = "location", defaultValue = "") String location,
                                                    @RequestParam(name = "petSize", defaultValue = "") List<String> petSize,
-                                                   @RequestParam(name = "care", defaultValue = "") String care,
+                                                   @RequestParam(name = "care", defaultValue = "") List<String> care,
                                                    @RequestParam(name = "startDate", defaultValue = "") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate,
                                                    @RequestParam(name = "endDate", defaultValue = "") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate endDate,
                                                    @RequestParam(name = "sitterStatus", defaultValue = "") String sitterStatus) {
@@ -56,7 +56,7 @@ public class PetsitterController {
         if (petSize.size() > 0) {
             searchValue.put("petSize", petSize);
         }
-        if (!care.equals("")) {
+        if (care.size() > 0) {
             searchValue.put("care", care);
         }
         if (startDate != null) {
