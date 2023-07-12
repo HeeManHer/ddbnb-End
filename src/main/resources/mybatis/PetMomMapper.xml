@@ -2,9 +2,9 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.nasigolang.ddbnb.pet.petmom.repositroy.PetMomMapper">
+<mapper namespace="com.nasigolang.ddbnb.board.repository.PetMomMapper">
 
-    <resultMap id="petMomResultMap" type="com.nasigolang.ddbnb.pet.petmom.dto.PetMomDTO">
+    <resultMap id="petMomResultMap" type="com.nasigolang.ddbnb.board.dto.PetMomDTO">
         <id property="boardId" column="BOARD_ID"/>
         <result property="boardTitle" column="BOARD_TITLE"/>
         <result property="boardCategory" column="BOARD_CATEGORY"/>
@@ -13,13 +13,13 @@
         <result property="care" column="CARE"/>
         <result property="startDate" column="START_DATE"/>
         <result property="endDate" column="END_DATE"/>
-        <result property="signficant" column="SIGNFICANT"/>
+        <result property="significant" column="SIGNIFICANT"/>
         <result property="request" column="REQUEST"/>
         <result property="hourlyRate" column="HOURLY_RATE"/>
         <result property="dateRate" column="DATE_RATE"/>
         <result property="houseType" column="HOUSE_TYPE"/>
         <result property="petYN" column="PET_YN"/>
-        <result property="momStatus" column="MOM_STATUS"/>
+        <result property="boardStatus" column="BOARD_STATUS"/>
 
         <association property="member" javaType="com.nasigolang.ddbnb.member.dto.MemberSimpleDTO">
             <id property="memberId" column="MEMBER_ID"/>
@@ -36,12 +36,12 @@
             <result property="starPoint" column="STAR_POINT"/>
             <result property="detailedHistory" column="DETAILED_HISTORY"/>
         </association>
-        <collection property="otherCondition" ofType="com.nasigolang.ddbnb.pet.petmom.dto.OtherTypeDTO">
+        <collection property="otherCondition" ofType="com.nasigolang.ddbnb.board.dto.OtherTypeDTO">
             <id property="typeId" column="TYPE_ID"/>
             <result property="typeContent" column="TYPE_CONTENT"/>
         </collection>
-        <collection property="boardImage" ofType="com.nasigolang.ddbnb.pet.petmom.dto.BoardImageDTO">
-            <id property="imgId" column="IMAGE_ID"/>
+        <collection property="boardImage" ofType="com.nasigolang.ddbnb.board.dto.BoardImageDTO">
+            <id property="imageId" column="IMAGE_ID"/>
             <result property="imageUrl" column="IMAGE_URL"/>
             <result property="boardId" column="BOARD_ID"/>
         </collection>
@@ -50,32 +50,38 @@
     <select id="searchPetMom" parameterType="hashmap" resultMap="petMomResultMap">
 
 
-        SELECT M.*,ME.*,OT.*,IMG.*
-        FROM PET_MOM M
-        JOIN MEMBER ME ON (M.MEMBER_ID = ME.MEMBER_ID)
-        LEFT JOIN OTHER O ON (M.BOARD_ID = O.BOARD_ID)
+        SELECT
+        B.*, PM.*, M.*, OT.*, BI.*
+        FROM BOARD B
+        JOIN PET_MOM PM ON (B.BOARD_ID = PM.BOARD_ID)
+        JOIN MEMBER M ON (B.MEMBER_ID = M.MEMBER_ID)
+        LEFT JOIN OTHER O ON (PM.BOARD_ID = O.BOARD_ID)
         LEFT JOIN OTHER_TYPE OT ON (O.TYPE_ID = OT.TYPE_ID)
-        LEFT JOIN BOARD_IMAGE IMG ON (M.BOARD_ID = IMG.BOARD_ID)
+        LEFT JOIN BOARD_IMAGE BI ON (B.BOARD_ID = BI.BOARD_ID)
 
 
         <trim prefix="WHERE" prefixOverrides="AND">
             <if test="petYN != null">
-                M.PET_YN LIKE #{petYN}
+                PM.PET_YN LIKE #{petYN}
             </if>
             <if test="location != null">
-                AND M.LOCATION LIKE #{location}
+                AND B.LOCATION LIKE #{location}
             </if>
             <if test="startDate != null">
-                <![CDATA[AND M.START_DATE >= #{startDate}]]>
+                <![CDATA[AND B.START_DATE >= #{startDate}]]>
             </if>
             <if test="endDate != null">
-                <![CDATA[   AND M.END_DATE <= #{endDate}]]>
+                <![CDATA[AND B.END_DATE <= #{endDate}]]>
             </if>
             <if test="otherCondition != null">
-                <![CDATA[  AND OT.TYPE_CONTENT = #{otherCondition}]]>
+                AND OT.TYPE_CONTENT IN
+                <foreach item="item" index="index" collection="otherCondition"
+                         open="(" separator="," close=")">
+                    #{item}
+                </foreach>
             </if>
         </trim>
-        ORDER BY M.BOARD_DATE DESC
+        ORDER BY B.BOARD_ID DESC
 
     </select>
 

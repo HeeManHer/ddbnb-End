@@ -1,7 +1,7 @@
 package com.nasigolang.ddbnb.login.controller;
 
 
-import com.nasigolang.ddbnb.common.ResponseDto;
+import com.nasigolang.ddbnb.common.ResponseDTO;
 import com.nasigolang.ddbnb.login.dto.KakaoAcessTokenDTO;
 import com.nasigolang.ddbnb.login.dto.NaverAccessTokenDTO;
 import com.nasigolang.ddbnb.login.service.LoginService;
@@ -42,7 +42,7 @@ public class LoginController {
         responseMap.put("token", kakaoToken);
 
         /* JWT와 응답 결과를 프론트에 전달*/
-        return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "로그인 성공", responseMap));
+        return ResponseEntity.ok().body(new ResponseDTO(HttpStatus.OK, "로그인 성공", responseMap));
     }
 
     @PostMapping("/kakaologout")
@@ -54,12 +54,12 @@ public class LoginController {
             /* 로그아웃 성공 처리 */
             return ResponseEntity
                     .ok()
-                    .body(new ResponseDto(HttpStatus.OK, "로그아웃 성공", null));
+                    .body(new ResponseDTO(HttpStatus.OK, "로그아웃 성공", null));
         } else {
             /* 로그아웃 실패 처리 */
             return ResponseEntity
                     .badRequest()
-                    .body(new ResponseDto(HttpStatus.BAD_REQUEST, "로그아웃 실패", null));
+                    .body(new ResponseDTO(HttpStatus.BAD_REQUEST, "로그아웃 실패", null));
         }
     }
 
@@ -76,7 +76,8 @@ public class LoginController {
     @PostMapping("/navercode")
     public ResponseEntity<?> getNaverCode(@RequestBody Map<String, String> codeAndState) {
         /* 인가 코드로 액세스 토큰 발급 */
-        NaverAccessTokenDTO naverAccessToken = loginService.getNaverAccessToken(codeAndState.get("code"), codeAndState.get("state"));
+        NaverAccessTokenDTO naverAccessToken = loginService.getNaverAccessToken(codeAndState.get("code"),
+                                                                                codeAndState.get("state"));
 
         /* 액세스 토큰으로 DB 저장or 확인 후 JWT 생성 */
         loginService.getJwtToken(naverAccessToken);
@@ -85,7 +86,7 @@ public class LoginController {
         responseMap.put("token", naverAccessToken);
 
         /* JWT와 응답 결과를 프론트에 전달*/
-        return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "로그인 성공", responseMap));
+        return ResponseEntity.ok().body(new ResponseDTO(HttpStatus.OK, "로그인 성공", responseMap));
     }
 
     @PostMapping("/naverlogout")
@@ -97,12 +98,12 @@ public class LoginController {
             /* 로그아웃 성공 처리 */
             return ResponseEntity
                     .ok()
-                    .body(new ResponseDto(HttpStatus.OK, "로그아웃 성공", null));
+                    .body(new ResponseDTO(HttpStatus.OK, "로그아웃 성공", null));
         } else {
             /* 로그아웃 실패 처리 */
             return ResponseEntity
                     .badRequest()
-                    .body(new ResponseDto(HttpStatus.BAD_REQUEST, "로그아웃 실패", null));
+                    .body(new ResponseDTO(HttpStatus.BAD_REQUEST, "로그아웃 실패", null));
         }
     }
 }

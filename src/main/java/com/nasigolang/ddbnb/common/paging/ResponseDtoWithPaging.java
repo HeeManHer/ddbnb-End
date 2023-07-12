@@ -7,7 +7,7 @@ import lombok.*;
 @Getter
 @Setter
 @ToString
-public class ResponseDtoWithPaging {
+public class ResponseDTOWithPaging {
 
     private Object data;
     private SelectCriteria pageInfo;

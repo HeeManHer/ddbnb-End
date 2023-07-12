@@ -2,9 +2,9 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.nasigolang.ddbnb.pet.petsitter.repository.PetSitterMapper">
+<mapper namespace="com.nasigolang.ddbnb.board.repository.PetSitterMapper">
 
-    <resultMap id="petSitterResultMap" type="com.nasigolang.ddbnb.pet.petsitter.dto.PetsitterboardDTO">
+    <resultMap id="petSitterResultMap" type="com.nasigolang.ddbnb.board.dto.PetSitterDTO">
         <id property="boardId" column="BOARD_ID"/>
         <result property="boardTitle" column="BOARD_TITLE"/>
         <result property="boardDate" column="BOARD_DATE"/>
@@ -12,7 +12,7 @@
         <result property="care" column="CARE"/>
         <result property="startDate" column="START_DATE"/>
         <result property="endDate" column="END_DATE"/>
-        <result property="signficant" column="SIGNFICANT"/>
+        <result property="significant" column="SIGNIFICANT"/>
         <result property="request" column="REQUEST"/>
         <result property="boardCategory" column="BOARD_CATEGORY"/>
         <result property="rate" column="RATE"/>
@@ -21,7 +21,7 @@
         <result property="petShape" column="PET_SHAPE"/>
         <result property="petGender" column="PET_GENDER"/>
         <result property="petSize" column="PET_SIZE"/>
-        <result property="sitterStatus" column="SITTER_STATUS"/>
+        <result property="boardStatus" column="BOARD_STATUS"/>
 
         <association property="member" javaType="com.nasigolang.ddbnb.member.dto.MemberSimpleDTO">
             <id property="memberId" column="MEMBER_ID"/>
@@ -38,8 +38,8 @@
             <result property="starPoint" column="STAR_POINT"/>
             <result property="detailedHistory" column="DETAILED_HISTORY"/>
         </association>
-        <collection property="boardImage" ofType="com.nasigolang.ddbnb.pet.petsitter.dto.PetSitterImageDTO">
-            <id property="imgId" column="IMAGE_ID"/>
+        <collection property="boardImage" ofType="com.nasigolang.ddbnb.board.dto.BoardImageDTO">
+            <id property="imageId" column="IMAGE_ID"/>
             <result property="imageUrl" column="IMAGE_URL"/>
             <result property="boardId" column="BOARD_ID"/>
         </collection>
@@ -49,31 +49,31 @@
     <select id="searchPetSitter" parameterType="hashmap" resultMap="petSitterResultMap">
 
         SELECT
-        P.*,M.*,SI.*
-
-        FROM PETSITTER P
-        JOIN MEMBER M ON (P.MEMBER_ID = M.MEMBER_ID)
-        LEFT JOIN SITTER_IMAGE SI ON (P.BOARD_ID = SI.BOARD_ID)
+        B.*, PS.*, M.*, BI.*
+        FROM BOARD B
+        JOIN PET_SITTER PS ON (B.BOARD_ID = PS.BOARD_ID)
+        JOIN MEMBER M ON (B.MEMBER_ID = M.MEMBER_ID)
+        LEFT JOIN BOARD_IMAGE BI ON (B.BOARD_ID = BI.BOARD_ID)
 
         <trim prefix="WHERE" prefixOverrides="AND">
             <if test="location != null">
-                LOCATION LIKE #{location}
+                B.LOCATION LIKE #{location}
             </if>
             <if test="startDate != null">
-                <![CDATA[AND START_DATE >= #{startDate}]]>
+                <![CDATA[AND B.START_DATE >= #{startDate}]]>
             </if>
             <if test="endDate != null">
-                <![CDATA[AND END_DATE >= #{endDate}]]>
+                <![CDATA[AND B.END_DATE <= #{endDate}]]>
             </if>
             <if test="petSize != null">
-                AND PET_SIZE IN
+                AND PS.PET_SIZE IN
                 <foreach item="item" index="index" collection="petSize"
                          open="(" separator="," close=")">
                     #{item}
                 </foreach>
             </if>
             <if test="care != null">
-                AND CARE IN
+                AND B.CARE IN
                 <foreach item="item" index="index" collection="care"
                          open="(" separator="," close=")">
                     #{item}
@@ -81,7 +81,7 @@
             </if>
 
         </trim>
-        ORDER BY P.BOARD_ID DESC
+        ORDER BY B.BOARD_ID DESC
     </select>
 
 </mapper>

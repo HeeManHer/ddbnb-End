@@ -1,8 +1,8 @@
 package com.nasigolang.ddbnb.message.controller;
 
-import com.nasigolang.ddbnb.common.ResponseDto;
+import com.nasigolang.ddbnb.common.ResponseDTO;
 import com.nasigolang.ddbnb.common.paging.Pagenation;
-import com.nasigolang.ddbnb.common.paging.ResponseDtoWithPaging;
+import com.nasigolang.ddbnb.common.paging.ResponseDTOWithPaging;
 import com.nasigolang.ddbnb.common.paging.SelectCriteria;
 import com.nasigolang.ddbnb.message.dto.MessageDTO;
 import com.nasigolang.ddbnb.message.service.MessageService;
@@ -29,7 +29,7 @@ public class MessageController {
 
 
     @GetMapping("/messages/receive/{whom}")
-    public ResponseEntity<ResponseDto> findSendMessage(@PageableDefault Pageable page, @PathVariable long whom) {
+    public ResponseEntity<ResponseDTO> findSendMessage(@PageableDefault Pageable page, @PathVariable long whom) {
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
@@ -37,13 +37,13 @@ public class MessageController {
         Page<MessageDTO> messageList = messageService.findSendMessageList(page, whom);
         SelectCriteria selectCriteria = Pagenation.getSelectCriteria(messageList);
 
-        ResponseDtoWithPaging data = new ResponseDtoWithPaging(messageList.getContent(), selectCriteria);
+        ResponseDTOWithPaging data = new ResponseDTOWithPaging(messageList.getContent(), selectCriteria);
 
-        return ResponseEntity.ok().headers(headers).body(new ResponseDto(HttpStatus.OK, "조회 성공", data));
+        return ResponseEntity.ok().headers(headers).body(new ResponseDTO(HttpStatus.OK, "조회 성공", data));
     }
 
     @GetMapping("/messages/send/{whom}")
-    public ResponseEntity<ResponseDto> findReceiveMessage(@PageableDefault Pageable page, @PathVariable long whom) {
+    public ResponseEntity<ResponseDTO> findReceiveMessage(@PageableDefault Pageable page, @PathVariable long whom) {
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
@@ -51,24 +51,24 @@ public class MessageController {
         Page<MessageDTO> messageList = messageService.findReceiveMessageList(page, whom);
         SelectCriteria selectCriteria = Pagenation.getSelectCriteria(messageList);
 
-        ResponseDtoWithPaging data = new ResponseDtoWithPaging(messageList.getContent(), selectCriteria);
+        ResponseDTOWithPaging data = new ResponseDTOWithPaging(messageList.getContent(), selectCriteria);
 
-        return ResponseEntity.ok().headers(headers).body(new ResponseDto(HttpStatus.OK, "조회 성공", data));
+        return ResponseEntity.ok().headers(headers).body(new ResponseDTO(HttpStatus.OK, "조회 성공", data));
     }
 
     @GetMapping("/message/{messageId}")
-    public ResponseEntity<ResponseDto> findMessage(@PathVariable long messageId) {
+    public ResponseEntity<ResponseDTO> findMessage(@PathVariable long messageId) {
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
 
         return ResponseEntity.ok()
                              .headers(headers)
-                             .body(new ResponseDto(HttpStatus.OK, "조회 성공", messageService.findMessage(messageId)));
+                             .body(new ResponseDTO(HttpStatus.OK, "조회 성공", messageService.findMessage(messageId)));
     }
 
     @PostMapping("/message")
-    public ResponseEntity<ResponseDto> registNewMessage(@RequestBody MessageDTO newMessage) {
+    public ResponseEntity<ResponseDTO> registNewMessage(@RequestBody MessageDTO newMessage) {
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
@@ -77,28 +77,28 @@ public class MessageController {
 
         messageService.registNewmessage(newMessage);
 
-        return ResponseEntity.ok().headers(headers).body(new ResponseDto(HttpStatus.CREATED, "생성 성공", null));
+        return ResponseEntity.ok().headers(headers).body(new ResponseDTO(HttpStatus.CREATED, "생성 성공", null));
 
     }
 
     @PutMapping("/message")
-    public ResponseEntity<ResponseDto> modifyMessage(@RequestBody MessageDTO modifyMessage) {
+    public ResponseEntity<ResponseDTO> modifyMessage(@RequestBody MessageDTO modifyMessage) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
 
         messageService.modifySample(modifyMessage);
 
-        return ResponseEntity.ok().headers(headers).body(new ResponseDto(HttpStatus.OK, "수정 성공", null));
+        return ResponseEntity.ok().headers(headers).body(new ResponseDTO(HttpStatus.OK, "수정 성공", null));
     }
 
     @DeleteMapping("/messages")
-    public ResponseEntity<ResponseDto> deleteMessage(@RequestBody List<Long> messageId) {
+    public ResponseEntity<ResponseDTO> deleteMessage(@RequestBody List<Long> messageId) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
 
         messageService.deleteSample(messageId);
 
-        return ResponseEntity.ok().headers(headers).body(new ResponseDto(HttpStatus.NO_CONTENT, "삭제 성공", null));
+        return ResponseEntity.ok().headers(headers).body(new ResponseDTO(HttpStatus.NO_CONTENT, "삭제 성공", null));
     }
 
 

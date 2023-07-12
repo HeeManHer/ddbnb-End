@@ -9,13 +9,13 @@ import org.springframework.http.HttpStatus;
 @Getter
 @Setter
 @ToString
-public class ResponseDto {
+public class ResponseDTO {
 
     private int status;
     private String message;
     private Object data;
 
-    public ResponseDto(HttpStatus status, String message, Object data) {
+    public ResponseDTO(HttpStatus status, String message, Object data) {
         this.status = status.value();
         this.message = message;
         this.data = data;

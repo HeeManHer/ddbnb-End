@@ -1,8 +1,8 @@
 package com.nasigolang.ddbnb.member.controller;
 
-import com.nasigolang.ddbnb.common.ResponseDto;
+import com.nasigolang.ddbnb.common.ResponseDTO;
 import com.nasigolang.ddbnb.common.paging.Pagenation;
-import com.nasigolang.ddbnb.common.paging.ResponseDtoWithPaging;
+import com.nasigolang.ddbnb.common.paging.ResponseDTOWithPaging;
 import com.nasigolang.ddbnb.common.paging.SelectCriteria;
 import com.nasigolang.ddbnb.member.dto.MemberSimpleDTO;
 import com.nasigolang.ddbnb.member.entity.Member;
@@ -38,7 +38,7 @@ public class MemberController {
 
     @ApiOperation(value = "멤버 소셜 id로 조회")
     @GetMapping("/members/{socialLogin}/{socialId}")
-    public ResponseEntity<ResponseDto> findBySocialId(@PathVariable String social_Login,
+    public ResponseEntity<ResponseDTO> findBySocialId(@PathVariable String social_Login,
                                                       @PathVariable String social_Id) {
 
         HttpHeaders headers = new HttpHeaders();
@@ -49,11 +49,11 @@ public class MemberController {
         Map<String, Object> responseMap = new HashMap<>();
         responseMap.put("member", foundMember);
 
-        return ResponseEntity.ok().headers(headers).body(new ResponseDto(HttpStatus.OK, "소셜 아이디 검색 성공", responseMap));
+        return ResponseEntity.ok().headers(headers).body(new ResponseDTO(HttpStatus.OK, "소셜 아이디 검색 성공", responseMap));
     }
 
     @GetMapping("/member")
-    public ResponseEntity<ResponseDto> findAllMember(@PageableDefault Pageable page,
+    public ResponseEntity<ResponseDTO> findAllMember(@PageableDefault Pageable page,
                                                      @RequestParam(name = "nickname", defaultValue = "") String nickname,
                                                      @RequestParam(name = "signDate", defaultValue = "") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate signDate) {
 
@@ -74,13 +74,13 @@ public class MemberController {
 
         SelectCriteria selectCriteria = Pagenation.getSelectCriteria(memberList);
 
-        ResponseDtoWithPaging data = new ResponseDtoWithPaging(memberList.getContent(), selectCriteria);
+        ResponseDTOWithPaging data = new ResponseDTOWithPaging(memberList.getContent(), selectCriteria);
 
-        return ResponseEntity.ok().headers(headers).body(new ResponseDto(HttpStatus.OK, "조회 성공", data));
+        return ResponseEntity.ok().headers(headers).body(new ResponseDTO(HttpStatus.OK, "조회 성공", data));
     }
 
     @GetMapping("/amount")
-    public ResponseEntity<ResponseDto> findMemberAmount() {
+    public ResponseEntity<ResponseDTO> findMemberAmount() {
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
@@ -96,13 +96,13 @@ public class MemberController {
         memberAmount.put("memberReport", reportService.findReportAmount("회원", today).size());
         memberAmount.put("boardReport", reportService.findReportAmount("게시글", today).size());
 
-        return ResponseEntity.ok().headers(headers).body(new ResponseDto(HttpStatus.OK, "조회 성공", memberAmount));
+        return ResponseEntity.ok().headers(headers).body(new ResponseDTO(HttpStatus.OK, "조회 성공", memberAmount));
     }
 
     //일부 멤버 조회
     @ApiOperation("멤버코드로 멤버 정보 조회")
     @GetMapping("/member/{memberId}")
-    public ResponseEntity<ResponseDto> findMemberById(@PathVariable long memberId) {
+    public ResponseEntity<ResponseDTO> findMemberById(@PathVariable long memberId) {
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
@@ -112,18 +112,18 @@ public class MemberController {
         Map<String, Object> responseMap = new HashMap<>();
         responseMap.put("members", foundMember);
 
-        return ResponseEntity.ok().headers(headers).body(new ResponseDto(HttpStatus.OK, "조회성공", responseMap));
+        return ResponseEntity.ok().headers(headers).body(new ResponseDTO(HttpStatus.OK, "조회성공", responseMap));
     }
 
     @ApiOperation("프로필 등록")
     @PutMapping("/member/{memberId}/postprofile")
-    public ResponseEntity<ResponseDto> updateprofile(@PathVariable long memberId,
+    public ResponseEntity<ResponseDTO> updateprofile(@PathVariable long memberId,
                                                      @RequestPart("newProfile") MemberSimpleDTO memberSimpleDTO,
                                                      @RequestPart(value = "image", required = false) MultipartFile image) {
 
 
         return ResponseEntity.ok()
-                             .body(new ResponseDto(HttpStatus.CREATED, "프로필 수정 성공",
+                             .body(new ResponseDTO(HttpStatus.CREATED, "프로필 수정 성공",
                                                    memberService.updateprofile(memberId, memberSimpleDTO, image)));
 
     }
