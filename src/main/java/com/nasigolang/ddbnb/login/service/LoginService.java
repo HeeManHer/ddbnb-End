@@ -52,7 +52,7 @@ public class LoginService {
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("grant_type", "authorization_code");
         params.add("client_id", KAKAO_CLIENT_ID);
-        params.add("redirect_uri", "http://localhost:3000/kakao/callback");
+        params.add("redirect_uri", "https://ddbnb.site/kakao/callback");
         params.add("code", code);
 
         HttpEntity<MultiValueMap<String, String>> kakaoTokenRequest = new HttpEntity<>(params, headers);
