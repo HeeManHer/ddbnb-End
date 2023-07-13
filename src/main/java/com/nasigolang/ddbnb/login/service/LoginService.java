@@ -146,6 +146,8 @@ public class LoginService {
             if (kakaoProfileDTO.getKakao_account().getGender() != null) {
                 newMember.setGender(kakaoProfileDTO.getKakao_account().getGender());
             }
+
+            newMember.setStarPoint("0");
             memberService.registNewUser(newMember);
         }
 

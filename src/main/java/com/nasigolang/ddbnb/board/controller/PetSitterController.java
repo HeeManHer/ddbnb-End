@@ -29,13 +29,13 @@ import java.util.Map;
 
 
 @RestController
-@RequestMapping("/api/v1/petsitter")
+@RequestMapping("/api/v1")
 @AllArgsConstructor
 public class PetSitterController {
 
     private final PetSitterService petsitterService;
 
-    @GetMapping("/list")
+    @GetMapping("/petSitter")
     @ApiOperation(value = "펫시터 목록 조회")
     public ResponseEntity<ResponseDTO> findAllList(@PageableDefault Pageable page,
                                                    @RequestParam(name = "location", defaultValue = "") String location,
@@ -47,7 +47,6 @@ public class PetSitterController {
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
-
 
         Map<String, Object> searchValue = new HashMap<>();
 
@@ -70,7 +69,6 @@ public class PetSitterController {
             searchValue.put("sitterStatus", sitterStatus);
         }
 
-        System.out.println(searchValue);
         Page<PetSitterDTO> petSitters = petsitterService.findAllPetSitter(page, searchValue);
         SelectCriteria selectCriteria = Pagenation.getSelectCriteria(petSitters);
 
@@ -80,19 +78,19 @@ public class PetSitterController {
     }
 
 
-    @GetMapping("/list/{boardid}")
+    @GetMapping("/petSitter/{boardId}")
     @ApiOperation(value = "펫시터 상세 조회")
-    public ResponseEntity<ResponseDTO> findList(@PathVariable("boardid") Long boardId) {
+    public ResponseEntity<ResponseDTO> findList(@PathVariable("boardId") long boardId) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
 
-        PetSitterDTO petsitter = petsitterService.findPetsitterByBoardNo(boardId);
+        PetSitterDTO petSitter = petsitterService.findPetsitterByBoardNo(boardId);
 
-        return ResponseEntity.ok().headers(headers).body(new ResponseDTO(HttpStatus.OK, "조회 성공", petsitter));
+        return ResponseEntity.ok().headers(headers).body(new ResponseDTO(HttpStatus.OK, "조회 성공", petSitter));
     }
 
 
-    @PostMapping("/regist")
+    @PostMapping("/petSitter")
     @ApiOperation(value = "펫시터 추가")
     public ResponseEntity<ResponseDTO> registPetSitter(@RequestPart("newPetSitter") PetSitterDTO petSitter,
                                                        @RequestPart(value = "image", required = false) List<MultipartFile> images) {
@@ -107,7 +105,7 @@ public class PetSitterController {
         return ResponseEntity.ok().headers(headers).body(new ResponseDTO(HttpStatus.OK, "생성 성공", null));
     }
 
-    @PutMapping("/modify")
+    @PutMapping("/petSitter")
     public ResponseEntity<ResponseDTO> modifyPetSitter(
             @RequestPart("modifyPetSitter") PetSitterDTO modifyPetSitter,
             @RequestPart(value = "image", required = false) List<MultipartFile> images) {
@@ -120,7 +118,7 @@ public class PetSitterController {
         return ResponseEntity.ok().headers(headers).body(new ResponseDTO(HttpStatus.OK, "수정 성공", null));
     }
 
-    @DeleteMapping("/{boardId}")
+    @DeleteMapping("/petSitter/{boardId}")
     public ResponseEntity<ResponseDTO> deletePetSitter(@PathVariable Long boardId) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
@@ -131,7 +129,7 @@ public class PetSitterController {
     }
 
     @ApiOperation(value = "펫맘 모집취소")
-    @PutMapping("/list/{boardId}/status")
+    @PutMapping("/petSitter/{boardId}/status")
     public ResponseEntity<ResponseDTO> updateSitterCancle(@RequestBody PetSitterDTO cancleSitter,
                                                           @PathVariable("boardId") long boardId) {
         HttpHeaders headers = new HttpHeaders();
@@ -155,7 +153,6 @@ public class PetSitterController {
         SelectCriteria selectCriteria = Pagenation.getSelectCriteria(petSitter);
 
         ResponseDTOWithPaging data = new ResponseDTOWithPaging(petSitter.getContent(), selectCriteria);
-        //        responseMap.put("reviews", reviews.getContent());
 
         return new ResponseEntity<>(new ResponseDTO(HttpStatus.OK, "조회성공", data), headers, HttpStatus.OK);
     }

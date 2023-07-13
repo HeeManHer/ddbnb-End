@@ -27,13 +27,13 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/v1/petmom")
+@RequestMapping("/api/v1")
 @AllArgsConstructor
 public class PetMomController {
 
     private final PetMomService petmomService;
 
-    @PostMapping("/regist")
+    @PostMapping("/petMom")
     public ResponseEntity<ResponseDTO> registNewReport(@RequestPart("newPetMom") PetMomDTO newPetMom,
                                                        @RequestPart(value = "image", required = false) List<MultipartFile> images) {
         HttpHeaders headers = new HttpHeaders();
@@ -47,7 +47,7 @@ public class PetMomController {
 
     }
 
-    @GetMapping("/list")
+    @GetMapping("/petMom")
     public ResponseEntity<ResponseDTO> findAllPetMom(@PageableDefault Pageable page,
                                                      @RequestParam(name = "location", defaultValue = "") String location,
                                                      @RequestParam(name = "startDate", defaultValue = "") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate,
@@ -88,7 +88,7 @@ public class PetMomController {
     }
 
 
-    @GetMapping("/list/{boardId}")
+    @GetMapping("/petMom/{boardId}")
     @ApiOperation(value = "펫시터 상세 조회")
     public ResponseEntity<ResponseDTO> findList(@PathVariable("boardId") long boardId) {
         HttpHeaders headers = new HttpHeaders();
@@ -97,25 +97,9 @@ public class PetMomController {
         PetMomDTO petMom = petmomService.findPetMomByBoardNo(boardId);
 
         return ResponseEntity.ok().headers(headers).body(new ResponseDTO(HttpStatus.OK, "조회 성공", petMom));
-        //    @GetMapping("/list/find")
-        //    public  ResponseEntity<ResponseDto> findPetMom(@PageableDefault Pageable pageable,
-        //                                                   @RequestParam(name= "location",defaultValue ="")String location,
-        //                                                   @RequestParam(name ="startDate",defaultValue = "")@DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate,
-        //                                                   @RequestParam(name = "endDate",defaultValue = "")@DateTimeFormat(pattern = "yyyy-MM-dd")LocalDate endDate,
-        //                                                   @RequestParam(name="petYN", defaultValue = "")Boolean petYN,
-        //                                                   @RequestParam(name="other", defaultValue = "")String other){
-        //        HttpHeaders headers = new HttpHeaders();
-        //        headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
-        //
-        //        Page<PetMomDTO> petMoms = petmomService.findPetMom(pageable,location,startDate,endDate,petYN,other);
-        //        SelectCriteria selectCriteria = Pagenation.getSelectCriteria(petMoms);
-        //
-        //        ResponseDtoWithPaging data = new ResponseDtoWithPaging(petMoms.getContent(), selectCriteria);
-        //        return new ResponseEntity<>(new ResponseDto(HttpStatus.OK, "조회성공", data), headers, HttpStatus.OK);
-        //    }
     }
 
-    @PutMapping("/modify")
+    @PutMapping("/petMom")
     public ResponseEntity<ResponseDTO> modifyPetMom(
             @RequestPart("modifyPetSitter") PetMomDTO modifyPetMom,
             @RequestPart(value = "image", required = false) List<MultipartFile> images) {
@@ -128,7 +112,7 @@ public class PetMomController {
         return ResponseEntity.ok().headers(headers).body(new ResponseDTO(HttpStatus.OK, "수정 성공", null));
     }
 
-    @DeleteMapping("/{borderid}")
+    @DeleteMapping("/petMom/{borderId}")
     public ResponseEntity<ResponseDTO> deletePetMom(@PathVariable int borderId) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
@@ -155,7 +139,7 @@ public class PetMomController {
     }
 
     @ApiOperation(value = "펫맘 모집상태변경")
-    @PutMapping("/list/{boardId}/status")
+    @PutMapping("/petMom/{boardId}/status")
     public ResponseEntity<ResponseDTO> updateMomCancle(@RequestBody PetMomDTO cancleMom,
                                                        @PathVariable("boardId") long boardId) {
         HttpHeaders headers = new HttpHeaders();

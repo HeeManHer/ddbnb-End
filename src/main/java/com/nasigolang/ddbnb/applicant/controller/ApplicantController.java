@@ -23,13 +23,13 @@ import java.nio.charset.Charset;
 import java.util.Date;
 
 @RestController
-@RequestMapping("/api/v1/applicant")
+@RequestMapping("/api/v1")
 @AllArgsConstructor
 public class ApplicantController {
 
     private final ApplicantService applicantService;
 
-    @GetMapping("/{boardId}")
+    @GetMapping("/applicant/{boardId}")
     @ApiOperation(value = "신청자 목록 조회")
     public ResponseEntity<ResponseDTO> findApplicantList(@PageableDefault Pageable page,
                                                          @PathVariable long boardId) {
@@ -46,7 +46,7 @@ public class ApplicantController {
     }
 
 
-    @PostMapping("/regist")
+    @PostMapping("/applicant")
     public ResponseEntity<ResponseDTO> findApplicant(@RequestBody ApplicantDTO applicant) {
 
         HttpHeaders headers = new HttpHeaders();
@@ -60,18 +60,18 @@ public class ApplicantController {
     }
 
     @ApiOperation(value = "나의 펫시터 신청 조회")
-    @GetMapping("/mypetsitters")
+    @GetMapping("/applicant/myApply")
     public ResponseEntity<ResponseDTO> findMyPetSitterApp(@PageableDefault Pageable pageable,
-                                                          @RequestParam long memberId) {
+                                                          @RequestParam long memberId,
+                                                          @RequestParam String category) {
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
 
-        Page<ApplicantDTO> petSitter = applicantService.findMyPetSitterApp(pageable, memberId);
+        Page<ApplicantDTO> petSitter = applicantService.findMyApply(pageable, memberId, category);
         SelectCriteria selectCriteria = Pagenation.getSelectCriteria(petSitter);
 
         ResponseDTOWithPaging data = new ResponseDTOWithPaging(petSitter.getContent(), selectCriteria);
-        //        responseMap.put("reviews", reviews.getContent());
 
         return new ResponseEntity<>(new ResponseDTO(HttpStatus.OK, "조회성공", data), headers, HttpStatus.OK);
     }

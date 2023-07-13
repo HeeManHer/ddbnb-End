@@ -3,7 +3,7 @@ package com.nasigolang.ddbnb.applicant.service;
 import com.nasigolang.ddbnb.applicant.dto.ApplicantDTO;
 import com.nasigolang.ddbnb.applicant.entity.Applicant;
 import com.nasigolang.ddbnb.applicant.repository.ApplicantRepository;
-import com.nasigolang.ddbnb.board.repository.PetSitterRepository;
+import com.nasigolang.ddbnb.board.repository.BoardRepository;
 import com.nasigolang.ddbnb.member.repository.MemberRepository;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -14,6 +14,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @AllArgsConstructor
 public class ApplicantService {
@@ -21,16 +23,16 @@ public class ApplicantService {
     private final ApplicantRepository applicantRepository;
     private final ModelMapper modelMapper;
     private final MemberRepository memberRepository;
-    private final PetSitterRepository petSitterRepository;
+    private final BoardRepository boardRepository;
 
 
     public Page<ApplicantDTO> findApplicantList(Pageable page, long boardId) {
 
         page = PageRequest.of(page.getPageNumber() <= 0 ? 0 : page.getPageNumber() - 1, page.getPageSize(),
-                              Sort.by("boardId"));
+                Sort.by("boardId"));
 
         return applicantRepository.findByBoardId(page, boardId)
-                                  .map(list -> modelMapper.map(list, ApplicantDTO.class));
+                .map(list -> modelMapper.map(list, ApplicantDTO.class));
     }
 
     @Transactional
@@ -38,12 +40,14 @@ public class ApplicantService {
         applicantRepository.save(modelMapper.map(applicant, Applicant.class));
     }
 
-    public Page<ApplicantDTO> findMyPetSitterApp(Pageable page, long memberId) {
+    public Page<ApplicantDTO> findMyApply(Pageable page, long memberId, String category) {
         page = PageRequest.of(page.getPageNumber() <= 0 ? 0 : page.getPageNumber() - 1, page.getPageSize(),
-                              Sort.by("boardId"));
+                Sort.by("boardId"));
 
-        return applicantRepository.findByMember(page, memberRepository.findById(memberId))
-                                  .map(petSitter -> modelMapper.map(petSitter, ApplicantDTO.class));
+        List<Long> boardIds = boardRepository.findByBoardCategoryContaining(category);
+
+        return applicantRepository.findByMemberAndBoardIdIn(page, memberRepository.findById(memberId), boardIds)
+                .map(petSitter -> modelMapper.map(petSitter, ApplicantDTO.class));
     }
 
 
