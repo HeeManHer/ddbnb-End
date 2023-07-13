@@ -3,6 +3,7 @@ package com.nasigolang.ddbnb.applicant.service;
 import com.nasigolang.ddbnb.applicant.dto.ApplicantDTO;
 import com.nasigolang.ddbnb.applicant.entity.Applicant;
 import com.nasigolang.ddbnb.applicant.repository.ApplicantRepository;
+import com.nasigolang.ddbnb.board.entity.Board;
 import com.nasigolang.ddbnb.board.repository.BoardRepository;
 import com.nasigolang.ddbnb.member.repository.MemberRepository;
 import lombok.AllArgsConstructor;
@@ -29,9 +30,9 @@ public class ApplicantService {
     public Page<ApplicantDTO> findApplicantList(Pageable page, long boardId) {
 
         page = PageRequest.of(page.getPageNumber() <= 0 ? 0 : page.getPageNumber() - 1, page.getPageSize(),
-                Sort.by("boardId"));
+                Sort.by("appliedDate").descending());
 
-        return applicantRepository.findByBoardId(page, boardId)
+        return applicantRepository.findByBoard(page, boardRepository.findById(boardId))
                 .map(list -> modelMapper.map(list, ApplicantDTO.class));
     }
 
@@ -42,11 +43,11 @@ public class ApplicantService {
 
     public Page<ApplicantDTO> findMyApply(Pageable page, long memberId, String category) {
         page = PageRequest.of(page.getPageNumber() <= 0 ? 0 : page.getPageNumber() - 1, page.getPageSize(),
-                Sort.by("boardId"));
+                Sort.by("appliedDate").descending());
 
-        List<Long> boardIds = boardRepository.findByBoardCategoryContaining(category);
+        List<Board> boards = boardRepository.findByBoardCategoryContaining(category);
 
-        return applicantRepository.findByMemberAndBoardIdIn(page, memberRepository.findById(memberId), boardIds)
+        return applicantRepository.findByMemberAndBoardIn(page, memberRepository.findById(memberId), boards)
                 .map(petSitter -> modelMapper.map(petSitter, ApplicantDTO.class));
     }
 

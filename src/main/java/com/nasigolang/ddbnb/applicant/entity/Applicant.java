@@ -1,5 +1,6 @@
 package com.nasigolang.ddbnb.applicant.entity;
 
+import com.nasigolang.ddbnb.board.entity.Board;
 import com.nasigolang.ddbnb.member.entity.Member;
 import lombok.*;
 import org.hibernate.annotations.Comment;
@@ -23,9 +24,10 @@ public class Applicant {
     @Comment("신청 번호")
     private long applicantId;
 
-    @Column(name = "BOARD_ID")
+    @ManyToOne
+    @JoinColumn(name = "BOARD_ID", referencedColumnName = "BOARD_ID")
     @Comment("게시판 번호")
-    private long boardId;
+    private Board board;
 
     @ManyToOne
     @JoinColumn(name = "MEMBER_ID", referencedColumnName = "MEMBER_ID")
