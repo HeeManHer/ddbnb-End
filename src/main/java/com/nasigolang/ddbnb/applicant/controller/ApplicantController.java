@@ -81,7 +81,7 @@ public class ApplicantController {
             @ApiResponse(code = 204, message = "신청취소 성공"),
             @ApiResponse(code = 400, message = "잘못된 파라미터")
     })
-    @DeleteMapping("/mypetsitters/{applicantId}")
+    @DeleteMapping("/applicant/{applicantId}")
     public ResponseEntity<?> deleteMyPetSitterApp(@PathVariable long applicantId) {
 
         applicantService.deleteMyPetSitterApp(applicantId);

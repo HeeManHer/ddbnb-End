@@ -40,13 +40,13 @@ public class PetSitterService {
     public Page<PetSitterDTO> findAllPetSitter(Pageable page, Map<String, Object> searchValue) {
 
         page = PageRequest.of(page.getPageNumber() <= 0 ? 0 : page.getPageNumber() - 1, page.getPageSize(),
-                              Sort.by("boardId").descending());
+                Sort.by("boardId").descending());
 
         Page<PetSitterDTO> petSitters;
 
         if (searchValue.isEmpty()) {
             petSitters = petSitterRepository.findAll(page)
-                                            .map(petSitter -> modelMapper.map(petSitter, PetSitterDTO.class));
+                    .map(petSitter -> modelMapper.map(petSitter, PetSitterDTO.class));
         } else {
             List<PetSitterDTO> petSitterList = petSitterMapper.searchPetSitter(searchValue);
 
@@ -125,21 +125,13 @@ public class PetSitterService {
     }
 
 
-    @Transactional
-    public void updateSitterCancle(PetSitterDTO sitterCancle, long boardId) {
-        PetSitter petsitter = petSitterRepository.findById(boardId).get();
-
-        petsitter.setBoardStatus(sitterCancle.getBoardStatus());
-
-    }
-
     //내 펫시터 조회
     public Page<PetSitterDTO> findMyPetSitter(Pageable page, long memberId) {
         page = PageRequest.of(page.getPageNumber() <= 0 ? 0 : page.getPageNumber() - 1, page.getPageSize(),
-                              Sort.by("boardId"));
+                Sort.by("boardId"));
 
         return petSitterRepository.findByMember(page, memberRepository.findById(memberId))
-                                  .map(petSitter -> modelMapper.map(petSitter, PetSitterDTO.class));
+                .map(petSitter -> modelMapper.map(petSitter, PetSitterDTO.class));
     }
 
 

@@ -62,7 +62,7 @@ public class PetMomService {
     public Page<PetMomDTO> findAllPetMoms(Pageable page, Map<String, Object> searchValue) {
 
         page = PageRequest.of(page.getPageNumber() <= 0 ? 0 : page.getPageNumber() - 1, page.getPageSize(),
-                              Sort.by("boardId").descending());
+                Sort.by("boardId").descending());
 
         Page<PetMomDTO> petMoms;
 
@@ -95,9 +95,9 @@ public class PetMomService {
         foundPetMom.setBoardCategory(modifyPetMom.getBoardCategory());
         foundPetMom.setBoardTitle(modifyPetMom.getBoardTitle());
         foundPetMom.setOtherCondition(modifyPetMom.getOtherCondition()
-                                                  .stream()
-                                                  .map(list -> modelMapper.map(list, OtherType.class))
-                                                  .collect(Collectors.toList()));
+                .stream()
+                .map(list -> modelMapper.map(list, OtherType.class))
+                .collect(Collectors.toList()));
 
         if (images != null) {
             for (int i = 0; i < foundPetMom.getBoardImage().size(); i++) {
@@ -123,8 +123,8 @@ public class PetMomService {
 
     public PetMomDTO findPetMomByBoardNo(long boardId) {
         return petMomRepository.findById(boardId)
-                               .map(petMom -> modelMapper.map(petMom, PetMomDTO.class))
-                               .get();
+                .map(petMom -> modelMapper.map(petMom, PetMomDTO.class))
+                .get();
 
     }
 
@@ -132,18 +132,12 @@ public class PetMomService {
     //내 펫맘 조회
     public Page<PetMomDTO> findMyPetMom(Pageable page, long memberId) {
         page = PageRequest.of(page.getPageNumber() <= 0 ? 0 : page.getPageNumber() - 1, page.getPageSize(),
-                              Sort.by("boardId"));
+                Sort.by("boardId"));
 
         return petMomRepository.findByMember(page, memberRepository.findById(memberId))
-                               .map(petMom -> modelMapper.map(petMom, PetMomDTO.class));
+                .map(petMom -> modelMapper.map(petMom, PetMomDTO.class));
     }
 
 
-    @Transactional
-    public void updateMomCancle(PetMomDTO momCancel, long boardId) {
-        PetMom petMom = petMomRepository.findById(boardId).get();
-
-        petMom.setBoardStatus(momCancel.getBoardStatus());
-    }
 }
 

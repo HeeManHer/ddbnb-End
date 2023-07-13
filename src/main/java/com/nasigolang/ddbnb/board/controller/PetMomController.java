@@ -133,21 +133,8 @@ public class PetMomController {
         SelectCriteria selectCriteria = Pagenation.getSelectCriteria(petMoms);
 
         ResponseDTOWithPaging data = new ResponseDTOWithPaging(petMoms.getContent(), selectCriteria);
-        //        responseMap.put("reviews", reviews.getContent());
 
         return new ResponseEntity<>(new ResponseDTO(HttpStatus.OK, "조회성공", data), headers, HttpStatus.OK);
-    }
-
-    @ApiOperation(value = "펫맘 모집상태변경")
-    @PutMapping("/petMom/{boardId}/status")
-    public ResponseEntity<ResponseDTO> updateMomCancle(@RequestBody PetMomDTO cancleMom,
-                                                       @PathVariable("boardId") long boardId) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
-
-        petmomService.updateMomCancle(cancleMom, boardId);
-
-        return ResponseEntity.ok().headers(headers).body(new ResponseDTO(HttpStatus.OK, "상태 변경 성공", null));
     }
 
 

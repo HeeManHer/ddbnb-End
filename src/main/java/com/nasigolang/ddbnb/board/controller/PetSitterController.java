@@ -128,19 +128,6 @@ public class PetSitterController {
         return ResponseEntity.ok().headers(headers).body(new ResponseDTO(HttpStatus.OK, "삭제 성공", null));
     }
 
-    @ApiOperation(value = "펫맘 모집취소")
-    @PutMapping("/petSitter/{boardId}/status")
-    public ResponseEntity<ResponseDTO> updateSitterCancle(@RequestBody PetSitterDTO cancleSitter,
-                                                          @PathVariable("boardId") long boardId) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
-
-        petsitterService.updateSitterCancle(cancleSitter, boardId);
-
-        return ResponseEntity.ok().headers(headers).body(new ResponseDTO(HttpStatus.OK, "상태 변경 성공", null));
-    }
-
-
     @ApiOperation(value = "나의 펫시터 조회")
     @GetMapping("/mypetsitters")
     public ResponseEntity<ResponseDTO> findMyPetSitter(@PageableDefault Pageable pageable,
