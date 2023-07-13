@@ -17,5 +17,6 @@ public class NaverAccessTokenDTO {
     private String token_type;
     private int expires_in;
     private int refresh_token_expires_in;
+    private String loginType;
 
 }

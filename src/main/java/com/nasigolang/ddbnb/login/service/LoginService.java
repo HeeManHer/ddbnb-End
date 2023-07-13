@@ -68,6 +68,8 @@ public class LoginService {
             e.printStackTrace();
         }
 
+        kakaoToken.setLoginType("kakao");
+
         return kakaoToken;
     }
 
@@ -256,6 +258,8 @@ public class LoginService {
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
+
+        naverAccessToken.setLoginType("naver");
 
         return naverAccessToken;
     }
